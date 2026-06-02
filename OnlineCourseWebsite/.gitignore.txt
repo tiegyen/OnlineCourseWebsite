@@ -1,0 +1,23 @@
+## Visual Studio Build and Output
+[Dd]ebug/
+[Dd]ebugPublic/
+[Rr]elease/
+[Xx]64/
+[Xx]84/
+bin/
+obj/
+
+## Visual Studio Virtual Cache & Personal Settings
+.vs/
+[Dd]ata[Bb]ase/
+*.user
+*.suo
+*.userosscache
+*.sln.docstates
+
+## NuGet Packages (Will be restored automatically)
+packages/
+
+## OS junk files
+.DS_Store
+Thumbs.db
