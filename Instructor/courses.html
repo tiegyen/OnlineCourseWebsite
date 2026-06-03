@@ -1,0 +1,148 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Manage My Courses | English Mastery</title>
+    <link href="../css/style.css" rel="stylesheet" />
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css">
+</head>
+<body>
+
+    <div class="admin-wrapper">
+        <div class="admin-sidebar">
+            <div class="sidebar-brand">
+                <i class="fa fa-graduation-cap"></i> Trainer Portal
+            </div>
+            <ul class="sidebar-menu">
+                <li><a href="dashboard.html"><i class="fa fa-dashboard"></i> Dashboard</a></li>
+                <li class="active"><a href="courses.html"><i class="fa fa-book"></i> My Courses</a></li>
+                <li><a href="curriculum.html"><i class="fa fa-tasks"></i> Curriculum</a></li>
+                <li><a href="students.html"><i class="fa fa-users"></i> Enrolled Students</a></li>
+                <li><a href="reviews.html"><i class="fa fa-star"></i> Reviews</a></li>
+                <li class="mt-50"><a href="../Guest/index.html"><i class="fa fa-sign-out"></i> Logout</a></li>
+            </ul>
+        </div>
+
+        <div class="admin-content">
+            <div class="admin-header">
+                <div>
+                    <h2>My Teaching Courses</h2>
+                    <p class="text-link">Create, update, and manage your English training programs.</p>
+                </div>
+                <button class="btn btn-primary" onclick="document.getElementById('courseModal').classList.add('open')">
+                    <i class="fa fa-plus"></i> Create New Course
+                </button>
+            </div>
+
+            <div class="data-table-wrapper">
+                <table class="data-table">
+                    <thead>
+                        <tr>
+                            <th>Image</th>
+                            <th>Course Title</th>
+                            <th>Category</th>
+                            <th>Price</th>
+                            <th>Students Enrolled</th>
+                            <th>Status</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td><img src="../images/picture1.jpg" alt="Course Thumbnail" width="60px" class="p-0"></td>
+                            <td><strong>IELTS Foundation</strong><br><small class="text-link">Duration: 10 Weeks</small></td>
+                            <td>IELTS Preparation</td>
+                            <td>1,500,000 VND</td>
+                            <td>428 Students</td>
+                            <td><span class="status-badge active">Active</span></td>
+                            <td>
+                                <button class="btn-action-icon" title="Edit Course Info" onclick="document.getElementById('courseModal').classList.add('open')">
+                                    <i class="fa fa-edit"></i>
+                                </button>
+                                <a href="curriculum.html" class="btn-action-icon" title="Manage Lessons">
+                                    <i class="fa fa-list-ol"></i>
+                                </a>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td><img src="../images/picture1.jpg" alt="Course Thumbnail" width="60px" class="p-0"></td>
+                            <td><strong>TOEIC Intensive 650+</strong><br><small class="text-link">Duration: 8 Weeks</small></td>
+                            <td>TOEIC Training</td>
+                            <td>1,200,000 VND</td>
+                            <td>0 Students</td>
+                            <td><span class="status-badge draft">Draft</span></td>
+                            <td>
+                                <button class="btn-action-icon" title="Edit Course Info">
+                                    <i class="fa fa-edit"></i>
+                                </button>
+                                <a href="curriculum.html" class="btn-action-icon" title="Manage Lessons">
+                                    <i class="fa fa-list-ol"></i>
+                                </a>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <div class="feedback-modal-overlay" id="courseModal">
+        <div class="feedback-modal-box course-modal-box">
+            <span class="close-modal-btn" onclick="document.getElementById('courseModal').classList.remove('open')">&times;</span>
+
+            <h3 class="mb-20"><i class="fa fa-book"></i> Course Information</h3>
+
+            <form>
+                <div class="form-group">
+                    <label>Course Title</label>
+                    <input type="text" class="form-control" placeholder="e.g., IELTS Academic Masterclass">
+                </div>
+
+                <div class="form-row">
+                    <div class="form-group form-col-equal">
+                        <label>Category</label>
+                        <select class="form-control filter-select">
+                            <option value="ielts">IELTS Preparation</option>
+                            <option value="toeic">TOEIC Training</option>
+                            <option value="business">Business English</option>
+                        </select>
+                    </div>
+                    <div class="form-group form-col-equal">
+                        <label>Status</label>
+                        <select class="form-control filter-select">
+                            <option value="active">Active (Publish)</option>
+                            <option value="draft">Draft (Hidden)</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="form-row">
+                    <div class="form-group form-col-equal">
+                        <label>Price (VND)</label>
+                        <input type="number" class="form-control" placeholder="e.g., 1500000">
+                    </div>
+                    <div class="form-group form-col-equal">
+                        <label>Duration (Weeks)</label>
+                        <input type="text" class="form-control" placeholder="e.g., 12 Weeks">
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label>Course Description</label>
+                    <textarea class="form-control feedback-textarea" rows="4" placeholder="Brief summary about the course targets and outcomes..."></textarea>
+                </div>
+
+                <div class="form-group">
+                    <label>Course Thumbnail Image</label>
+                    <input type="file" class="form-control">
+                </div>
+
+                <button type="submit" class="btn btn-primary w-100">Save Course Settings</button>
+            </form>
+        </div>
+    </div>
+
+</body>
+</html>

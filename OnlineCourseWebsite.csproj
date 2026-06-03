@@ -152,6 +152,9 @@
     <Content Include="Guest\index.html" />
     <Content Include="Guest\login.html" />
     <Content Include="Guest\register.html" />
+    <Content Include="Instructor\courses.html" />
+    <Content Include="Instructor\curriculum.html" />
+    <Content Include="Instructor\dashboard.html" />
     <Content Include="Scripts\bootstrap.bundle.js" />
     <Content Include="Scripts\bootstrap.bundle.min.js" />
     <Content Include="Scripts\bootstrap.esm.js" />

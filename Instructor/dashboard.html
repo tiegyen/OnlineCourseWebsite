@@ -1,0 +1,145 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Instructor Dashboard & Stats | English Mastery</title>
+    <link href="../css/style.css" rel="stylesheet" />
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css">
+</head>
+<body>
+
+    <div class="admin-wrapper">
+        <div class="admin-sidebar">
+            <div class="sidebar-brand">
+                <i class="fa fa-graduation-cap"></i> Trainer Portal
+            </div>
+            <ul class="sidebar-menu">
+                <li class="active"><a href="dashboard.html"><i class="fa fa-dashboard"></i> Dashboard</a></li>
+                <li><a href="courses.html"><i class="fa fa-book"></i> My Courses</a></li>
+                <li><a href="curriculum.html"><i class="fa fa-tasks"></i> Curriculum</a></li>
+                <li><a href="students.html"><i class="fa fa-users"></i> Enrolled Students</a></li>
+                <li><a href="reviews.html"><i class="fa fa-star"></i> Reviews</a></li>
+                <li class="mt-50"><a href="../Guest/index.html"><i class="fa fa-sign-out"></i> Logout</a></li>
+            </ul>
+        </div>
+
+        <div class="admin-content">
+            <div class="admin-header">
+                <div>
+                    <h2>Instructor Command Center</h2>
+                    <p class="text-link">Monitor your overall statistics and detailed course metrics.</p>
+                </div>
+                <div class="user-info">
+                    <span class="student-welcome"><i class="fa fa-user-circle"></i> Instructor Mode</span>
+                </div>
+            </div>
+
+            <div class="stats-grid">
+                <div class="stat-card">
+                    <div class="stat-info">
+                        <h3>4</h3>
+                        <p>Total Courses</p>
+                    </div>
+                    <div class="stat-icon"><i class="fa fa-book"></i></div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-info">
+                        <h3>1,248</h3>
+                        <p>Total Enrollments</p>
+                    </div>
+                    <div class="stat-icon icon-blue"><i class="fa fa-users"></i></div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-info">
+                        <h3>4.8</h3>
+                        <p>Average Rating</p>
+                    </div>
+                    <div class="stat-icon icon-orange"><i class="fa fa-star"></i></div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-info">
+                        <h3>IELTS Foundation</h3>
+                        <p>Most Popular Course</p>
+                    </div>
+                    <div class="stat-icon icon-green"><i class="fa fa-trophy"></i></div>
+                </div>
+            </div>
+
+            <div class="stats-detail-section">
+                <div class="section-subtitle-box">
+                    <h3><i class="fa fa-bar-chart"></i> Course Statistics breakdown</h3>
+                    <span class="text-link" style="font-size: 13px;">Data updated: Live</span>
+                </div>
+
+                <div class="data-table-wrapper">
+                    <table class="data-table">
+                        <thead>
+                            <tr>
+                                <th>Course Name</th>
+                                <th>Status</th>
+                                <th>Total Enrollments</th>
+                                <th>Average Rating</th>
+                                <th>Learning Status Breakdown</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td><strong>IELTS Foundation</strong></td>
+                                <td><span class="status-badge active">Active</span></td>
+                                <td><strong>428</strong> Students</td>
+                                <td><i class="fa fa-star" style="color: #f1c40f;"></i> 4.9 / 5.0</td>
+                                <td><small class="text-link">340 Studying | 88 Completed</small></td>
+                            </tr>
+                            <tr>
+                                <td><strong>TOEIC Intensive 650+</strong></td>
+                                <td><span class="status-badge active">Active</span></td>
+                                <td><strong>312</strong> Students</td>
+                                <td><i class="fa fa-star" style="color: #f1c40f;"></i> 4.7 / 5.0</td>
+                                <td><small class="text-link">290 Studying | 22 Completed</small></td>
+                            </tr>
+                            <tr>
+                                <td><strong>Business English Communication</strong></td>
+                                <td><span class="status-badge active">Active</span></td>
+                                <td><strong>508</strong> Students</td>
+                                <td><i class="fa fa-star" style="color: #f1c40f;"></i> 4.8 / 5.0</td>
+                                <td><small class="text-link">400 Studying | 108 Completed</small></td>
+                            </tr>
+                            <tr>
+                                <td><strong>Grammar Masterclass</strong></td>
+                                <td><span class="status-badge draft">Draft</span></td>
+                                <td><strong>0</strong> Students</td>
+                                <td><i class="fa fa-star" style="color: #ccc;"></i> 0.0 / 5.0</td>
+                                <td><small class="text-link">No Active Learners</small></td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <div class="card-box mt-30">
+                <h3 class="profile-section-title"><i class="fa fa-history"></i> Recent Activities</h3>
+                <div class="material-list">
+                    <div class="material-item">
+                        <div class="material-info">
+                            <i class="fa fa-check-circle" style="color: #2ecc71; font-size: 16px;"></i>
+                            <span>Student <strong>Alice Pham</strong> enrolled in <strong>IELTS Foundation</strong></span>
+                        </div>
+                        <small class="text-link">2 mins ago</small>
+                    </div>
+                    <div class="material-item">
+                        <div class="material-info">
+                            <i class="fa fa-star" style="color: #f1c40f; font-size: 16px;"></i>
+                            <span><strong>Minh Nguyen</strong> left a 4-star review on <strong>TOEIC Speaking</strong></span>
+                        </div>
+                        <small class="text-link">1 hour ago</small>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+</body>
+</html>
