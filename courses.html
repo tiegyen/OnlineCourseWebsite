@@ -19,8 +19,6 @@
                     <ul id="MenuItems">
                         <li><a href="index.html">Home</a></li>
                         <li><a href="courses.html">Courses</a></li>
-                        <li><a href="about.html">About</a></li>
-                        <li><a href="contact.html">Contact</a></li>
                         <li><a href="register.html">Register</a></li>
                         <li><a href="login.html">Login</a></li>
                     </ul>
@@ -29,8 +27,8 @@
             <div class="row">
                 <div class="col-2">
                     <h1>Achieve Your Goal<br>With Expert English Courses</h1>
-                    <p class="banner-text">From IELTS foundations to Advanced Business English.</p>
-                    <a href="#featured-courses" class="btn">Explore Courses &#10132;</a>
+                    <p>From IELTS foundations to Advanced Business English.</p>
+                    <a href="#featured-courses" class="btn btn-danger">Explore Courses &#10132;</a>
                 </div>
                 <div class="col-2">
                     <img src="./images/banner1.png" alt="English Learning" />
@@ -39,32 +37,44 @@
         </div>
     </div>
 
-    <div class="small-container course-list-section" id="featured-courses">
+    <div class="small-container mt-50" id="featured-courses">
         <h2 class="title">Available Courses</h2>
+
+        <div class="row search-filter-row">
+            <div class="search-box">
+                <input type="text" class="form-control" placeholder="Search course by name or instructor...">
+            </div>
+            <div class="filter-box">
+                <select class="form-control filter-select">
+                    <option value="">All Categories</option>
+                    <option value="ielts">IELTS Preparation</option>
+                    <option value="toeic">TOEIC Training</option>
+                    <option value="business">Business English</option>
+                </select>
+            </div>
+        </div>
+
         <div class="row">
-
-            <div class="col-4 course-card">
-                <img src="./images/picture1.jpg" alt="IELTS" class="course-img">
-                <h4 class="course-name">IELTS Foundation</h4>
-                <p class="course-instructor">Instructor: John Smith</p>
-                <p class="course-price">1,500,000 VND</p>
-                <div class="course-actions">
-                    <a href="#" class="btn btn-enroll">Enroll Now</a>
-                    <a href="details.html" class="link-details">Details</a>
+            <div class="col-4 card-box">
+                <img src="./images/picture1.jpg" alt="IELTS">
+                <span class="category-badge">IELTS Preparation</span>
+                <h4 class="mt-15" style="font-weight: 600;">IELTS Foundation</h4>
+                <p style="font-weight: normal; color: #555; margin: 5px 0;">Instructor: John Smith</p>
+                <p style="color: #2c3e50; font-weight: 700;">1,500,000 VND</p>
+                <div class="row mt-15" style="justify-content: space-between; padding: 0 5px;">
+                    <a href="#" class="btn btn-primary" style="padding: 10px 20px; font-size: 14px;">Enroll Now</a>
+                    <a href="details.html" class="text-link" style="font-size: 14px;">Details</a>
                 </div>
             </div>
+        </div>
 
-            <div class="col-4 course-card">
-                <img src="./images/picture4.jpg" alt="TOEIC" class="course-img">
-                <h4 class="course-name">TOEIC Beginner</h4>
-                <p class="course-instructor">Instructor: Anna Brown</p>
-                <p class="course-price">1,200,000 VND</p>
-                <div class="course-actions">
-                    <a href="#" class="btn btn-enroll">Enroll Now</a>
-                    <a href="details.html" class="link-details">Details</a>
-                </div>
+        <div class="row mt-50 pagination-wrapper">
+            <div class="pagination-list">
+                <span class="page-item active">1</span>
+                <span class="page-item">2</span>
+                <span class="page-item">3</span>
+                <span class="page-item">&#10132;</span>
             </div>
-
         </div>
     </div>
 
