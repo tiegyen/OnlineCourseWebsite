@@ -295,3 +295,9 @@ ul {
 .copyright {
     text-align: center;
 }
+
+.col-4 p {
+    font-weight: bold;
+    color: #ff523b;
+    margin-top: 5px;
+}
