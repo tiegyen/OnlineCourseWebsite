@@ -1,0 +1,105 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Enrolled Students | English Mastery</title>
+    <link href="../css/style.css" rel="stylesheet" />
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css">
+</head>
+<body>
+
+    <div class="admin-wrapper">
+        <div class="admin-sidebar">
+            <div class="sidebar-brand">
+                <i class="fa fa-graduation-cap"></i> Trainer Portal
+            </div>
+            <ul class="sidebar-menu">
+                <li><a href="dashboard.html"><i class="fa fa-dashboard"></i> Dashboard</a></li>
+                <li><a href="courses.html"><i class="fa fa-book"></i> My Courses</a></li>
+                <li><a href="curriculum.html"><i class="fa fa-tasks"></i> Curriculum</a></li>
+                <li class="active"><a href="students.html"><i class="fa fa-users"></i> Enrolled Students</a></li>
+                <li><a href="reviews.html"><i class="fa fa-star"></i> Reviews</a></li>
+                <li class="mt-50"><a href="../Guest/index.html"><i class="fa fa-sign-out"></i> Logout</a></li>
+            </ul>
+        </div>
+
+        <div class="admin-content">
+            <div class="admin-header">
+                <div>
+                    <h2>Enrolled Students Management</h2>
+                    <p class="text-link">Track student enrollment dates, tuition payment status, and learning progress.</p>
+                </div>
+            </div>
+
+            <div class="table-filter-zone">
+                <select class="form-control filter-select">
+                    <option value="all">All My Courses</option>
+                    <option value="ielts">IELTS Foundation</option>
+                    <option value="toeic">TOEIC Intensive 650+</option>
+                </select>
+            </div>
+
+            <div class="data-table-wrapper">
+                <table class="data-table">
+                    <thead>
+                        <tr>
+                            <th>Student Name</th>
+                            <th>Enrolled Course</th>
+                            <th>Enrollment Date</th>
+                            <th>Payment Status</th>
+                            <th>Learning Progress</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td><strong>Alice Pham</strong><br><small class="text-link">alice.pham@gmail.com</small></td>
+                            <td>IELTS Foundation</td>
+                            <td>May 25, 2026</td>
+                            <td><span class="payment-badge paid">Paid</span></td>
+                            <td>
+                                <div class="progress-container">
+                                    <div class="progress-bar-bg">
+                                        <div class="progress-bar-fill" style="width: 75%;"></div>
+                                    </div>
+                                    <span class="progress-text">75%</span>
+                                </div>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td><strong>Minh Nguyen</strong><br><small class="text-link">minh.nguyen99@yahoo.com</small></td>
+                            <td>IELTS Foundation</td>
+                            <td>June 01, 2026</td>
+                            <td><span class="payment-badge paid">Paid</span></td>
+                            <td>
+                                <div class="progress-container">
+                                    <div class="progress-bar-bg">
+                                        <div class="progress-bar-fill" style="width: 12%;"></div>
+                                    </div>
+                                    <span class="progress-text">12%</span>
+                                </div>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td><strong>Hoang Dang</strong><br><small class="text-link">danghoang.hotech@gmail.com</small></td>
+                            <td>TOEIC Intensive 650+</td>
+                            <td>April 10, 2026</td>
+                            <td><span class="payment-badge paid">Paid</span></td>
+                            <td>
+                                <div class="progress-container">
+                                    <div class="progress-bar-bg">
+                                        <div class="progress-bar-fill" style="width: 100%;"></div>
+                                    </div>
+                                    <span class="progress-text">100%</span>
+                                </div>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+</body>
+</html>
