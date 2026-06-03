@@ -1,5 +1,5 @@
 ﻿/* ==========================================================================
-   1. RESET, FONT CHỦ ĐẠO & ĐỒNG BỘ KÍCH THƯỚC NAVBAR
+   1. RESET, FONT CHỦ ĐẠO & ĐỒNG BỘ CẤU TRÚC TOÀN CỤC
    ========================================================================== */
 * {
     margin: 0;
@@ -9,18 +9,19 @@
 
 body {
     font-family: "Poppins", sans-serif;
+    background-color: #fcfcfc;
 }
 
-/* Xanh pha tím tri thức (Linear Gradient mượt mà thay cho Radial hồng cũ) */
-.header {
-    background: linear-gradient(135deg, #2c3e50 0%, #667eea 50%, #764ba2 100%);
-    padding-bottom: 50px;
+ul {
+    list-style-type: none;
 }
 
-    .header .row {
-        margin-top: 70px;
-    }
+a {
+    text-decoration: none;
+    color: #fff;
+}
 
+/* 2. LAYOUT & HỆ THỐNG GRID CHUẨN COPPY */
 .container {
     max-width: 1300px;
     margin: auto;
@@ -28,33 +29,13 @@ body {
     padding-right: 25px;
 }
 
-.navbar {
-    display: flex;
-    align-items: center;
-    padding: 20px;
+.small-container {
+    min-width: 1080px;
+    margin: auto;
+    padding-left: 25px;
+    padding-right: 25px;
 }
 
-nav {
-    flex: 1;
-    text-align: right;
-}
-
-    nav ul {
-        display: inline-block;
-        list-style-type: none;
-    }
-
-        nav ul li {
-            display: inline-block;
-            margin-right: 20px;
-        }
-
-a {
-    text-decoration: none;
-    color: #fff;
-}
-
-/*css for class .row */
 .row {
     display: flex;
     align-items: center;
@@ -62,7 +43,6 @@ a {
     justify-content: space-around;
 }
 
-/*continue setting thead attributes to class col-2 and sub card inside the class*/
 .col-2 {
     flex-basis: 50%;
     min-width: 300px;
@@ -79,31 +59,6 @@ a {
         margin: 25px 0;
     }
 
-/* KHUNG NÚT CHUẨN: Giữ nguyên thuộc tính gốc, thêm transition mượt */
-.btn {
-    border: none;
-    color: white;
-    padding: 12px 25px;
-    text-align: center;
-    display: inline-block;
-    font-size: 16px;
-    cursor: pointer;
-    border-radius: 25px;
-    transition: all 0.3s ease;
-}
-
-/*categories*/
-.small-container {
-    min-width: 1080px;
-    margin: auto;
-    padding-left: 25px;
-    padding-right: 25px;
-}
-
-.categories {
-    margin: 70px 0;
-}
-
 .col-3 {
     flex-basis: 30%;
     min-width: 250px;
@@ -113,8 +68,110 @@ a {
     .col-3 img {
         width: 100%;
     }
-/*end-categories*/
 
+.col-4 {
+    flex-basis: 25%;
+    padding: 10px;
+    min-width: 200px;
+    margin-bottom: 50px;
+    transition: transform 0.6s;
+}
+
+    .col-4 img {
+        width: 100%;
+    }
+
+    .col-4:hover {
+        transform: translateY(-5px);
+    }
+
+/* ==========================================================================
+   2. KHU VỰC HEADER, NAVBAR & FOOTER DÙNG CHUNG
+   ========================================================================== */
+.header {
+    background: linear-gradient(135deg, #2c3e50 0%, #667eea 50%, #764ba2 100%);
+    padding-bottom: 50px;
+}
+
+    .header .row {
+        margin-top: 70px;
+    }
+
+.navbar {
+    display: flex;
+    align-items: center;
+    padding: 20px;
+}
+
+nav {
+    flex: 1;
+    text-align: right;
+}
+
+    nav ul {
+        display: inline-block;
+    }
+
+        nav ul li {
+            display: inline-block;
+            margin-right: 20px;
+        }
+
+/* Footer */
+.footer {
+    background: #000;
+    color: #8a8a8a;
+    font-size: 14px;
+    padding: 60px 0 20px;
+}
+
+    .footer p {
+        color: #8a8a8a;
+    }
+
+    .footer h3 {
+        color: #fff;
+        margin-bottom: 20px;
+    }
+
+.footer-col-1, .footer-col-2, .footer-col-3 {
+    min-width: 250px;
+    margin-bottom: 20px;
+}
+
+.footer-col-1 {
+    flex-basis: 30%;
+}
+
+.footer-col-2 {
+    flex: 1;
+    text-align: center;
+}
+
+    .footer-col-2 img {
+        width: 100%;
+        margin-bottom: 20px;
+    }
+
+.footer-col-3 {
+    flex-basis: 12%;
+    text-align: center;
+}
+
+.footer hr {
+    border: none;
+    background: #b5b5b5;
+    height: 1px;
+    margin: 20px 0;
+}
+
+.copyright {
+    text-align: center;
+}
+
+/* ==========================================================================
+   3. HỆ THỐNG CLASS LEGO TÁI SỬ DỤNG (REUSABLE COMPONENTS)
+   ========================================================================== */
 .title {
     text-align: center;
     margin: 0 auto 80px;
@@ -135,22 +192,6 @@ a {
         transform: translateX(-50%);
     }
 
-.col-4 {
-    flex-basis: 25%;
-    padding: 10px;
-    min-width: 200px;
-    margin-bottom: 50px;
-    transition: transform 0.6s;
-}
-
-    .col-4 img {
-        width: 100%;
-    }
-
-    .col-4:hover {
-        transform: translateY(-5px);
-    }
-
 h4 {
     color: #555;
     font-size: normal;
@@ -160,146 +201,19 @@ h4 {
     color: #ff523b;
 }
 
-/*css for layout*/
-.offer {
-    background: linear-gradient(135deg, #2c3e50 0%, #667eea 50%, #764ba2 100%);
-    margin-top: 80px;
-    padding: 30px 0;
-}
-
-.col-2 .offer-img {
-    padding: 50px;
-}
-
-small {
-    color: #fff;
-}
-
-.testimonial {
-    padding-top: 100px;
-}
-
-    .testimonial .col-3 {
-        text-align: center;
-        padding: 40px 20px;
-        box-shadow: 0 0 20px 0px rgba(0,0,0, 0.1);
-        cursor: pointer;
-        transition: transform 0.5s;
-    }
-
-        .testimonial .col-3 img {
-            width: 50px;
-            margin-top: 20px;
-            border-radius: 50%;
-        }
-
-        .testimonial .col-3 h3 {
-            font-weight: 600;
-            color: #555;
-            font-size: 16px;
-        }
-
-.fa.fa-quote-left {
-    font-size: 34px;
-    color: #ff523b;
-}
-
-.col-3 p {
-    font-size: 12px;
-    margin: 12px 0;
-    color: #777;
-}
-
-.brands {
-    margin: 100px auto;
-}
-
-.col-5 {
-    width: 160px;
-}
-
-    .col-5 img {
-        width: 100%;
-        cursor: pointer;
-        filter: grayscale(100%);
-    }
-
-        .col-5 img:hover {
-            filter: grayscale(0)
-        }
-
-.footer {
-    background: #000;
-    color: #8a8a8a;
-    font-size: 14px;
-    padding: 60px 0 20px;
-}
-
-    .footer p {
-        color: #8a8a8a;
-    }
-
-    .footer h3 {
-        color: #fff;
-        margin-bottom: 20px;
-    }
-
-.footer-col-1,
-.footer-col-2,
-.footer-col-3,
-.footer-col-4 {
-    min-width: 250px;
-    margin-bottom: 20px;
-}
-
-.footer-col-1 {
-    flex-basis: 30%;
-}
-
-.footer-col-2 {
-    flex: 1;
-    text-align: center;
-}
-
-    .footer-col-2 img {
-        width: 100%;
-        margin-bottom: 20px;
-    }
-
-.footer-col-3,
-.footer-col-4 {
-    flex-basis: 12%;
-    text-align: center;
-}
-
-ul {
-    list-style-type: none;
-}
-
-.app-logo {
-    margin-top: 20px;
-}
-
-    .app-logo img {
-        width: 140px;
-    }
-
-.footer hr {
+/* Button UI */
+.btn {
     border: none;
-    background: #b5b5b5;
-    height: 1px;
-    margin: 20px 0;
-}
-
-.copyright {
+    color: white;
+    padding: 12px 25px;
     text-align: center;
+    display: inline-block;
+    font-size: 16px;
+    cursor: pointer;
+    border-radius: 25px;
+    transition: all 0.3s ease;
 }
 
-/* ==========================================================================
-   HỆ THỐNG CLASS LEGO TÁI SỬ DỤNG (REUSABLE UTILITIES & COMPONENTS)
-   ========================================================================== */
-
-/* 1. Biến thể màu sắc & Hiệu ứng nút */
 .btn-danger {
     background-color: #ff523b;
 }
@@ -318,7 +232,7 @@ ul {
         box-shadow: 0 5px 15px rgba(118, 75, 162, 0.3);
     }
 
-/* 2. Hộp bọc ngoài dùng chung (Card/Box) */
+/* Card Box UI */
 .card-box {
     box-shadow: 0 0 20px rgba(0,0,0,0.08);
     padding: 25px;
@@ -330,7 +244,7 @@ ul {
         border-radius: 5px;
     }
 
-/* 3. Text link điều hướng trong vùng nền trắng */
+/* Text link UI */
 .text-link {
     color: #ff523b;
     font-weight: 600;
@@ -344,7 +258,7 @@ ul {
         transform: translateX(3px);
     }
 
-/* 4. Form Controls chuẩn hệ thống */
+/* Form Fields UI */
 .form-group {
     margin-bottom: 20px;
 }
@@ -363,13 +277,14 @@ ul {
     border-radius: 5px;
     font-family: inherit;
     outline: none;
+    transition: border 0.3s ease;
 }
 
     .form-control:focus {
         border-color: #764ba2;
     }
 
-/* 5. Helpers nhanh */
+/* Global Quick Helpers */
 .w-100 {
     width: 100%;
 }
@@ -407,34 +322,31 @@ ul {
 }
 
 /* ==========================================================================
-   CLASS LEGO BỔ SUNG CHO TRANG COURSE LIST & DETAIL (KHÔNG DÙNG INLINE CSS)
+   4. CẤU TRÚC LEGO BỔ SUNG THEO ĐẶC TẢ ĐỀ BÀI (GUEST FEATURES)
    ========================================================================== */
 
-/* Trực quan hóa bố cục tìm kiếm và bộ lọc */
-.search-filter-row {
-    justify-content: space-between;
+/* Search & Filter Row */
+.filter-container {
+    max-width: 100%;
     margin-bottom: 40px;
     padding: 0 10px;
 }
 
-.search-box {
-    flex-basis: 50%;
-    min-width: 300px;
-    margin-bottom: 15px;
+.search-block {
+    width: 100%;
 }
 
-.filter-box {
-    flex-basis: 30%;
-    min-width: 200px;
-    text-align: right;
+.filter-block {
+    width: 100%;
 }
 
 .filter-select {
     padding: 10px 15px;
     cursor: pointer;
+    max-width: 250px; /* Khống chế độ rộng select box vừa vặn, không bị bè ra hết màn hình */
 }
 
-/* Badge hiển thị chuyên mục (Category) của khóa học */
+/* Course Categories Badge */
 .category-badge {
     font-size: 12px;
     background: #eef2ff;
@@ -446,7 +358,7 @@ ul {
     margin-top: 15px;
 }
 
-/* Thanh phân trang (Pagination) */
+/* Pagination UI */
 .pagination-wrapper {
     justify-content: center;
 }
@@ -476,7 +388,7 @@ ul {
         color: #fff;
     }
 
-/* Khu vực thông tin giảng viên & Reviews */
+/* Instructor & Reviews */
 .details-extra-section {
     border-top: 1px solid #eee;
     padding-top: 40px;
@@ -507,7 +419,7 @@ ul {
     align-items: center;
 }
 
-/* Tiện ích cho phần Login (Remember & Forgot) */
+/* Login Utilities UI */
 .login-utilities {
     display: flex;
     justify-content: space-between;
@@ -530,7 +442,7 @@ ul {
     height: 16px;
 }
 
-/* Validation Message */
+/* Validation Error UI */
 .validation-error {
     color: #ff523b;
     font-size: 12px;
