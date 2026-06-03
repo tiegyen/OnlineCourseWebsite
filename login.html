@@ -4,35 +4,45 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Login | English Mastery</title>
-    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css">
     <link href="css/style.css" rel="stylesheet" />
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
 </head>
 <body>
 
     <div class="header" style="padding-bottom: 20px;">
-
-        <div class="container text-center">
-            <h2 style="color: white; margin-top: 30px;">Login to Your Account</h2>
+        <div class="container">
+            <div class="navbar">
+                <div class="logo"><img src="./images/logo-one.png" width="125px" alt="Logo" /></div>
+                <nav>
+                    <ul id="MenuItems">
+                        <li><a href="index.html">Home</a></li>
+                        <li><a href="courses.html">Courses</a></li>
+                        <li><a href="about.html">About</a></li>
+                        <li><a href="contact.html">Contact</a></li>
+                        <li><a href="register.html">Register</a></li>
+                        <li><a href="login.html">Login</a></li>
+                    </ul>
+                </nav>
+            </div>
         </div>
     </div>
 
-    <div class="container" style="max-width: 400px; margin-top: 50px; margin-bottom: 50px;">
-        <div class="panel panel-default" style="padding: 20px; box-shadow: 0 4px 8px rgba(0,0,0,0.1);">
-            <form action="#" method="post">
-                <div class="form-group">
-                    <label>Email Address</label>
-                    <input type="email" class="form-control" placeholder="Enter your email">
+    <div class="container" style="max-width: 450px; margin-top: 80px; margin-bottom: 80px;">
+        <div style="box-shadow: 0 0 20px rgba(0,0,0,0.1); padding: 40px; border-radius: 10px; background: #fff;">
+            <h2 style="text-align: center; margin-bottom: 30px; color: #333;">Welcome Back</h2>
+            <form>
+                <div style="margin-bottom: 20px;">
+                    <label style="display: block; margin-bottom: 8px; color: #555; font-weight: 500;">Email Address</label>
+                    <input type="email" placeholder="Enter your email" style="width: 100%; padding: 12px; border: 1px solid #ccc; border-radius: 5px; font-family: inherit;" required>
                 </div>
-                <div class="form-group">
-                    <label>Password</label>
-                    <input type="password" class="form-control" placeholder="Enter your password">
+                <div style="margin-bottom: 20px;">
+                    <label style="display: block; margin-bottom: 8px; color: #555; font-weight: 500;">Password</label>
+                    <input type="password" placeholder="Enter password" style="width: 100%; padding: 12px; border: 1px solid #ccc; border-radius: 5px; font-family: inherit;" required>
                 </div>
-                <button type="submit" class="btn btn-primary btn-block">Login</button>
+                <button type="submit" class="btn" style="width: 100%; margin: 10px 0 0; background-color: #2c3e50;">Sign In</button>
             </form>
-            <hr>
-            <p class="text-center">
-                Don't have an account?
-                <a href="register.html" style="color: #2c3e50; font-weight: bold;">Register here</a>
+            <p style="text-align: center; margin-top: 20px; color: #666; font-size: 14px;">
+                New to English Mastery? <a href="register.html" style="color: #ff523b; font-weight: 600;">Register here</a>
             </p>
         </div>
     </div>

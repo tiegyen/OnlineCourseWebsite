@@ -4,41 +4,50 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Course Details | English Mastery</title>
-    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css">
     <link href="css/style.css" rel="stylesheet" />
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
 </head>
 <body>
 
-    <div class="header" style="padding-bottom: 20px;">
-        <div class="container text-center">
-            <h2 style="color: white; margin-top: 30px;">IELTS Foundation</h2>
+    <div class="header header-details">
+        <div class="container">
+            <div class="navbar">
+                <div class="logo">
+                    <img src="./images/logo-one.png" width="125px" alt="Logo" />
+                </div>
+                <nav>
+                    <ul id="MenuItems">
+                        <li><a href="index.html">Home</a></li>
+                        <li><a href="courses.html">Courses</a></li>
+                        <li><a href="about.html">About</a></li>
+                        <li><a href="contact.html">Contact</a></li>
+                        <li><a href="register.html">Register</a></li>
+                        <li><a href="login.html">Login</a></li>
+                    </ul>
+                </nav>
+            </div>
         </div>
     </div>
 
-    <div class="container" style="margin-top: 50px; margin-bottom: 50px;">
-        <div class="row">
-            <div class="col-md-8">
-                <img src="./images/picture1.jpg" style="width: 100%; height: 400px; object-fit: cover; border-radius: 10px;" alt="Course Cover">
-                <h3 style="margin-top: 30px;">Course Description</h3>
-                <p>This course is designed for students who want to build a solid foundation for IELTS. You will learn key strategies for Reading, Writing, Listening, and Speaking.</p>
+    <div class="small-container details-container">
+        <div class="row row-details">
 
-                <h3 style="margin-top: 30px;">Course Lessons</h3>
-                <ul class="list-group">
-                    <li class="list-group-item">Lesson 1: Introduction to IELTS Structure</li>
-                    <li class="list-group-item">Lesson 2: Vocabulary for IELTS Reading</li>
-                    <li class="list-group-item">Lesson 3: Mastering Listening Techniques</li>
-                </ul>
+            <div class="col-2 details-left">
+                <img src="./images/picture1.jpg" alt="Course Image" class="details-img">
+                <h2 class="details-section-title">Course Description</h2>
+                <p class="details-description">This course is designed for students who want to build a solid foundation for IELTS. You will learn key strategies for Reading, Writing, Listening, and Speaking.</p>
             </div>
 
-            <div class="col-md-4">
-                <div class="panel panel-default" style="padding: 20px; border-radius: 10px;">
-                    <h4>Price: <span style="color: #2c3e50; font-weight: bold;">1,500,000 VND</span></h4>
-                    <p><strong>Instructor:</strong> John Smith</p>
-                    <p><strong>Duration:</strong> 10 weeks</p>
-                    <a href="#" class="btn btn-primary btn-block" style="margin-top: 20px;">Enroll Now</a>
-                    <a href="courses.html" class="btn btn-default btn-block">Back to List</a>
-                </div>
+            <div class="col-2 details-right-box">
+                <h1 class="details-main-title">IELTS Foundation</h1>
+                <p class="details-price">Price: 1,500,000 VND</p>
+                <p class="details-info"><strong>Instructor:</strong> John Smith</p>
+                <p class="details-info"><strong>Duration:</strong> 10 Weeks</p>
+
+                <a href="#" class="btn btn-enroll-details">Enroll Now</a>
+                <a href="courses.html" class="link-back">Back to Courses</a>
             </div>
+
         </div>
     </div>
 

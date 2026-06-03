@@ -1,54 +1,22 @@
-﻿/* ==========================================================================
-   1. RESET, FONT CHỦ ĐẠO & ĐỒNG BỘ KÍCH THƯỚC NAVBAR
-   ========================================================================== */
-* {
+﻿* {
     margin: 0;
     padding: 0;
     box-sizing: border-box;
 }
 
-/* Ép font Poppins cho toàn hệ thống */
-body, html {
-    font-family: 'Poppins', sans-serif !important;
+body {
+    font-family: "Poppins", sans-serif;
 }
 
-/* KHÓA CỨNG: Ép chữ của Menu luôn bự 16px ở mọi trang (Index, Login, Regis, Details) */
-#MenuItems,
-#MenuItems li,
-#MenuItems li a,
-nav ul id="MenuItems" li a {
-    font-family: 'Poppins', sans-serif !important;
-    font-size: 16px !important;
-    font-weight: 500 !important;
-    text-decoration: none !important;
-}
-
-/* Nút Login trên Menu */
-.btn-login {
-    font-size: 16px !important;
-    font-weight: 600 !important;
-}
-
-/* Mặc định cho các thẻ link chung */
-a {
-    text-decoration: none;
-    color: #fff;
-}
-
-
-/* ==========================================================================
-   2. BANNER & LAYOUT CHÍNH (XANH PHA TÍM GRADIENT)
-   ========================================================================== */
+/* ĐÃ ĐỔI: Xanh pha tím tri thức (Linear Gradient mượt mà thay cho Radial hồng cũ) */
 .header {
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-    padding-bottom: 50px;
+    background: linear-gradient(135deg, #2c3e50 0%, #667eea 50%, #764ba2 100%);
 }
 
     .header .row {
         margin-top: 70px;
     }
 
-/* Container tùy chỉnh cho phần nội dung tự viết */
 .container {
     max-width: 1300px;
     margin: auto;
@@ -67,10 +35,22 @@ nav {
     text-align: right;
 }
 
-    nav ul li {
+    nav ul {
         display: inline-block;
-        margin-right: 20px;
+        list-style-type: none;
     }
+
+        nav ul li {
+            display: inline-block;
+            margin-right: 20px;
+        }
+
+a {
+    text-decoration: none;
+    color: #fff;
+}
+
+/*css for class .row */
 
 .row {
     display: flex;
@@ -79,27 +59,30 @@ nav {
     justify-content: space-around;
 }
 
-
-/* ==========================================================================
-   3. BUTTONS (Midnight Blue & Accent Red)
-   ========================================================================== */
-/* Nút chính trong Form Login/Register/Enroll */
-.btn-primary {
-    background-color: #2c3e50 !important; /* Xanh Midnight Blue */
-    border: none !important;
-    color: white !important;
-    padding: 10px 20px;
-    border-radius: 5px;
-    transition: 0.3s;
+.header .row {
+    margin-top: 70px;
 }
 
-    .btn-primary:hover {
-        background-color: #667eea !important;
+/*continue setting thead attributes to class col-2 and sub card inside the class*/
+
+.col-2 {
+    flex-basis: 50%;
+    min-width: 300px;
+}
+
+    .col-2 img {
+        max-width: 100%;
+        padding: 50px 0;
     }
 
-/* Nút Explore trên banner (Màu đỏ nhấn mạnh) */
+    .col-2 h1 {
+        font-size: 50px;
+        line-height: 60px;
+        margin: 25px 0;
+    }
+
 .btn {
-    background-color: #e74c3c;
+    background-color: rgb(241, 36, 7);
     border: none;
     color: white;
     padding: 15px 30px;
@@ -111,16 +94,48 @@ nav {
     border-radius: 25px;
 }
 
-
-/* ==========================================================================
-   4. CATEGORIES & COURSE CARDS
-   ========================================================================== */
+/*categories*/
 .small-container {
-    max-width: 1300px;
+    min-width: 1080px;
     margin: auto;
     padding-left: 25px;
     padding-right: 25px;
 }
+
+.categories {
+    margin: 70px 0;
+}
+
+.col-3 {
+    flex-basis: 30%;
+    min-width: 250px;
+    margin-bottom: 30px;
+}
+
+    .col-3 img {
+        width: 100%;
+    }
+/*end-categories*/
+
+.title {
+    text-align: center;
+    margin: 0 auto 80px;
+    position: relative;
+    line-height: 60px;
+    color: #555;
+}
+
+    .title::after {
+        content: "";
+        background: #ff523b;
+        width: 80px;
+        height: 5px;
+        border-radius: 5px;
+        position: absolute;
+        bottom: 0;
+        left: 50%;
+        transform: translateX(-50%);
+    }
 
 .col-4 {
     flex-basis: 25%;
@@ -132,24 +147,90 @@ nav {
 
     .col-4 img {
         width: 100%;
-        height: 200px;
-        object-fit: cover;
     }
 
     .col-4:hover {
         transform: translateY(-5px);
     }
 
-    .col-4 p {
-        font-weight: 700;
-        color: #333;
-        margin: 10px 0;
+h4 {
+    color: #555;
+    font-size: normal;
+}
+
+.rating .fa {
+    color: #ff523b;
+}
+
+/*css for layout*/
+/* ĐÃ ĐỔI: Đồng bộ màu xanh tím tri thức cho phần Offer bên dưới */
+.offer {
+    background: linear-gradient(135deg, #2c3e50 0%, #667eea 50%, #764ba2 100%);
+    margin-top: 80px;
+    padding: 30px 0;
+}
+
+.col-2 .offer-img {
+    padding: 50px;
+}
+
+small {
+    color: #fff;
+}
+
+.testimonial {
+    padding-top: 100px;
+}
+
+    .testimonial .col-3 {
+        text-align: center;
+        padding: 40px 20px;
+        box-shadow: 0 0 20px 0px rgba(0,0,0, 0.1);
+        cursor: pointer;
+        transition: transform 0.5s;
     }
 
+        .testimonial .col-3 img {
+            width: 50px;
+            margin-top: 20px;
+            border-radius: 50%;
+        }
 
-/* ==========================================================================
-   5. FOOTER & ĐỊNH DẠNG LINK TRONG PANEL BOOTSTRAP
-   ========================================================================== */
+        .testimonial .col-3 h3 {
+            font-weight: 600;
+            color: #555;
+            font-size: 16px;
+        }
+
+.fa.fa-quote-left {
+    font-size: 34px;
+    color: #ff523b;
+}
+
+.col-3 p {
+    font-size: 12px;
+    margin: 12px 0;
+    color: #777;
+}
+
+.brands {
+    margin: 100px auto;
+}
+
+.col-5 {
+    width: 160px;
+}
+
+    .col-5 img {
+        width: 100%;
+        cursor: pointer;
+        filter: grayscale(100%);
+    }
+
+        .col-5 img:hover {
+            filter: grayscale(0)
+        }
+
 .footer {
     background: #000;
     color: #8a8a8a;
@@ -157,18 +238,138 @@ nav {
     padding: 60px 0 20px;
 }
 
-/* Fix màu chữ cho link trong thẻ panel/Bootstrap form không bị ăn màu trắng */
-.panel-body a:not(.btn),
-.panel a:not(.btn),
-.text-center a:not(.btn),
-.panel-footer a:not(.btn) {
-    color: #2c3e50 !important;
+    .footer p {
+        color: #8a8a8a;
+    }
+
+    .footer h3 {
+        color: #fff;
+        margin-bottom: 20px;
+    }
+
+.footer-col-1,
+.footer-col-2,
+.footer-col-3,
+.footer-col-4 {
+    min-width: 250px;
+    margin-bottom: 20px;
+}
+
+.footer-col-1 {
+    flex-basis: 30%;
+}
+
+.footer-col-2 {
+    flex: 1;
+    text-align: center;
+}
+
+    .footer-col-2 img {
+        width: 100%;
+        margin-bottom: 20px;
+    }
+
+.footer-col-3,
+.footer-col-4 {
+    flex-basis: 12%;
+    text-align: center;
+}
+
+ul {
+    list-style-type: none;
+}
+
+.app-logo {
+    margin-top: 20px;
+}
+
+    .app-logo img {
+        width: 140px;
+    }
+
+.footer hr {
+    border: none;
+    background: #b5b5b5;
+    height: 1px;
+    margin: 20px 0;
+}
+
+.copyright {
+    text-align: center;
+}
+
+
+.banner-text {
+    color: #fff;
+}
+
+/* Khu vực danh sách cách banner ra */
+.course-list-section {
+    margin-top: 50px;
+}
+
+/* Thẻ bọc ngoài của mỗi khóa học */
+.course-card {
+    box-shadow: 0 0 20px rgba(0,0,0,0.05);
+    padding: 20px;
+    border-radius: 10px;
+    background: #fff;
+}
+
+/* Ảnh của khóa học bên trong card */
+.course-img {
+    border-radius: 5px;
+}
+
+/* Tên khóa học */
+.course-name {
+    margin-top: 15px;
     font-weight: 600;
 }
 
-    /* Hiệu ứng di chuột vào cho rõ (cũng loại trừ nút bấm ra luôn) */
-    .panel a:not(.btn):hover,
-    .text-center a:not(.btn):hover {
-        color: #764ba2 !important;
+/* Giảng viên */
+.course-instructor {
+    font-weight: normal;
+    color: #555;
+    margin: 5px 0;
+}
+
+/* Giá tiền */
+.course-price {
+    color: #2c3e50;
+    font-weight: 700;
+}
+
+/* Thanh chứa 2 nút hành động */
+.course-actions {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-top: 15px;
+}
+
+/* Nút Enroll tùy chỉnh lại từ class .btn gốc của bạn */
+.btn-enroll {
+    margin: 0;
+    padding: 10px 20px;
+    font-size: 14px;
+    background-color: #2c3e50;
+}
+    .btn-enroll:hover {
+        background-color: #764ba2 !important;
+        color: #fff !important;
+        transform: translateY(-2px);
+        box-shadow: 0 5px 10px rgba(118, 75, 162, 0.3);
+    }
+
+/* Chữ Details */
+.link-details {
+    color: #ff523b;
+    font-weight: 600;
+    font-size: 14px;
+}
+    .link-details:hover {
+        color: #ff523b !important;
         text-decoration: underline !important;
+        transform: translateX(3px);
     }
