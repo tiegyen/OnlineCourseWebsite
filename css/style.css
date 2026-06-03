@@ -93,6 +93,16 @@ a {
     border-radius: 25px;
 }
 
+.btn-sm {
+    display: inline-block;
+    background: #ff523b;
+    color: white;
+    padding: 5px 15px;
+    border-radius: 5px;
+    margin-top: 10px;
+    font-size: 14px;
+}
+
 /*categories*/
 .small-container {
     min-width: 1080px;
@@ -297,7 +307,7 @@ ul {
 }
 
 .col-4 p {
-    font-weight: bold;
-    color: #ff523b;
-    margin-top: 5px;
+    font-weight: 700;
+    color: #333;
+    margin: 10px 0;
 }
