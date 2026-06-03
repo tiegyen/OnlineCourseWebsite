@@ -145,6 +145,7 @@
     <Content Include="Content\bootstrap.rtl.min.css" />
     <Content Include="courses.html" />
     <Content Include="css\style.css" />
+    <Content Include="details.html" />
     <Content Include="favicon.ico" />
     <Content Include="Global.asax" />
     <Content Include="Content\Site.css" />
