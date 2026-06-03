@@ -450,3 +450,310 @@ h4 {
     display: block;
     margin-top: 5px;
 }
+
+/* ==========================================================================
+   STUDENT PORTAL - PAYMENT STYLES
+   ========================================================================== */
+.payment-left-col {
+    flex: 1.3;
+    padding-right: 20px;
+}
+
+.payment-right-col {
+    flex: 0.7;
+    background: #fff;
+    padding: 30px;
+    border-radius: 10px;
+}
+
+.table-responsive {
+    background: #fff;
+    border-radius: 10px;
+    overflow: hidden;
+    box-shadow: 0 5px 15px rgba(0,0,0,0.05);
+}
+
+.table-payment {
+    width: 100%;
+    border-collapse: collapse;
+    text-align: left;
+}
+
+    .table-payment th {
+        background: #2c3e50;
+        color: #fff;
+        padding: 15px;
+    }
+
+    .table-payment td {
+        padding: 15px;
+        border-bottom: 1px solid #eee;
+    }
+
+    .table-payment tr.invoice-pending {
+        background: #fffde7;
+    }
+
+.invoice-id, .invoice-amount {
+    font-weight: 600;
+    color: #2c3e50;
+}
+
+/* Badge Trạng thái */
+.badge {
+    padding: 5px 10px;
+    border-radius: 20px;
+    font-size: 13px;
+    font-weight: 600;
+}
+
+.badge-paid {
+    background: #e8f5e9;
+    color: #2e7d32;
+}
+
+.badge-pending {
+    background: #fff3e0;
+    color: #ef6c00;
+}
+
+/* Khung Bank Thông Tin */
+.bank-info-box {
+    background: #f8fafc;
+    padding: 15px;
+    border-radius: 8px;
+    border: 1px dashed #764ba2;
+    margin-bottom: 20px;
+}
+
+    .bank-info-box p {
+        margin: 5px 0;
+        font-size: 15px;
+    }
+
+.bank-content-code {
+    font-family: monospace;
+    font-weight: 700;
+}
+
+.payment-note {
+    font-size: 13px;
+    color: #999;
+    font-style: italic;
+    line-height: 1.4;
+}
+
+/* ==========================================================================
+   STUDENT PORTAL - EMPTY STATE STYLES (MY COURSES)
+   ========================================================================== */
+.empty-state-container {
+    padding: 60px 20px;
+    background: #fff;
+    border-radius: 10px;
+    box-shadow: 0 5px 15px rgba(0,0,0,0.05);
+}
+
+.empty-state-icon {
+    font-size: 100px;
+    color: #ccc;
+    margin-bottom: 20px;
+}
+
+.empty-state-title {
+    font-weight: 500;
+    color: #2c3e50;
+}
+
+.empty-state-text {
+    color: #777;
+    margin: 15px 0 30px;
+}
+
+.btn-empty-action {
+    padding: 12px 30px;
+    font-size: 16px;
+}
+
+/* ==========================================================================
+   STUDENT PORTAL - COURSE MATERIALS WORKSPACE
+   ========================================================================== */
+.workspace-container {
+    display: flex;
+    gap: 25px;
+    margin-top: 30px;
+    margin-bottom: 50px;
+}
+
+/* Sidebar bên trái: Danh sách bài học (LESSON) */
+.workspace-sidebar {
+    flex: 0.8;
+    background: #fff;
+    border-radius: 10px;
+    box-shadow: 0 5px 15px rgba(0,0,0,0.05);
+    padding: 20px;
+    height: fit-content;
+}
+
+.lesson-list {
+    margin-top: 15px;
+}
+
+.lesson-item {
+    padding: 12px 15px;
+    border-radius: 5px;
+    margin-bottom: 10px;
+    background: #f8fafc;
+    border-left: 4px solid #ccc;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+    .lesson-item:hover, .lesson-item.active {
+        background: #eef2ff;
+        border-left-color: #764ba2;
+    }
+
+    .lesson-item h5 {
+        color: #2c3e50;
+        font-size: 14px;
+        font-weight: 500;
+    }
+
+/* Khu vực nội dung bên phải: Video & Tài liệu (COURSEMATERIAL) */
+.workspace-content {
+    flex: 1.2;
+    display: flex;
+    flex-direction: column;
+    gap: 25px;
+}
+
+.video-wrapper {
+    position: relative;
+    padding-bottom: 56.25%; /* Tỷ lệ màn hình 16:9 chuẩn bài */
+    height: 0;
+    overflow: hidden;
+    border-radius: 10px;
+    box-shadow: 0 5px 15px rgba(0,0,0,0.08);
+}
+
+    .video-wrapper iframe {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        border: none;
+    }
+
+.material-section {
+    background: #fff;
+    padding: 25px;
+    border-radius: 10px;
+    box-shadow: 0 5px 15px rgba(0,0,0,0.05);
+}
+
+.material-list {
+    margin-top: 15px;
+}
+
+.material-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 12px 0;
+    border-bottom: 1px solid #f1f5f9;
+}
+
+    .material-item:last-child {
+        border-bottom: none;
+    }
+
+.material-info {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+    .material-info i {
+        font-size: 20px;
+        color: #ff523b;
+    }
+
+    .material-info span {
+        font-size: 14px;
+        color: #475569;
+    }
+
+/* ==========================================================================
+   STUDENT PORTAL - COURSE DETAILS EXTENSION
+   ========================================================================== */
+.reviews-container-box {
+    box-shadow: none;
+    padding: 0;
+    background: transparent;
+}
+
+/* ==========================================================================
+   STUDENT PORTAL - PROFILE & ACCOUNT STYLES
+   ========================================================================== */
+.profile-sidebar-card {
+    text-align: center;
+    padding: 40px 20px;
+}
+
+.profile-avatar-wrapper {
+    position: relative;
+    width: 150px;
+    height: 150px;
+    margin: 0 auto 20px;
+}
+
+.profile-avatar-img {
+    width: 150px;
+    height: 150px;
+    border-radius: 50%;
+    object-fit: cover;
+    border: 3px solid #764ba2;
+}
+
+.avatar-upload-btn {
+    position: absolute;
+    bottom: 0;
+    right: 0;
+    background: #ff523b;
+    color: #fff;
+    width: 35px;
+    height: 35px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    border: 2px solid #fff;
+    font-size: 14px;
+}
+
+.profile-main-info h3 {
+    color: #2c3e50;
+    margin-bottom: 5px;
+}
+
+.profile-main-info p {
+    color: #777;
+    font-size: 14px;
+}
+
+.profile-section-title {
+    font-weight: 600;
+    color: #2c3e50;
+    border-bottom: 2px solid #f1f5f9;
+    padding-bottom: 10px;
+    margin-bottom: 25px;
+}
+
+.password-update-card {
+    margin-top: 30px;
+}
