@@ -44,7 +44,13 @@
                 <p class="details-info-p"><strong>Instructor:</strong> John Smith</p>
                 <p class="details-info-p"><strong>Duration:</strong> 10 Weeks</p>
 
-                <a href="payment.html" class="btn btn-primary w-100 mt-20">Enroll Now</a>
+                <div class="row mt-20 details-action-group">
+                    <a href="materials.html" class="btn btn-primary btn-enrolled-action">Go to Classroom</a>
+                    <button class="btn btn-feedback btn-enrolled-action" onclick="document.getElementById('feedbackModal').classList.add('open')">
+                        <i class="fa fa-pencil"></i> Write Feedback
+                    </button>
+                </div>
+
                 <a href="courses.html" class="text-center d-block mt-20 link-back-courses">Back to Courses</a>
             </div>
         </div>
@@ -52,7 +58,6 @@
 
     <div class="small-container mb-50 details-extra-section">
         <div class="row align-start">
-
             <div class="col-2 details-left">
                 <h3 class="details-section-title">Instructor Information</h3>
                 <div class="instructor-header">
@@ -62,29 +67,48 @@
                         <p class="instructor-title">Senior IELTS Trainer (8.5 IELTS)</p>
                     </div>
                 </div>
-                <p class="details-text-p">John has over 8 years of experience teaching academic English to international students. His energetic methods focus on real test-taking strategies and high-scoring patterns.</p>
+                <p class="details-text-p">John has over 8 years of experience teaching academic English to international students.</p>
             </div>
 
             <div class="col-2 details-right-box reviews-container-box">
                 <h3 class="details-section-title">Student Reviews</h3>
-
                 <div class="review-item">
                     <div class="review-header">
                         <strong class="review-author">Alice Pham</strong>
                         <div class="rating review-rating"><i class="fa fa-star"></i><i class="fa fa-star"></i><i class="fa fa-star"></i><i class="fa fa-star"></i><i class="fa fa-star"></i></div>
                     </div>
-                    <p class="review-content">"Excellent material! The reading tips helped me raise my band score significantly."</p>
-                </div>
-
-                <div class="review-item">
-                    <div class="review-header">
-                        <strong class="review-author">Minh Nguyen</strong>
-                        <div class="rating review-rating"><i class="fa fa-star"></i><i class="fa fa-star"></i><i class="fa fa-star"></i><i class="fa fa-star"></i><i class="fa fa-star-o"></i></div>
-                    </div>
-                    <p class="review-content">"Clear explanations and great mock test exercises. Highly recommend this course."</p>
+                    <p class="review-content">"Excellent material!"</p>
                 </div>
             </div>
+        </div>
+    </div>
 
+    <div class="feedback-modal-overlay" id="feedbackModal">
+        <div class="feedback-modal-box">
+            <span class="close-modal-btn" onclick="document.getElementById('feedbackModal').classList.remove('open')">&times;</span>
+
+            <h3 class="mb-20"><i class="fa fa-star"></i> Course Feedback</h3>
+            <p class="mb-15">Share your learning experience with this course:</p>
+
+            <form>
+                <div class="form-group">
+                    <label>Your Rating</label>
+                    <div class="rating-select">
+                        <i class="fa fa-star selected"></i>
+                        <i class="fa fa-star selected"></i>
+                        <i class="fa fa-star selected"></i>
+                        <i class="fa fa-star selected"></i>
+                        <i class="fa fa-star"></i>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label>Your Review</label>
+                    <textarea class="form-control feedback-textarea" rows="4" placeholder="What did you like or dislike about this course?..."></textarea>
+                </div>
+
+                <button type="submit" class="btn btn-primary w-100">Submit Review</button>
+            </form>
         </div>
     </div>
 
