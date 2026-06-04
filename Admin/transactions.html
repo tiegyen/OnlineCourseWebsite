@@ -78,5 +78,74 @@
         </div>
     </div>
 
+    <script>
+        document.addEventListener("DOMContentLoaded", function () {
+
+            // 1. Logic xử lý nút "Confirm" (Duyệt tiền chuyển khoản thủ công)
+            const confirmButtons = document.querySelectorAll(".btn-payment-action.confirm");
+
+            confirmButtons.forEach(button => {
+                button.addEventListener("click", function (event) {
+                    event.preventDefault();
+
+                    const row = this.closest("tr");
+                    const paymentBadge = row.querySelector(".payment-badge");
+                    const actionTd = this.parentElement;
+
+                    // Hiện MessageBox xác nhận đã nhận được tiền trong tài khoản ngân hàng chưa
+                    const confirmPayment = confirm("Have you verified the bank statement for this transaction reference?");
+
+                    if (confirmPayment) {
+                        // Cập nhật trạng thái Payment sang Paid (Thành công)
+                        paymentBadge.classList.remove("pending");
+                        paymentBadge.classList.add("success");
+                        paymentBadge.textContent = "Paid";
+
+                        // Thay thế cụm nút Duyệt/Hủy bằng nút "Cancel Course" (Đúng luồng nghiệp vụ sau khi đã đóng tiền)
+                        actionTd.innerHTML = `<button class="btn-status-action deactivate">Cancel Course</button>`;
+
+                        alert("Payment confirmed! Access to the course has been granted to the student.");
+
+                        // Kích hoạt lại trình lắng nghe sự kiện cho cái nút mới tạo ra (Event Delegation)
+                        initCancelAction(actionTd.querySelector(".btn-status-action.deactivate"));
+                    }
+                });
+            });
+
+            // 2. Logic xử lý nút "Cancel" / "Cancel Course" (Hủy đăng ký & Hoàn tiền)
+            const cancelButtons = document.querySelectorAll(".btn-payment-action.cancel, .btn-status-action.deactivate");
+
+            cancelButtons.forEach(button => {
+                initCancelAction(button);
+            });
+
+            // Hàm bọc logic Hủy khóa học để tái sử dụng
+            function initCancelAction(button) {
+                if (!button) return;
+
+                button.addEventListener("click", function (event) {
+                    event.preventDefault();
+
+                    const row = this.closest("tr");
+                    const paymentBadge = row.querySelector(".payment-badge");
+
+                    const confirmCancel = confirm("Are you sure you want to cancel this enrollment and process a refund?");
+
+                    if (confirmCancel) {
+                        // Chuyển trạng thái badge sang Đã hủy
+                        paymentBadge.className = "payment-badge cancelled";
+                        paymentBadge.textContent = "Cancelled";
+
+                        // Vô hiệu hóa khu vực hành động (Xóa sạch nút bấm vì giao dịch đã đóng)
+                        this.parentElement.innerHTML = `<span class="text-link" style="font-size: 12px;">No Actions Available</span>`;
+
+                        alert("Enrollment cancelled. Refund processed in the temporary ledger.");
+                    }
+                });
+            }
+
+        });
+    </script>
+
 </body>
 </html>
