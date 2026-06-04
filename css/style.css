@@ -169,6 +169,9 @@ nav {
     text-align: center;
 }
 
+
+/* ========================================================================== */
+
 /* ==========================================================================
    3. HỆ THỐNG CLASS LEGO TÁI SỬ DỤNG (REUSABLE COMPONENTS)
    ========================================================================== */
@@ -321,6 +324,9 @@ h4 {
     align-items: flex-start !important;
 }
 
+
+/* ========================================================================== */
+
 /* ==========================================================================
    4. CẤU TRÚC LEGO BỔ SUNG THEO ĐẶC TẢ ĐỀ BÀI (GUEST FEATURES)
    ========================================================================== */
@@ -451,6 +457,8 @@ h4 {
     margin-top: 5px;
 }
 
+/* ========================================================================== */
+
 /* ==========================================================================
    STUDENT PORTAL - PAYMENT STYLES
    ========================================================================== */
@@ -543,6 +551,8 @@ h4 {
     line-height: 1.4;
 }
 
+/* ========================================================================== */
+
 /* ==========================================================================
    STUDENT PORTAL - EMPTY STATE STYLES (MY COURSES)
    ========================================================================== */
@@ -573,6 +583,9 @@ h4 {
     padding: 12px 30px;
     font-size: 16px;
 }
+
+
+/* ========================================================================== */
 
 /* ==========================================================================
    STUDENT PORTAL - COURSE MATERIALS WORKSPACE
@@ -687,6 +700,9 @@ h4 {
         color: #475569;
     }
 
+
+/* ========================================================================== */
+
 /* ==========================================================================
    STUDENT PORTAL - COURSE DETAILS EXTENSION
    ========================================================================== */
@@ -695,6 +711,9 @@ h4 {
     padding: 0;
     background: transparent;
 }
+
+
+/* ========================================================================== */
 
 /* ==========================================================================
    STUDENT PORTAL - PROFILE & ACCOUNT STYLES
@@ -757,6 +776,9 @@ h4 {
 .password-update-card {
     margin-top: 30px;
 }
+
+
+/* ========================================================================== */
 
 /* ==========================================================================
    STUDENT PORTAL - FEEDBACK MODAL SYSTEM
@@ -842,6 +864,10 @@ h4 {
         color: #ff523b;
     }
 
+
+
+/* ========================================================================== */
+
 /* ==========================================================================
    STUDENT PORTAL - ENROLLED DETAILS CLEANUP
    ========================================================================== */
@@ -857,6 +883,10 @@ h4 {
 .feedback-textarea {
     resize: none;
 }
+
+
+
+/* ========================================================================== */
 
 /* ==========================================================================
    INSTRUCTOR PORTAL - CORE LAYOUT
@@ -967,6 +997,8 @@ h4 {
         color: #e67e22;
     }
 
+/* ========================================================================== */
+
 /* ==========================================================================
    INSTRUCTOR PORTAL - COURSE MANAGEMENT
    ========================================================================== */
@@ -1041,6 +1073,8 @@ h4 {
     width: 650px;
 }
 
+/* ========================================================================== */
+
 /* ==========================================================================
    FORM GRID LAYOUT - UTILITIES
    ========================================================================== */
@@ -1054,6 +1088,8 @@ h4 {
 .form-col-equal {
     flex: 1;
 }
+
+/* ========================================================================== */
 
 /* ==========================================================================
    INSTRUCTOR PORTAL - CURRICULUM & MATERIALS
@@ -1136,6 +1172,8 @@ h4 {
         font-size: 11px;
     }
 
+/* ========================================================================== */
+
 /* ==========================================================================
    INSTRUCTOR PORTAL - EDIT FORM EXTENSION
    ========================================================================== */
@@ -1164,6 +1202,8 @@ h4 {
         color: #c0392b;
     }
 
+/* ========================================================================== */
+
 /* ==========================================================================
    INSTRUCTOR PORTAL - DASHBOARD STATISTICS EXTENSION
    ========================================================================== */
@@ -1183,6 +1223,8 @@ h4 {
         font-size: 18px;
         font-weight: 600;
     }
+
+/* ========================================================================== */
 
 /* ==========================================================================
    INSTRUCTOR PORTAL - ENROLLED STUDENTS MANAGEMENT
@@ -1244,6 +1286,8 @@ h4 {
     margin-bottom: 20px;
 }
 
+/* ========================================================================== */
+
 /* ==========================================================================
    INSTRUCTOR PORTAL - REVIEW MANAGEMENT
    ========================================================================== */
@@ -1300,3 +1344,306 @@ h4 {
         text-decoration: underline;
     }
 
+
+/* ========================================================================== */
+
+
+/* ==========================================================================
+   ADMIN PORTAL - CLEANING INLINE CSS
+   ========================================================================== */
+/* Grid 5 cột cho Admin Dashboard */
+.admin-stats-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 20px;
+}
+
+/* Màu thương hiệu đặc quyền của Admin Brand */
+.sidebar-brand-admin {
+    color: #f1c40f !important;
+}
+
+/* Màu chữ cho Super Admin */
+.welcome-super-admin {
+    color: #e74c3c !important;
+}
+
+/* Khung tiêu đề quản lý Review */
+.review-mod-box {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 20px;
+}
+
+    .review-mod-box h3 {
+        margin: 0;
+    }
+
+/* Card Review bị gắn cờ độc hại (Spam) */
+.review-card-spam {
+    margin-bottom: 15px;
+    border-left: 4px solid #e74c3c;
+}
+
+.review-author-spam {
+    color: #e74c3c !important;
+}
+
+.review-comment-spam {
+    color: #c0392b;
+}
+
+.btn-delete-review {
+    color: #e74c3c;
+}
+
+.btn-delete-review-bold {
+    color: #e74c3c;
+    font-weight: bold;
+}
+
+/* ==========================================================================
+   ADMIN PORTAL - COURSES & CATEGORIES MANAGEMENT
+   ========================================================================== */
+/* Layout chia đôi màn hình: Khóa học bên trái (70%), Danh mục bên phải (30%) */
+.admin-two-col-layout {
+    display: flex;
+    gap: 30px;
+    align-items: flex-start;
+}
+
+.admin-main-col {
+    flex: 7;
+}
+
+.admin-side-col {
+    flex: 3;
+}
+
+/* Badge trạng thái duyệt khóa học */
+.status-badge.pending {
+    background-color: #fef3c7;
+    color: #d97706;
+}
+
+.status-badge.active {
+    background-color: #d1fae5;
+    color: #059669;
+}
+
+/* Dropdown chọn nhanh giảng viên (Assign Instructor) */
+.assign-select {
+    padding: 4px 8px;
+    border-radius: 4px;
+    border: 1px solid #cbd5e1;
+    font-size: 13px;
+    color: #334155;
+    background-color: #fff;
+}
+
+/* Nút thao tác nhỏ gọn trên bảng */
+.btn-status-toggle {
+    padding: 4px 8px;
+    border-radius: 4px;
+    font-size: 12px;
+    font-weight: 500;
+    cursor: pointer;
+    border: 1px solid transparent;
+}
+
+    .btn-status-toggle.approve {
+        background-color: #3498db;
+        color: #fff;
+    }
+
+        .btn-status-toggle.approve:hover {
+            background-color: #2980b9;
+        }
+
+/* Form thêm nhanh Category */
+.quick-form-group {
+    margin-bottom: 15px;
+}
+
+    .quick-form-group label {
+        display: block;
+        font-size: 13px;
+        font-weight: 500;
+        margin-bottom: 5px;
+        color: #475569;
+    }
+
+.btn-admin-submit {
+    width: 100%;
+    padding: 8px;
+    background-color: #2ecc71;
+    color: #fff;
+    border: none;
+    border-radius: 4px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: background 0.2s;
+}
+
+    .btn-admin-submit:hover {
+        background-color: #27ae60;
+    }
+
+.font-size-13 {
+    font-size: 13px !important;
+}
+
+/* ==========================================================================
+   ADMIN PORTAL - USERS MANAGEMENT (TABS & ACCOUNTS)
+   ========================================================================== */
+/* Cấu trúc Switch Tab bằng CSS Radio */
+.tab-wrapper {
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+}
+
+.tab-nav {
+    display: flex;
+    gap: 10px;
+    border-bottom: 2px solid #e2e8f0;
+    margin-bottom: 20px;
+}
+
+.tab-link {
+    padding: 10px 20px;
+    font-weight: 600;
+    color: #64748b;
+    cursor: pointer;
+    border-bottom: 2px solid transparent;
+    margin-bottom: -2px;
+    transition: all 0.2s;
+}
+
+/* Các Input Radio ẩn để điều hướng tab */
+input[name="user-tabs"] {
+    display: none;
+}
+
+.tab-content {
+    display: none;
+}
+
+/* Logic hiển thị nội dung theo Tab được chọn */
+#tab-instructors:checked ~ .tab-nav label[for="tab-instructors"],
+#tab-students:checked ~ .tab-nav label[for="tab-students"] {
+    color: #ff523b;
+    border-bottom-color: #ff523b;
+}
+
+#tab-instructors:checked ~ .tab-container #content-instructors,
+#tab-students:checked ~ .tab-container #content-students {
+    display: block;
+}
+
+/* Badge trạng thái tài khoản */
+.account-badge {
+    padding: 4px 8px;
+    border-radius: 4px;
+    font-size: 12px;
+    font-weight: 500;
+}
+
+    .account-badge.active {
+        background-color: #d1fae5;
+        color: #065f46;
+    }
+
+    .account-badge.disabled {
+        background-color: #fee2e2;
+        color: #991b1b;
+    }
+
+/* CSS xử lý nút Đổi trạng thái (Toggle) */
+.btn-status-action {
+    padding: 4px 8px;
+    border-radius: 4px;
+    font-size: 12px;
+    font-weight: 500;
+    cursor: pointer;
+    border: 1px solid #cbd5e1;
+    background-color: #fff;
+}
+
+    .btn-status-action.deactivate {
+        color: #e74c3c;
+    }
+
+        .btn-status-action.deactivate:hover {
+            background-color: #fdf2f2;
+        }
+
+    .btn-status-action.activate {
+        color: #2ecc71;
+    }
+
+        .btn-status-action.activate:hover {
+            background-color: #f0fdf4;
+        }
+
+/* Header phụ của từng tab */
+.tab-header-actions {
+    display: flex;
+    justify-content: flex-end;
+    margin-bottom: 15px;
+}
+
+/* ==========================================================================
+   ADMIN PORTAL - ENROLLMENTS & PAYMENTS (TRANSACTIONS)
+   ========================================================================== */
+/* Badge trạng thái tiền nong */
+.payment-badge {
+    padding: 4px 8px;
+    border-radius: 4px;
+    font-size: 12px;
+    font-weight: 500;
+}
+
+    .payment-badge.success {
+        background-color: #d1fae5;
+        color: #065f46;
+    }
+
+    .payment-badge.pending {
+        background-color: #fef3c7;
+        color: #92400e;
+    }
+
+    .payment-badge.cancelled {
+        background-color: #fee2e2;
+        color: #991b1b;
+    }
+
+/* Nút bấm duyệt tiền nhanh */
+.btn-payment-action {
+    padding: 4px 8px;
+    border-radius: 4px;
+    font-size: 12px;
+    font-weight: 500;
+    cursor: pointer;
+    border: 1px solid transparent;
+}
+
+    .btn-payment-action.confirm {
+        background-color: #2ecc71;
+        color: #fff;
+    }
+
+        .btn-payment-action.confirm:hover {
+            background-color: #27ae60;
+        }
+
+    .btn-payment-action.cancel {
+        background-color: #e74c3c;
+        color: #fff;
+    }
+
+        .btn-payment-action.cancel:hover {
+            background-color: #c0392b;
+        }

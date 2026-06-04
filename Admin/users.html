@@ -1,0 +1,178 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Manage Users | English Mastery</title>
+    <link href="../css/style.css" rel="stylesheet" />
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css">
+</head>
+<body>
+
+    <div class="admin-wrapper">
+        <div class="admin-sidebar">
+            <div class="sidebar-brand sidebar-brand-admin">
+                <i class="fa fa-sliders"></i> Admin Control
+            </div>
+            <ul class="sidebar-menu">
+                <li><a href="dashboard.html"><i class="fa fa-dashboard"></i> Dashboard</a></li>
+                <li><a href="courses.html"><i class="fa fa-book"></i> Courses & Categories</a></li>
+                <li class="active"><a href="users.html"><i class="fa fa-users"></i> Instructors & Students</a></li>
+                <li><a href="transactions.html"><i class="fa fa-credit-card"></i> Enrollments & Payments</a></li>
+                <li class="mt-50"><a href="../Guest/index.html"><i class="fa fa-sign-out"></i> Logout</a></li>
+            </ul>
+        </div>
+
+        <div class="admin-content">
+            <div class="admin-header">
+                <div>
+                    <h2>Users Accounts Management</h2>
+                    <p class="text-link">Monitor system users, modify information, and activate/deactivate accounts.</p>
+                </div>
+            </div>
+
+            <div class="card-box mt-30 tab-wrapper">
+
+                <input type="radio" id="tab-instructors" name="user-tabs" checked>
+                <input type="radio" id="tab-students" name="user-tabs">
+
+                <div class="tab-nav">
+                    <label for="tab-instructors" class="tab-link"><i class="fa fa-user-secret"></i> Instructors</label>
+                    <label for="tab-students" class="tab-link"><i class="fa fa-graduation-cap"></i> Students</label>
+                </div>
+
+                <div class="tab-container">
+
+                    <div class="tab-content" id="content-instructors">
+                        <div class="tab-header-actions">
+                            <button class="btn" onclick="alert('Open Add Instructor Modal Popup!')"><i class="fa fa-plus"></i> Add New Instructor</button>
+                        </div>
+                        <div class="data-table-wrapper">
+                            <table class="data-table">
+                                <thead>
+                                    <tr>
+                                        <th>Name / Email</th>
+                                        <th>Specialization</th>
+                                        <th>Status</th>
+                                        <th>Actions</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr>
+                                        <td><strong>Mr. HDCP</strong><br><small class="text-link">hdcp.trainer@hutech.edu.vn</small></td>
+                                        <td>IELTS & Academic English</td>
+                                        <td><span class="account-badge active">Active</span></td>
+                                        <td>
+                                            <button class="btn-action-icon text-link" title="Edit Info"><i class="fa fa-edit"></i></button>
+                                            <button class="btn-status-action deactivate" onclick="alert('Account Deactivated!')">Deactivate</button>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td><strong>Mr. Shine</strong><br><small class="text-link">shine.english@gmail.com</small></td>
+                                        <td>Communication & Grammar</td>
+                                        <td><span class="account-badge active">Active</span></td>
+                                        <td>
+                                            <button class="btn-action-icon text-link" title="Edit Info"><i class="fa fa-edit"></i></button>
+                                            <button class="btn-status-action deactivate" onclick="alert('Account Deactivated!')">Deactivate</button>
+                                        </td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+
+                    <div class="tab-content" id="content-students">
+                        <div class="data-table-wrapper">
+                            <table class="data-table">
+                                <thead>
+                                    <tr>
+                                        <th>Student Name</th>
+                                        <th>Email</th>
+                                        <th>Status</th>
+                                        <th>Actions</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr>
+                                        <td><strong>Alice Pham</strong></td>
+                                        <td>alice.pham@gmail.com</td>
+                                        <td><span class="account-badge active">Active</span></td>
+                                        <td>
+                                            <button class="btn-action-icon text-link" title="Edit Student Info"><i class="fa fa-edit"></i></button>
+                                            <button class="btn-status-action deactivate" onclick="alert('Student Banned!')">Block</button>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td><strong>Bad Boy 99</strong></td>
+                                        <td>badboy.spam@yahoo.com</td>
+                                        <td><span class="account-badge disabled">Deactivated</span></td>
+                                        <td>
+                                            <button class="btn-action-icon text-link" title="Edit Student Info"><i class="fa fa-edit"></i></button>
+                                            <button class="btn-status-action activate" onclick="alert('Student Restored!')">Unblock</button>
+                                        </td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+    <script>
+        document.addEventListener("DOMContentLoaded", function () {
+            // Lấy tất cả các nút có class xử lý trạng thái tài khoản
+            const statusButtons = document.querySelectorAll(".btn-status-action");
+
+            statusButtons.forEach(button => {
+                button.addEventListener("click", function (event) {
+                    event.preventDefault();
+
+                    const row = this.closest("tr");
+                    const badge = row.querySelector(".account-badge");
+
+                    // CASE 1: Nếu đang bấm nút "Deactivate" hoặc "Block" (Khóa tài khoản)
+                    if (this.classList.contains("deactivate")) {
+                        const confirmBlock = confirm("Are you sure you want to suspend this user account?");
+                        if (confirmBlock) {
+                            // Đổi màu và chữ của Badge trạng thái sang Disabled
+                            badge.classList.remove("active");
+                            badge.classList.add("disabled");
+                            badge.textContent = "Deactivated";
+
+                            // Biến cái nút hiện tại thành nút "Unblock" để Admin có thể mở lại sau này
+                            this.classList.remove("deactivate");
+                            this.classList.add("activate");
+                            this.textContent = "Unblock";
+
+                            alert("User account has been suspended in temporary database!");
+                        }
+                    }
+                    // CASE 2: Nếu đang bấm nút "Unblock" hoặc "Activate" (Mở khóa tài khoản)
+                    else if (this.classList.contains("activate")) {
+                        const confirmActivate = confirm("Do you want to restore this user account?");
+                        if (confirmActivate) {
+                            // Đổi màu và chữ của Badge trạng thái về lại Active
+                            badge.classList.remove("disabled");
+                            badge.classList.add("active");
+                            badge.textContent = "Active";
+
+                            // Biến nút bấm quay lại thành nút "Block"
+                            this.classList.remove("activate");
+                            this.classList.add("deactivate");
+                            this.textContent = "Block";
+
+                            alert("User account restored successfully!");
+                        }
+                    }
+                });
+            });
+        });
+    </script>
+
+</body>
+</html>

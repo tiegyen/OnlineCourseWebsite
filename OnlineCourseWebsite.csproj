@@ -127,6 +127,10 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
+    <Content Include="Admin\courses.html" />
+    <Content Include="Admin\dashboard.html" />
+    <Content Include="Admin\transactions.html" />
+    <Content Include="Admin\users.html" />
     <Content Include="Content\bootstrap-grid.css" />
     <Content Include="Content\bootstrap-grid.min.css" />
     <Content Include="Content\bootstrap-grid.rtl.css" />

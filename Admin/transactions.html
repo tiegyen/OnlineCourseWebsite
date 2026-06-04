@@ -1,0 +1,82 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Enrollments & Payments Management | English Mastery</title>
+    <link href="../css/style.css" rel="stylesheet" />
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css">
+</head>
+<body>
+
+    <div class="admin-wrapper">
+        <div class="admin-sidebar">
+            <div class="sidebar-brand sidebar-brand-admin">
+                <i class="fa fa-sliders"></i> Admin Control
+            </div>
+            <ul class="sidebar-menu">
+                <li><a href="dashboard.html"><i class="fa fa-dashboard"></i> Dashboard</a></li>
+                <li><a href="courses.html"><i class="fa fa-book"></i> Courses & Categories</a></li>
+                <li><a href="users.html"><i class="fa fa-users"></i> Instructors & Students</a></li>
+                <li class="active"><a href="transactions.html"><i class="fa fa-credit-card"></i> Enrollments & Payments</a></li>
+                <li class="mt-50"><a href="../Guest/index.html"><i class="fa fa-sign-out"></i> Logout</a></li>
+            </ul>
+        </div>
+
+        <div class="admin-content">
+            <div class="admin-header">
+                <div>
+                    <h2>Enrollments & Financial Payments</h2>
+                    <p class="text-link">Track student enrollments, confirm tuition payments, and update ledger status.</p>
+                </div>
+            </div>
+
+            <div class="card-box mt-30">
+                <h3 class="profile-section-title mb-20"><i class="fa fa-exchange"></i> Global Transaction Ledger</h3>
+
+                <div class="data-table-wrapper">
+                    <table class="data-table">
+                        <thead>
+                            <tr>
+                                <th>Enrollment ID</th>
+                                <th>Student & Course</th>
+                                <th>Date / Method</th>
+                                <th>Amount</th>
+                                <th>Payment Status</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>#ENR-9021</td>
+                                <td><strong>Alice Pham</strong><br><small class="text-link">Course: IELTS Foundation</small></td>
+                                <td>June 04, 2026<br><small class="text-link">Banking Transfer</small></td>
+                                <td><strong>$99.00</strong></td>
+                                <td><span class="payment-badge pending">Pending Approval</span></td>
+                                <td>
+                                    <button class="btn-payment-action confirm" onclick="alert('Payment Confirmed! Enrollment activated.')">Confirm</button>
+                                    <button class="btn-payment-action cancel" onclick="alert('Enrollment Cancelled.')">Cancel</button>
+                                </td>
+                            </tr>
+
+                            <tr>
+                                <td>#ENR-8840</td>
+                                <td><strong>Bad Boy 99</strong><br><small class="text-link">Course: Pronunciation Master</small></td>
+                                <td>June 01, 2026<br><small class="text-link">Paypal</small></td>
+                                <td><strong>$29.00</strong></td>
+                                <td><span class="payment-badge success">Paid</span></td>
+                                <td>
+                                    <button class="btn-status-action deactivate" onclick="alert('Enrollment Cancelled & Refunded!')">Cancel Course</button>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+</body>
+</html>
