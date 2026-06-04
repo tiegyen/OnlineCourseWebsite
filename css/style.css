@@ -1243,3 +1243,60 @@ h4 {
     gap: 15px;
     margin-bottom: 20px;
 }
+
+/* ==========================================================================
+   INSTRUCTOR PORTAL - REVIEW MANAGEMENT
+   ========================================================================== */
+.review-card {
+    background: #fff;
+    padding: 20px;
+    border-radius: 10px;
+    border: 1px solid #e2e8f0;
+    margin-top: 15px; /* Thêm dòng này để hộp đầu tiên không bị dính vào tiêu đề */
+    margin-bottom: 15px; /* Giữ nguyên để cách với hộp phía dưới */
+}
+
+.review-header {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 10px;
+}
+
+.review-rating {
+    color: #f1c40f;
+    font-size: 14px;
+}
+
+.review-author {
+    font-weight: 600;
+    color: #1e293b;
+}
+
+.review-date {
+    font-size: 12px;
+    color: #94a3b8;
+}
+
+.review-comment {
+    color: #475569;
+    font-size: 14px;
+    line-height: 1.5;
+}
+
+.btn-view-course {
+    font-size: 12px;
+    color: #3498db;
+    padding: 10px 15px;
+    text-decoration: none;
+    font-weight: 500;
+    transition: color 0.2s;
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+}
+
+    .btn-view-course:hover {
+        color: #2980b9;
+        text-decoration: underline;
+    }
+
