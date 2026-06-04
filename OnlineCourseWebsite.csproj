@@ -181,6 +181,7 @@
     <Content Include="Student\courses.html" />
     <Content Include="Student\details.html" />
     <Content Include="Student\index.html" />
+    <Content Include="Student\learning.html" />
     <Content Include="Student\materials.html" />
     <Content Include="Student\mycourses.html" />
     <Content Include="Student\payment.html" />
