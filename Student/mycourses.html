@@ -93,13 +93,14 @@
 
                 <div style="margin: 15px 0;">
                     <div style="display: flex; justify-content: space-between; font-size: 12px; margin-bottom: 5px;">
-                        <span>Progress</span>
-                        <span>33%</span>
+                        <span id="progress-text-1">Progress</span>
+                        <span id="progress-val-1">33%</span>
                     </div>
                     <div style="background: #e2e8f0; height: 8px; border-radius: 4px;">
-                        <div style="width: 33%; height: 100%; background: #2ecc71; border-radius: 4px;"></div>
+                        <div id="progress-bar-1" class="progress-bar-fill" style="width: 0%;"></div>
                     </div>
                 </div>
+
                 <a href="learning.html" class="btn btn-primary w-100">Continue Learning</a>
             </div>
 
@@ -128,6 +129,18 @@
             <p class="copyright">Copyright 2026 - Team 03 - English Mastery Portal</p>
         </div>
     </div>
+
+    <!--test progress-->
+    <script>
+    // Hàm này giả lập việc "Load data từ database" sau khi trang web tải xong
+    window.onload = function() {
+        // Sau 0.5 giây, thanh tiến độ sẽ tự chạy từ 0 lên 33%
+        setTimeout(() => {
+            const progressBar = document.getElementById('progress-bar-1');
+            progressBar.style.width = '33%'; // Giá trị này sau này sẽ là data thật từ DB
+        }, 500);
+    };
+    </script>
 
 </body>
 </html>
