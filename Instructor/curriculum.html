@@ -26,102 +26,200 @@
         </div>
 
         <div class="admin-content">
+
+          
             <div class="admin-header">
                 <div>
                     <h2>Course Curriculum: <span class="text-link">Business English</span></h2>
-                    <p class="text-link">Organize your lessons, upload video links, PDF documents, and learning materials.</p>
+                    <p class="text-link">
+                        Organize your lessons, upload video links, PDF documents, and learning materials.
+                    </p>
                 </div>
-                <button class="btn btn-primary" onclick="document.getElementById('lessonModal').classList.add('open')">
+
+                <button class="btn btn-primary"
+                        onclick="document.getElementById('lessonModal').classList.add('open')">
                     <i class="fa fa-plus"></i> Add New Lesson
                 </button>
             </div>
 
             <div class="curriculum-section">
+
                 <div class="section-header">
-                    <span class="section-title">Section 1: Essential Business Communication</span>
+                    <span class="section-title">
+                        Section 1: Overview
+                    </span>
+
                     <div>
-                        <button class="btn-action-icon" title="Edit Section"><i class="fa fa-edit"></i></button>
-                        <button class="btn-action-icon" title="Delete Section"><i class="fa fa-trash"></i></button>
+                        <button class="btn-action-icon" title="Edit Section">
+                            <i class="fa fa-edit"></i>
+                        </button>
+
+                        <button class="btn-action-icon" title="Delete Section">
+                            <i class="fa fa-trash"></i>
+                        </button>
                     </div>
                 </div>
 
                 <ul class="lesson-list">
+
                     <li class="lesson-item">
+
                         <div>
-                            <strong>Lesson 1: Business Email Writing</strong>
+
+                            <strong>
+                                Introduction
+                            </strong>
+
                             <div class="resource-badges">
-                                <span class="resource-badge"><i class="fa fa-video-camera"></i> Video Link</span>
-                                <span class="resource-badge"><i class="fa fa-file-pdf-o"></i> Email_Templates.pdf</span>
+
+                                <span class="resource-badge">
+                                    <i class="fa fa-video-camera"></i>
+                                    Video Link
+                                </span>
+
+                                <span class="resource-badge">
+                                    <i class="fa fa-file-pdf-o"></i>
+                                    Material8.pdf
+                                </span>
+
                             </div>
+
                         </div>
+
                         <div class="lesson-meta">
-                            <button class="btn-action-icon" title="Edit Lesson & Materials" onclick="document.getElementById('lessonModal').classList.add('open')">
+
+                            <button class="btn-action-icon"
+                                    title="Edit Lesson & Materials"
+                                    onclick="document.getElementById('lessonModal').classList.add('open')">
+
                                 <i class="fa fa-edit"></i>
+
                             </button>
-                            <button class="btn-action-icon" title="Delete Lesson"><i class="fa fa-trash"></i></button>
+
+                            <button class="btn-action-icon"
+                                    title="Delete Lesson">
+
+                                <i class="fa fa-trash"></i>
+
+                            </button>
+
                         </div>
+
                     </li>
-                    <li class="lesson-item">
-                        <div>
-                            <strong>Lesson 2: Meeting & Negotiation Phrases</strong>
-                            <div class="resource-badges">
-                                <span class="resource-badge"><i class="fa fa-video-camera"></i> Video Link</span>
-                                <span class="resource-badge"><i class="fa fa-file-powerpoint-o"></i> Negotiation_Skills.pptx</span>
-                            </div>
-                        </div>
-                        <div class="lesson-meta">
-                            <button class="btn-action-icon" title="Edit Lesson & Materials"><i class="fa fa-edit"></i></button>
-                            <button class="btn-action-icon" title="Delete Lesson"><i class="fa fa-trash"></i></button>
-                        </div>
-                    </li>
+
                 </ul>
+
             </div>
+         
 
         </div>
-    </div>
 
-    <div class="feedback-modal-overlay" id="lessonModal">
-        <div class="feedback-modal-box course-modal-box">
-            <span class="close-modal-btn" onclick="document.getElementById('lessonModal').classList.remove('open')">&times;</span>
+        <div class="feedback-modal-overlay" id="lessonModal">
 
-            <h3 class="mb-20"><i class="fa fa-tasks"></i> Edit Lesson & Materials</h3>
+        
+            <div class="feedback-modal-box course-modal-box">
 
-            <form>
-                <div class="form-group">
-                    <label>Lesson Title</label>
-                    <input type="text" class="form-control" value="Lesson 1: Business Email Writing">
-                </div>
+                <span class="close-modal-btn"
+                      onclick="document.getElementById('lessonModal').classList.remove('open')">
+                    &times;
+                </span>
 
-                <div class="form-group">
-                    <label>Assign to Section</label>
-                    <select class="form-control filter-select">
-                        <option value="sec1" selected>Section 1: Essential Business Communication</option>
-                    </select>
-                </div>
+                <h3 class="mb-20">
+                    <i class="fa fa-tasks"></i>
+                    Edit Lesson & Materials
+                </h3>
 
-                <div class="form-group">
-                    <label>Video Lecture Link (URL)</label>
-                    <input type="url" class="form-control" value="https://youtube.com/embed/sample-business-video">
-                    <small class="text-link">You can change this URL to update the video lecture.</small>
-                </div>
+                <form>
 
-                <div class="form-group">
-                    <label>Learning Document (.pdf, .docx, .pptx)</label>
+                    <div class="form-group">
+                        <label>Lesson Title</label>
 
-                    <div class="current-file-badge">
-                        <span><i class="fa fa-file-pdf-o" style="color: #e74c3c;"></i> <strong>Current File:</strong> Email_Templates.pdf</span>
-                        <button type="button" class="btn-delete-file" title="Remove this file" onclick="this.parentElement.style.display='none'"><i class="fa fa-times-circle"></i> Remove</button>
+                        <input type="text"
+                               class="form-control"
+                               value="Introduction">
                     </div>
 
-                    <div class="mt-15">
-                        <label style="font-size: 12px; color: #64748b;">Upload new file to replace the current one (Optional):</label>
-                        <input type="file" class="form-control">
-                    </div>
-                </div>
+                    <div class="form-group">
 
-                <button type="submit" class="btn btn-primary w-100">Update Lesson & Materials</button>
-            </form>
+                        <label>Assign to Section</label>
+
+                        <select class="form-control filter-select">
+                            <option selected>
+                                Section 1: Overview
+                            </option>
+                        </select>
+
+                    </div>
+
+                    <div class="form-group">
+
+                        <label>Video Lecture Link (URL)</label>
+
+                        <input type="url"
+                               class="form-control"
+                               value="https://www.youtube.com/embed/dQw4w9WgXcQ">
+
+                        <small class="text-link">
+                            You can change this URL to update the video lecture.
+                        </small>
+
+                    </div>
+
+                    <div class="form-group">
+
+                        <label>
+                            Learning Document (.pdf, .docx, .pptx)
+                        </label>
+
+                        <div class="current-file-badge">
+
+                            <span>
+                                <i class="fa fa-file-pdf-o"
+                                   style="color:#e74c3c;"></i>
+
+                                <strong>Current File:</strong>
+                                Material8.pdf
+                            </span>
+
+                            <button type="button"
+                                    class="btn-delete-file"
+                                    title="Remove this file"
+                                    onclick="this.parentElement.style.display='none'">
+
+                                <i class="fa fa-times-circle"></i>
+                                Remove
+
+                            </button>
+
+                        </div>
+
+                        <div class="mt-15">
+
+                            <label style="font-size:12px;color:#64748b;">
+                                Upload new file to replace the current one (Optional):
+                            </label>
+
+                            <input type="file"
+                                   class="form-control">
+
+                        </div>
+
+                    </div>
+
+                    <button type="submit"
+                            class="btn btn-primary w-100">
+
+                        Update Lesson & Materials
+
+                    </button>
+
+                </form>
+
+            </div>
+        
+
         </div>
+
     </div>
 
 </body>
