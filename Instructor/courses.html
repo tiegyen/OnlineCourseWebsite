@@ -74,7 +74,7 @@
                             <td><strong>3</strong> Students</td>
                             <td><span class="status-badge active">Open</span></td>
                             <td>
-                                <button class="btn-action-icon" title="Edit Course Info">
+                                <button class="btn-action-icon" title="Edit Course Info" onclick="document.getElementById('courseModal').classList.add('open')">
                                     <i class="fa fa-edit"></i>
                                 </button>
                                 <a href="curriculum.html" class="btn-action-icon" title="Manage Lessons">
@@ -90,7 +90,7 @@
                             <td><strong>2</strong> Students</td>
                             <td><span class="status-badge active">Open</span></td>
                             <td>
-                                <button class="btn-action-icon" title="Edit Course Info">
+                                <button class="btn-action-icon" title="Edit Course Info" onclick="document.getElementById('courseModal').classList.add('open')">
                                     <i class="fa fa-edit"></i>
                                 </button>
                                 <a href="curriculum.html" class="btn-action-icon" title="Manage Lessons">
@@ -98,6 +98,89 @@
                                 </a>
                             </td>
                         </tr>
+
+                        <tr>
+                            <td>
+                                <img src="../images/picture1.jpg"
+                                     alt="Course Thumbnail"
+                                     width="60px"
+                                     class="p-0">
+                            </td>
+
+                            <td>
+                                <strong>TOEFL Foundation</strong><br>
+                                <small class="text-link">Duration: 10 Weeks</small>
+                            </td>
+
+                            <td>TOEFL</td>
+
+                            <td>1,800,000 VND</td>
+
+                            <td>
+                                <strong>2</strong> Students
+                            </td>
+
+                            <td>
+                                <span class="status-badge active">
+                                    Open
+                                </span>
+                            </td>
+
+                            <td>
+                                <button class="btn-action-icon"
+                                        title="Edit Course Info" onclick="document.getElementById('courseModal').classList.add('open')">
+                                    <i class="fa fa-edit"></i>
+                                </button>
+
+                                <a href="curriculum.html"
+                                   class="btn-action-icon"
+                                   title="Manage Lessons">
+                                    <i class="fa fa-list-ol"></i>
+                                </a>
+                            </td>
+                        </tr>
+
+                        <tr>
+                            <td>
+                                <img src="../images/picture1.jpg"
+                                     alt="Course Thumbnail"
+                                     width="60px"
+                                     class="p-0">
+                            </td>
+
+                            <td>
+                                <strong>TOEFL Advanced</strong><br>
+                                <small class="text-link">Duration: 12 Weeks</small>
+                            </td>
+
+                            <td>TOEFL</td>
+
+                            <td>3,200,000 VND</td>
+
+                            <td>
+                                <strong>2</strong> Students
+                            </td>
+
+                            <td>
+                                <span class="status-badge active">
+                                    Open
+                                </span>
+                            </td>
+
+                            <td>
+                                <button class="btn-action-icon"
+                                        title="Edit Course Info" onclick="document.getElementById('courseModal').classList.add('open')">
+                                    <i class="fa fa-edit"></i>
+                                </button>
+
+                                <a href="curriculum.html"
+                                   class="btn-action-icon"
+                                   title="Manage Lessons">
+                                    <i class="fa fa-list-ol"></i>
+                                </a>
+                            </td>
+                        </tr>
+
                     </tbody>
                 </table>
             </div>
@@ -106,7 +189,7 @@
 
     <div class="feedback-modal-overlay" id="courseModal">
         <div class="feedback-modal-box course-modal-box">
-            <span class="close-modal-btn" onclick="document.getElementById('courseModal').remove('open')">&times;</span>
+            <span class="close-modal-btn" onclick="document.getElementById('courseModal').classList.remove('open')">&times;</span>
 
             <h3 class="mb-20"><i class="fa fa-book"></i> Course Information</h3>
 
