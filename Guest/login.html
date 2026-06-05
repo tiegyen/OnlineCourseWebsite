@@ -12,7 +12,7 @@
     <div class="header" style="padding-bottom: 20px;">
         <div class="container">
             <div class="navbar">
-                <div class="logo"><img src="./images/logo-one.png" width="125px" alt="Logo" /></div>
+                <div class="logo"><img src="../images/logo-one.png" width="125px" alt="Logo" /></div>
                 <nav>
                     <ul id="MenuItems">
                         <li><a href="index.html">Home</a></li>
@@ -28,14 +28,14 @@
     <div class="container mt-50 mb-50" style="max-width: 450px;">
         <div class="card-box" style="padding: 40px;">
             <h2 class="text-center" style="margin-bottom: 30px; color: #333;">Welcome Back</h2>
-            <form>
+            <form id="loginForm">
                 <div class="form-group">
                     <label>Email Address</label>
-                    <input type="email" class="form-control" placeholder="Enter your email" required>
+                    <input type="email" id="emailInput" class="form-control" placeholder="admin@course.com hoặc student1@gmail.com" required>
                 </div>
                 <div class="form-group">
                     <label>Password</label>
-                    <input type="password" class="form-control" placeholder="Enter password" required>
+                    <input type="password" class="form-control" placeholder="123456" required>
                 </div>
 
                 <div class="login-utilities">
@@ -53,5 +53,21 @@
         </div>
     </div>
 
+    <script>
+        document.getElementById('loginForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            const email = document.getElementById('emailInput').value;
+
+            if (email === 'admin@course.com') {
+                alert('Welcome Admin!');
+                window.location.href = '../Admin/dashboard.html';
+            } else if (email.includes('student')) {
+                alert('Welcome Student!');
+                window.location.href = '../Student/profile.html';
+            } else {
+                alert('Invalid email or password!');
+            }
+        });
+    </script>
 </body>
 </html>

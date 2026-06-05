@@ -38,35 +38,35 @@
             <div class="admin-stats-grid">
                 <div class="stat-card">
                     <div class="stat-info">
-                        <h3>12</h3>
+                        <h3>10</h3>
                         <p>Total Courses</p>
                     </div>
                     <div class="stat-icon"><i class="fa fa-book"></i></div>
                 </div>
                 <div class="stat-card">
                     <div class="stat-info">
-                        <h3>3,420</h3>
+                        <h3>10</h3>
                         <p>Total Students</p>
                     </div>
                     <div class="stat-icon icon-blue"><i class="fa fa-graduation-cap"></i></div>
                 </div>
                 <div class="stat-card">
                     <div class="stat-info">
-                        <h3>8</h3>
+                        <h3>4</h3>
                         <p>Total Instructors</p>
                     </div>
                     <div class="stat-icon icon-orange"><i class="fa fa-user-secret"></i></div>
                 </div>
                 <div class="stat-card">
                     <div class="stat-info">
-                        <h3>1,820</h3>
+                        <h3>20</h3>
                         <p>Total Enrollments</p>
                     </div>
                     <div class="stat-icon icon-green"><i class="fa fa-check-square-o"></i></div>
                 </div>
                 <div class="stat-card">
                     <div class="stat-info">
-                        <h3>$45,200</h3>
+                        <h3>61.3Mđ</h3>
                         <p>Total Revenue</p>
                     </div>
                     <div class="stat-icon icon-gold"><i class="fa fa-money"></i></div>
@@ -76,42 +76,40 @@
             <div class="card-box mt-30">
                 <div class="review-mod-box">
                     <h3 class="profile-section-title"><i class="fa fa-star"></i> Global Reviews Moderation</h3>
-                    <span class="text-link" style="font-size: 13px;">Review Statistics: <strong>4.75 Avg Rating</strong></span>
+                    <span class="text-link" style="font-size: 13px;">Review Statistics: <strong>4.50 Avg Rating</strong></span>
                 </div>
 
-                <div class="review-card" style="margin-top: 0; margin-bottom: 15px;">
+                <div class="review-card" style="margin-top: 15px; margin-bottom: 15px;">
                     <div class="review-header">
                         <div>
                             <span class="review-author">Alice Pham</span>
-                            <small class="text-link"> on Course: <strong>IELTS Foundation</strong></small>
+                            <small class="text-link"> on Course: <strong>Business English</strong></small>
                             <div class="review-rating"><i class="fa fa-star"></i><i class="fa fa-star"></i><i class="fa fa-star"></i><i class="fa fa-star"></i><i class="fa fa-star"></i></div>
                         </div>
                         <button class="btn-action-icon btn-delete-review" title="Delete Inappropriate Review">
                             <i class="fa fa-trash"></i> Delete
                         </button>
                     </div>
-                    <p class="review-comment">"Excellent lectures. Highly recommended!"</p>
+                    <p class="review-comment">"Excellent course! Highly recommend for professionals."</p>
                 </div>
 
-                <div class="review-card review-card-spam">
+                <div class="review-card">
                     <div class="review-header">
                         <div>
-                            <span class="review-author">SpamBot_99</span>
-                            <small class="text-link review-author-spam"> on Course: <strong>TOEIC Intensive 650+</strong></small>
-                            <div class="review-rating"><i class="fa fa-star"></i><i class="fa fa-star-o"></i><i class="fa fa-star-o"></i><i class="fa fa-star-o"></i><i class="fa fa-star-o"></i></div>
+                            <span class="review-author">Charlie Brown</span>
+                            <small class="text-link"> on Course: <strong>Communication English</strong></small>
+                            <div class="review-rating"><i class="fa fa-star"></i><i class="fa fa-star"></i><i class="fa fa-star"></i><i class="fa fa-star"></i><i class="fa fa-star-o"></i></div>
                         </div>
                         <button class="btn-action-icon btn-delete-review-bold" title="Delete Inappropriate Review">
                             <i class="fa fa-trash"></i> Delete
                         </button>
                     </div>
-                    <p class="review-comment review-comment-spam">"CLICK HERE TO WIN FREE IPHONE!!! Dính nội dung spam quảng cáo bẩn."</p>
+                    <p class="review-comment">"Very practical communication lessons."</p>
                 </div>
             </div>
 
         </div>
     </div>
-
-   
 
 </body>
 
@@ -121,15 +119,13 @@
 
         deleteButtons.forEach(button => {
             button.addEventListener("click", function (event) {
-                event.preventDefault(); // Chặn mọi hành vi click mặc định
+                event.preventDefault();
 
-                // Hiện MessageBox hỏi ý kiến Admin
                 const confirmDelete = confirm("Are you sure you want to delete this inappropriate review?");
 
                 if (confirmDelete) {
                     const reviewCard = this.closest(".review-card");
                     if (reviewCard) {
-                        // Hiệu ứng Fade-out nhẹ nhàng trước khi hủy biến trong DB
                         reviewCard.style.transition = "opacity 0.3s ease";
                         reviewCard.style.opacity = "0";
 
@@ -139,7 +135,6 @@
                         }, 300);
                     }
                 } else {
-                    // Bấm Hủy (Cancel) thì báo hủy thao tác và KHÔNG xóa gì hết
                     alert("Action cancelled. Review is safe!");
                 }
             });

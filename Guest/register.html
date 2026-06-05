@@ -12,7 +12,7 @@
     <div class="header" style="padding-bottom: 20px;">
         <div class="container">
             <div class="navbar">
-                <div class="logo"><img src="./images/logo-one.png" width="125px" alt="Logo" /></div>
+                <div class="logo"><img src="../images/logo-one.png" width="125px" alt="Logo" /></div>
                 <nav>
                     <ul id="MenuItems">
                         <li><a href="index.html">Home</a></li>
@@ -28,27 +28,28 @@
     <div class="container mt-50 mb-50" style="max-width: 500px;">
         <div class="card-box" style="padding: 40px;">
             <h2 class="text-center" style="margin-bottom: 30px; color: #333;">Create Account</h2>
-            <form>
+            <form id="registerForm">
                 <div class="form-group">
                     <label>Full Name</label>
                     <input type="text" class="form-control" placeholder="Enter your name" required>
-                    <span class="validation-error"></span>
+                </div>
+                <div class="form-group">
+                    <label>Phone Number</label>
+                    <input type="tel" class="form-control" placeholder="Enter your phone number">
                 </div>
                 <div class="form-group">
                     <label>Email Address</label>
                     <input type="email" class="form-control" placeholder="Enter your email" required>
-                    <span class="validation-error"></span>
                 </div>
                 <div class="form-group">
                     <label>Password</label>
                     <input type="password" class="form-control" placeholder="Create password" required>
-                    <span class="validation-error"></span>
                 </div>
                 <div class="form-group">
                     <label>Confirm Password</label>
                     <input type="password" class="form-control" placeholder="Confirm password" required>
-                    <span class="validation-error"></span>
                 </div>
+
                 <button type="submit" class="btn btn-primary w-100 mt-20">Register Now</button>
             </form>
             <p class="text-center mt-20" style="color: #666; font-size: 14px;">

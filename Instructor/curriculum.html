@@ -28,7 +28,7 @@
         <div class="admin-content">
             <div class="admin-header">
                 <div>
-                    <h2>Course Curriculum: <span class="text-link">IELTS Foundation</span></h2>
+                    <h2>Course Curriculum: <span class="text-link">Business English</span></h2>
                     <p class="text-link">Organize your lessons, upload video links, PDF documents, and learning materials.</p>
                 </div>
                 <button class="btn btn-primary" onclick="document.getElementById('lessonModal').classList.add('open')">
@@ -38,20 +38,20 @@
 
             <div class="curriculum-section">
                 <div class="section-header">
-                    <span class="section-title">Section 1: Introduction & Listening Basics</span>
+                    <span class="section-title">Section 1: Essential Business Communication</span>
                     <div>
                         <button class="btn-action-icon" title="Edit Section"><i class="fa fa-edit"></i></button>
                         <button class="btn-action-icon" title="Delete Section"><i class="fa fa-trash"></i></button>
                     </div>
                 </div>
-                
+
                 <ul class="lesson-list">
                     <li class="lesson-item">
                         <div>
-                            <strong>Lesson 1.1: Overview of IELTS Listening Test</strong>
+                            <strong>Lesson 1: Business Email Writing</strong>
                             <div class="resource-badges">
                                 <span class="resource-badge"><i class="fa fa-video-camera"></i> Video Link</span>
-                                <span class="resource-badge"><i class="fa fa-file-pdf-o"></i> Syllabus.pdf</span>
+                                <span class="resource-badge"><i class="fa fa-file-pdf-o"></i> Email_Templates.pdf</span>
                             </div>
                         </div>
                         <div class="lesson-meta">
@@ -63,33 +63,10 @@
                     </li>
                     <li class="lesson-item">
                         <div>
-                            <strong>Lesson 1.2: Form Completion Strategies</strong>
-                            <div class="resource-badges">
-                                <span class="resource-badge"><i class="fa fa-file-audio-o"></i> AudioTrack1.mp3</span>
-                            </div>
-                        </div>
-                        <div class="lesson-meta">
-                            <button class="btn-action-icon" title="Edit Lesson & Materials"><i class="fa fa-edit"></i></button>
-                            <button class="btn-action-icon" title="Delete Lesson"><i class="fa fa-trash"></i></button>
-                        </div>
-                    </li>
-                </ul>
-            </div>
-
-            <div class="curriculum-section">
-                <div class="section-header">
-                    <span class="section-title">Section 2: Reading Skills - Skimming & Scanning</span>
-                    <div>
-                        <button class="btn-action-icon" title="Edit Section"><i class="fa fa-edit"></i></button>
-                        <button class="btn-action-icon" title="Delete Section"><i class="fa fa-trash"></i></button>
-                    </div>
-                </div>
-                <ul class="lesson-list">
-                    <li class="lesson-item">
-                        <div>
-                            <strong>Lesson 2.1: Master the Skimming Technique</strong>
+                            <strong>Lesson 2: Meeting & Negotiation Phrases</strong>
                             <div class="resource-badges">
                                 <span class="resource-badge"><i class="fa fa-video-camera"></i> Video Link</span>
+                                <span class="resource-badge"><i class="fa fa-file-powerpoint-o"></i> Negotiation_Skills.pptx</span>
                             </div>
                         </div>
                         <div class="lesson-meta">
@@ -112,28 +89,27 @@
             <form>
                 <div class="form-group">
                     <label>Lesson Title</label>
-                    <input type="text" class="form-control" value="Lesson 1.1: Overview of IELTS Listening Test">
+                    <input type="text" class="form-control" value="Lesson 1: Business Email Writing">
                 </div>
 
                 <div class="form-group">
                     <label>Assign to Section</label>
                     <select class="form-control filter-select">
-                        <option value="sec1" selected>Section 1: Introduction & Listening Basics</option>
-                        <option value="sec2">Section 2: Reading Skills - Skimming & Scanning</option>
+                        <option value="sec1" selected>Section 1: Essential Business Communication</option>
                     </select>
                 </div>
 
                 <div class="form-group">
                     <label>Video Lecture Link (URL)</label>
-                    <input type="url" class="form-control" value="https://youtube.com/embed/dQw4w9WgXcQ">
+                    <input type="url" class="form-control" value="https://youtube.com/embed/sample-business-video">
                     <small class="text-link">You can change this URL to update the video lecture.</small>
                 </div>
 
                 <div class="form-group">
-                    <label>Learning Document (.pdf, .docx, .mp3)</label>
+                    <label>Learning Document (.pdf, .docx, .pptx)</label>
 
                     <div class="current-file-badge">
-                        <span><i class="fa fa-file-pdf-o" style="color: #e74c3c;"></i> <strong>Current File:</strong> Syllabus_IELTS_v1.pdf</span>
+                        <span><i class="fa fa-file-pdf-o" style="color: #e74c3c;"></i> <strong>Current File:</strong> Email_Templates.pdf</span>
                         <button type="button" class="btn-delete-file" title="Remove this file" onclick="this.parentElement.style.display='none'"><i class="fa fa-times-circle"></i> Remove</button>
                     </div>
 

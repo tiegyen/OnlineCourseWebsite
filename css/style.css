@@ -777,6 +777,12 @@ h4 {
     margin-top: 30px;
 }
 
+.form-text-muted {
+    display: block;
+    color: #6c757d; /* Màu xám nhẹ nhàng tinh tế */
+    font-size: 12px;
+    margin-top: 5px;
+}
 
 /* ========================================================================== */
 

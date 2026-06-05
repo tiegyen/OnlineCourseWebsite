@@ -1,9 +1,10 @@
 ﻿<!DOCTYPE html>
+
 <html lang="en">
 <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Payment & Billing | English Mastery</title>
+    <title>Payment History | English Mastery</title>
     <link href="../css/style.css" rel="stylesheet" />
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css">
@@ -16,12 +17,17 @@
                 <div class="logo">
                     <img src="../images/logo-one.png" width="125px" alt="Logo" />
                 </div>
+
                 <nav>
                     <ul id="MenuItems">
                         <li><a href="index.html">Home</a></li>
                         <li><a href="mycourses.html">My Courses</a></li>
                         <li><a href="payment.html">Payment</a></li>
-                        <li><a href="profile.html"><i class="fa fa-user-circle"></i> Welcome, Student</a></li>
+                        <li>
+                            <a href="profile.html">
+                                <i class="fa fa-user-circle"></i> Welcome, Student
+                            </a>
+                        </li>
                     </ul>
                 </nav>
             </div>
@@ -29,74 +35,65 @@
     </div>
 
     <div class="small-container mt-50 mb-50">
-        <h2 class="title">Payment & Billing Management</h2>
 
-        <div class="row align-start">
-            <div class="col-2 payment-left-col">
-                <h3 class="mb-20"><i class="fa fa-history"></i> Invoice History</h3>
+        <h2 class="title">Payment History</h2>
 
-                <div class="table-responsive">
-                    <table class="table-payment">
-                        <thead>
-                            <tr>
-                                <th>Invoice ID</th>
-                                <th>Course Name</th>
-                                <th>Amount</th>
-                                <th>Date</th>
-                                <th>Status</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            <tr>
-                                <td class="invoice-id">#INV-0032</td>
-                                <td>IELTS Foundation</td>
-                                <td class="invoice-amount">1,500,000 VND</td>
-                                <td>15/05/2026</td>
-                                <td>
-                                    <span class="badge badge-paid">Paid</span>
-                                </td>
-                            </tr>
-                            <tr class="invoice-pending">
-                                <td class="invoice-id">#INV-0045</td>
-                                <td>Business Writing Master</td>
-                                <td class="invoice-amount">2,000,000 VND</td>
-                                <td>02/06/2026</td>
-                                <td>
-                                    <span class="badge badge-pending">Pending</span>
-                                </td>
-                            </tr>
-                        </tbody>
-                    </table>
-                </div>
+        <div class="card-box">
+
+            <h3 class="mb-20">
+                <i class="fa fa-history"></i> Invoice History
+            </h3>
+
+            <div class="table-responsive">
+                <table class="table-payment">
+
+                    <thead>
+                        <tr>
+                            <th>Invoice ID</th>
+                            <th>Course Name</th>
+                            <th>Amount</th>
+                            <th>Payment Method</th>
+                            <th>Status</th>
+                        </tr>
+                    </thead>
+
+                    <tbody>
+
+                        <tr>
+                            <td class="invoice-id">#INV-0001</td>
+                            <td>IELTS Foundation</td>
+                            <td class="invoice-amount">1,500,000 VND</td>
+                            <td>VNPay</td>
+                            <td>
+                                <span class="badge badge-paid">Paid</span>
+                            </td>
+                        </tr>
+
+                        <tr>
+                            <td class="invoice-id">#INV-0002</td>
+                            <td>Business English</td>
+                            <td class="invoice-amount">1,000,000 VND</td>
+                            <td>VNPay</td>
+                            <td>
+                                <span class="badge badge-paid">Paid</span>
+                            </td>
+                        </tr>
+
+                    </tbody>
+
+                </table>
             </div>
 
-            <div class="col-2 card-box payment-right-col">
-                <h3 class="mb-20">
-                    <i class="fa fa-credit-card"></i> Quick Payment
-                </h3>
-
-                <p>To clear any <strong>Pending</strong> invoices, please transfer the exact amount to the account below:</p>
-
-                <div class="bank-info-box">
-                    <p><strong>Bank:</strong> Vietcombank (VCB)</p>
-                    <p><strong>Account No:</strong> 10238495823</p>
-                    <p><strong>Account Name:</strong> TEAM 03 ENGLISH PORTAL</p>
-                    <p><strong>Content:</strong> <span class="bank-content-code">INV-0045</span></p>
-                </div>
-
-                <p class="payment-note">
-                    *Note: System will automatically process and active your course within 10-15 minutes after receiving the transaction.
-                </p>
-
-                <a href="#" class="btn btn-primary w-100 mt-20">Confirm Transferred</a>
-            </div>
         </div>
+
     </div>
 
     <div class="footer">
         <div class="container">
             <hr />
-            <p class="copyright">Copyright 2026 - Team 03 - English Mastery Portal</p>
+            <p class="copyright">
+                Copyright 2026 - Team 03 - English Mastery Portal
+            </p>
         </div>
     </div>
 
