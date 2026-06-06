@@ -1,4 +1,5 @@
-﻿@model IEnumerable<OnlineCourseWebsite.Models.Course>
+﻿@using PagedList.Mvc; @* 🌟 Nhớ thêm dòng này ở đầu file để xài được Html.PagedListPager *@
+@model PagedList.IPagedList<OnlineCourseWebsite.Models.Course>
 
 @{
     ViewBag.Title = "Courses";
@@ -12,7 +13,7 @@
             <div class="col-2">
                 <h1>Master English with<br />Industry-Leading Courses</h1>
                 <p>Empower your future with expert-led curriculum and internationally recognized certifications.</p>
-                <a href="@Url.Action("Index", "Course")" class="btn btn-danger">Explore Courses →</a>
+                <a href="@Url.Action("Course", "Course")" class="btn btn-danger">Explore Courses →</a>
             </div>
             <div class="col-2">
                 <img src="@Url.Content("~/Content/images/banner1.png")" alt="Banner" />
@@ -29,13 +30,15 @@
             <input type="text" class="form-control" placeholder="Search course by name or instructor...">
         </div>
         <div class="filter-block mt-15">
-            <select class="form-control filter-select">
+            <select id="categoryFilter" class="form-control filter-select">
                 <option value="">All Categories</option>
                 @if (categories != null)
                 {
                     foreach (var cat in categories)
                     {
-                        <option value="@cat.CategoryID">@cat.CategoryName</option>
+                        // Nếu ID của category trùng với ID đang lọc thì thêm thuộc tính selected vào
+                        bool isSelected = ViewBag.CurrentCategory != null && (int)ViewBag.CurrentCategory == cat.CategoryID;
+                        <option value="@cat.CategoryID" @(isSelected ? "selected='selected'" : "")>@cat.CategoryName</option>
                     }
                 }
             </select>
@@ -47,9 +50,8 @@
         {
             foreach (var item in Model)
             {
-                <div class="col-4 card-box course-item-card" style="flex: 1 1 calc(25% - 20px); min-width: 250px;">
+                <div class="col-4 card-box course-item-card" style="flex: 0 0 calc(25% - 15px); min-width: 250px; max-width: 280px; margin-bottom: 20px;">
                     @{
-                        // Logic bốc ảnh tự động theo CategoryID để giao diện lung linh
                         string courseImageUrl = "~/Content/images/picture1.jpg";
                         if (item.CategoryID == 1) { courseImageUrl = "~/Content/images/pic1.jpg"; }
                         else if (item.CategoryID == 2) { courseImageUrl = "~/Content/images/pic2.jpg"; }
@@ -61,7 +63,7 @@
 
                     <span class="category-badge">@(item.Category != null ? item.Category.CategoryName : "General")</span>
 
-                    <h4 class="mt-15 course-card-title">@item.CourseName</h4>
+                    <h4 class="mt-15 course-card-title" style="height: 44px; overflow: hidden;">@item.CourseName</h4>
 
                     <p class="course-card-instructor">Instructor: @(item.Instructor != null ? item.Instructor.FullName : "Updating")</p>
 
@@ -83,4 +85,73 @@
             </div>
         }
     </div>
+
+    <div class="pagination-container" style="margin-top: 40px; text-align: center;">
+        <p style="color: #666; font-style: italic; margin-bottom: 10px;">
+            Page @(Model.PageCount < Model.PageNumber ? 0 : Model.PageNumber) of @Model.PageCount
+        </p>
+        <div class="pagination-buttons">
+            @Html.PagedListPager(Model, page => Url.Action("Course", new { page, currentCategory = ViewBag.CurrentCategory }))
+        </div>
+    </div>
 </div>
+
+<style>
+    .pagination-buttons ul {
+        display: inline-flex;
+        padding-left: 0;
+        list-style: none;
+        border-radius: 4px;
+        gap: 5px;
+    }
+
+    .pagination-buttons li {
+        display: inline;
+    }
+
+        .pagination-buttons li a, .pagination-buttons li span {
+            position: relative;
+            display: block;
+            padding: 8px 16px;
+            margin-left: -1px;
+            line-height: 1.42857143;
+            color: #764ba2;
+            text-decoration: none;
+            background-color: #fff;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            font-weight: 600;
+        }
+
+        .pagination-buttons li.active span {
+            z-index: 3;
+            color: #fff;
+            background-color: #764ba2;
+            border-color: #764ba2;
+            cursor: default;
+        }
+
+        .pagination-buttons li a:hover {
+            background-color: #eee;
+        }
+</style>
+
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script>
+    $(document).ready(function () {
+        // Bắt sự kiện khi hai ní thay đổi lựa chọn trong Dropdown danh mục
+        $('#categoryFilter').change(function () {
+            var selectedCategoryId = $(this).val();
+
+            // Tạo đường dẫn mới dẫn thẳng về hàm Course kèm theo tham số category tương ứng
+            var url = '@Url.Action("Course", "Course")';
+
+            if (selectedCategoryId) {
+                url += '?currentCategory=' + selectedCategoryId;
+            }
+
+            // Chuyển hướng trang web sang link mới để Controller lọc dữ liệu
+            window.location.href = url;
+        });
+    });
+</script>
