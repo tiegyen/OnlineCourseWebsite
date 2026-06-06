@@ -89,33 +89,46 @@ a {
    2. KHU VỰC HEADER, NAVBAR & FOOTER DÙNG CHUNG
    ========================================================================== */
 .header {
-    background: linear-gradient(135deg, #2c3e50 0%, #667eea 50%, #764ba2 100%);
-    padding-bottom: 50px;
+    background: #23395d;
+    padding: 15px 0;
 }
 
     .header .row {
-        margin-top: 70px;
+        margin-top: 5px;
     }
+
+.hero-section {
+    background: linear-gradient( 135deg, #3f5b86, #6c63ff, #7b4da8 );
+    padding: 80px 0;
+}
 
 .navbar {
     display: flex;
     align-items: center;
-    padding: 20px;
+    padding: 5px 0;
 }
 
-nav {
-    flex: 1;
-    text-align: right;
+nav ul {
+    display: flex;
+    justify-content: flex-end;
+    gap: 30px;
+    list-style: none;
 }
-
-    nav ul {
+    nav ul li {
         display: inline-block;
+        margin-right: 20px;
     }
 
-        nav ul li {
-            display: inline-block;
-            margin-right: 20px;
-        }
+        nav ul li a {
+        color: #fff;
+        text-decoration: none;
+        font-weight: 500;
+    }
+
+    nav ul li a:hover {
+        color: #ffd700;
+        transition: 0.3s;
+    }
 
 
 

@@ -12,11 +12,48 @@
     @Styles.Render("~/Content/css")
     @Scripts.Render("~/bundles/modernizr")
 </head>
+
 <body>
 
+    <!-- HEADER -->
+    <div class="header">
+
+        <div class="container">
+
+            <div class="navbar">
+
+                <div class="logo">
+                    <img src="~/Content/images/logo-one.png"
+                         width="125"
+                         alt="Logo" />
+                </div>
+
+                <nav>
+                    <ul id="MenuItems">
+
+                        <li>@Html.ActionLink("Home", "Index", "Home")</li>
+
+                        <li>@Html.ActionLink("Courses", "Index", "Course")</li>
+
+                        <li>@Html.ActionLink("Register", "Register", "Account")</li>
+
+                        <li>@Html.ActionLink("Login", "Login", "Account")</li>
+
+                    </ul>
+                </nav>
+
+            </div>
+
+        </div>
+
+    </div>
+
+    <!-- CONTENT -->
     @RenderBody()
 
-    <div class="footer mt-50">
+    <!-- FOOTER -->
+    <div class="footer">
+
         <div class="container">
 
             <div class="row">
@@ -27,16 +64,18 @@
                 </div>
 
                 <div class="footer-col-2">
-                    <img src="~/Content/images/logo-one.png" alt="Logo">
+                    <img src="~/Content/images/logo-one.png" alt="Logo" />
                     <p>Professional English Training.</p>
                 </div>
 
                 <div class="footer-col-3">
                     <h3>Quick Links</h3>
+
                     <ul>
                         <li><a href="#">Certifications</a></li>
                         <li><a href="#">Support</a></li>
                     </ul>
+
                 </div>
 
             </div>
@@ -48,6 +87,7 @@
             </p>
 
         </div>
+
     </div>
 
     @Scripts.Render("~/bundles/jquery")

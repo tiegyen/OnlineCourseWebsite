@@ -2,44 +2,10 @@
     ViewBag.Title = "Home";
 }
 
-<div class="header">
+<div class="hero-section">
 
     <div class="container">
 
-        <!-- NAVBAR -->
-        <div class="navbar">
-
-            <div class="logo">
-                <img src="~/Content/images/logo-one.png"
-                     width="125"
-                     alt="Logo" />
-            </div>
-
-            <nav>
-                <ul id="MenuItems">
-
-                    <li>
-                        @Html.ActionLink("Home", "Index", "Home")
-                    </li>
-
-                    <li>
-                        @Html.ActionLink("Courses", "Index", "Course")
-                    </li>
-
-                    <li>
-                        @Html.ActionLink("Register", "Register", "Account")
-                    </li>
-
-                    <li>
-                        @Html.ActionLink("Login", "Login", "Account")
-                    </li>
-
-                </ul>
-            </nav>
-
-        </div>
-
-        <!-- HERO -->
         <div class="row">
 
             <div class="col-2">
@@ -51,12 +17,11 @@
                 </h1>
 
                 <p>
-                    Empower your future with expert-led curriculum
-                    and internationally recognized certifications.
+                    Empower your future with expert-led curriculum and internationally recognized certifications.
                 </p>
 
                 <a href="#" class="btn btn-danger">
-                    Explore Courses &#10132;
+                    Explore Courses →
                 </a>
 
             </div>
@@ -73,3 +38,4 @@
     </div>
 
 </div>
+
