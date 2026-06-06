@@ -1,25 +1,19 @@
-﻿@model IEnumerable<OnlineCourseWebsite.Models.Course>
-
-@{
+﻿@{
     ViewBag.Title = "Home";
     Layout = "~/Views/Shared/_Layout.cshtml";
+
+    // Ép kiểu sạch sẽ từ namespace hệ thống
+    var topSubscribedCourses = ViewBag.TopSubscribed as List<OnlineCourseWebsite.Models.Course>;
+    var topRatedCourses = ViewBag.TopRated as List<OnlineCourseWebsite.Controllers.RatedCourseView>;
 }
 
 <div class="hero-section">
     <div class="container">
         <div class="row">
             <div class="col-2">
-                <h1>
-                    Master English with
-                    <br />
-                    Industry-Leading Courses
-                </h1>
-                <p>
-                    Empower your future with expert-led curriculum and internationally recognized certifications.
-                </p>
-                <a href="@Url.Action("Index", "Course")" class="btn btn-danger">
-                    Explore Courses →
-                </a>
+                <h1>Master English with<br />Industry-Leading Courses</h1>
+                <p>Empower your future with expert-led curriculum and internationally recognized certifications.</p>
+                <a href="@Url.Action("Index", "Course")" class="btn btn-danger">Explore Courses →</a>
             </div>
             <div class="col-2">
                 <img src="@Url.Content("~/Content/images/banner1.png")" alt="Banner" />
@@ -39,33 +33,80 @@
     </div>
 </div>
 
+
 <div class="small-container mt-50">
-    <h2 class="title">Featured Courses</h2>
-    <div class="row">
-
-        @if (Model != null && Model.Any())
+    <h2 class="title">Most Popular Courses</h2>
+    <div class="row" style="display: flex; justify-content: space-around; flex-wrap: wrap; gap: 20px;">
+        @if (topSubscribedCourses != null && topSubscribedCourses.Any())
         {
-            foreach (var item in Model)
+            foreach (var item in topSubscribedCourses)
             {
-                <div class="col-4 card-box" style="margin-bottom: 30px;">
-                    <img src="@(string.IsNullOrEmpty(@item.Image) ? Url.Content("~/Content/images/picture1.jpg") : item.Image)" alt="@item.CourseName">
-
-                    <h4 class="mt-15">@item.CourseName</h4>
-                    <p class="mt-15" style="color: #555; font-size: 14px;">@item.Description</p>
-
-                    <p class="mt-10" style="font-weight: bold; color: #ff4757;">Price: @string.Format("{0:C0}", item.Price)</p>
-
-                    <a href="@Url.Action("Details", "Course", new { id = item.CourseID })" class="btn btn-primary w-100 mt-15">View Details</a>
+                <div class="col-4 card-box" style="flex: 1; min-width: 280px; max-width: 350px; margin-bottom: 30px; box-shadow: 0 4px 8px rgba(0,0,0,0.05); padding: 15px; border-radius: 10px; background: #fff;">
+                    @{
+                        // Ở Khối 2: "item" chính là Course rồi, nên gọi trực tiếp item.CategoryID
+                        string imageUrl = "~/Content/images/picture1.jpg";
+                        if (item.CategoryID == 1) { imageUrl = "~/Content/images/pic1.jpg"; }
+                        else if (item.CategoryID == 2) { imageUrl = "~/Content/images/pic2.jpg"; }
+                        else if (item.CategoryID == 3) { imageUrl = "~/Content/images/pic3.jpg"; }
+                        else if (item.CategoryID == 4) { imageUrl = "~/Content/images/pic4.jpg"; }
+                        else if (item.CategoryID == 5) { imageUrl = "~/Content/images/pic5.jpg"; }
+                    }
+                    <img src="@Url.Content(imageUrl)" alt="@item.CourseName" style="width: 100%; height: 180px; object-fit: cover; border-radius: 8px;">
+                    <h4 class="mt-15" style="font-size: 18px; font-weight: 600; color: #333;">@item.CourseName</h4>
+                    <p style="color: #764ba2; font-size: 13px; font-weight: 500;" class="mt-5"><i class="fa fa-clock-o"></i> Duration: @item.Duration</p>
+                    <p class="mt-10" style="color: #666; font-size: 14px; height: 42px; overflow: hidden; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical;">@item.Description</p>
+                    <p class="mt-15" style="font-weight: 700; color: #ff4757; font-size: 16px;">Price: @string.Format("{0:C0}", item.Price)</p>
+                    <a href="@Url.Action("Details", "Course", new { id = item.CourseID })" class="btn btn-primary w-100 mt-15" style="text-align: center; display: block;">View Details</a>
                 </div>
             }
         }
         else
         {
-            <p class="text-center" style="width: 100%; font-style: italic; color: #888;">No courses available at the moment.</p>
+            <p class="text-center" style="width: 100%; font-style: italic; color: #888;">No courses available.</p>
         }
-
     </div>
 </div>
+
+
+<div class="small-container mt-50">
+    <h2 class="title">Top Rated Courses</h2>
+    <div class="row" style="display: flex; justify-content: space-around; flex-wrap: wrap; gap: 20px;">
+        @if (topRatedCourses != null && topRatedCourses.Any())
+        {
+            foreach (var item in topRatedCourses)
+            {
+                // Ở Khối 3: "item" là RatedCourseView nên phải bốc .CourseData ra biến phụ
+                var course = item.CourseData;
+
+                <div class="col-4 card-box" style="flex: 1; min-width: 280px; max-width: 350px; margin-bottom: 30px; box-shadow: 0 4px 8px rgba(0,0,0,0.05); padding: 15px; border-radius: 10px; background: #fff;">
+                    @{
+                        string ratedImageUrl = "~/Content/images/picture1.jpg";
+                        if (course.CategoryID == 1) { ratedImageUrl = "~/Content/images/pic1.jpg"; }
+                        else if (course.CategoryID == 2) { ratedImageUrl = "~/Content/images/pic2.jpg"; }
+                        else if (course.CategoryID == 3) { ratedImageUrl = "~/Content/images/pic3.jpg"; }
+                        else if (course.CategoryID == 4) { ratedImageUrl = "~/Content/images/pic4.jpg"; }
+                        else if (course.CategoryID == 5) { ratedImageUrl = "~/Content/images/pic5.jpg"; }
+                    }
+                    <img src="@Url.Content(ratedImageUrl)" alt="@course.CourseName" style="width: 100%; height: 180px; object-fit: cover; border-radius: 8px;">
+                    <h4 class="mt-15" style="font-size: 18px; font-weight: 600; color: #333;">@course.CourseName</h4>
+
+                    <p style="color: #ffa502; font-size: 14px; font-weight: 600;" class="mt-5">
+                        <i class="fa fa-star"></i> @string.Format("{0:0.0}", item.AverageRating) / 5.0 Rating
+                    </p>
+
+                    <p class="mt-10" style="color: #666; font-size: 14px; height: 42px; overflow: hidden; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical;">@course.Description</p>
+                    <p class="mt-15" style="font-weight: 700; color: #ff4757; font-size: 16px;">Price: @string.Format("{0:C0}", course.Price)</p>
+                    <a href="@Url.Action("Details", "Course", new { id = course.CourseID })" class="btn btn-primary w-100 mt-15" style="text-align: center; display: block;">View Details</a>
+                </div>
+            }
+        }
+        else
+        {
+            <p class="text-center" style="width: 100%; font-style: italic; color: #888;">No highly rated courses yet.</p>
+        }
+    </div>
+</div>
+
 
 <div class="small-container mt-50" style="background: #f8f9fa; padding: 40px 20px; border-radius: 15px;">
     <h2 class="title">Our Featured Instructors</h2>

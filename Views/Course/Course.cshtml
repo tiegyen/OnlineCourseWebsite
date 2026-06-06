@@ -1,0 +1,86 @@
+﻿@model IEnumerable<OnlineCourseWebsite.Models.Course>
+
+@{
+    ViewBag.Title = "Courses";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+    var categories = ViewBag.Categories as List<OnlineCourseWebsite.Models.Category>;
+}
+
+<div class="hero-section">
+    <div class="container">
+        <div class="row">
+            <div class="col-2">
+                <h1>Master English with<br />Industry-Leading Courses</h1>
+                <p>Empower your future with expert-led curriculum and internationally recognized certifications.</p>
+                <a href="@Url.Action("Index", "Course")" class="btn btn-danger">Explore Courses →</a>
+            </div>
+            <div class="col-2">
+                <img src="@Url.Content("~/Content/images/banner1.png")" alt="Banner" />
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="small-container mt-50" id="featured-courses">
+    <h2 class="title">Available Courses</h2>
+
+    <div class="filter-container">
+        <div class="search-block">
+            <input type="text" class="form-control" placeholder="Search course by name or instructor...">
+        </div>
+        <div class="filter-block mt-15">
+            <select class="form-control filter-select">
+                <option value="">All Categories</option>
+                @if (categories != null)
+                {
+                    foreach (var cat in categories)
+                    {
+                        <option value="@cat.CategoryID">@cat.CategoryName</option>
+                    }
+                }
+            </select>
+        </div>
+    </div>
+
+    <div class="row" style="display: flex; flex-wrap: wrap; gap: 20px; margin-top: 30px;">
+        @if (Model != null && Model.Any())
+        {
+            foreach (var item in Model)
+            {
+                <div class="col-4 card-box course-item-card" style="flex: 1 1 calc(25% - 20px); min-width: 250px;">
+                    @{
+                        // Logic bốc ảnh tự động theo CategoryID để giao diện lung linh
+                        string courseImageUrl = "~/Content/images/picture1.jpg";
+                        if (item.CategoryID == 1) { courseImageUrl = "~/Content/images/pic1.jpg"; }
+                        else if (item.CategoryID == 2) { courseImageUrl = "~/Content/images/pic2.jpg"; }
+                        else if (item.CategoryID == 3) { courseImageUrl = "~/Content/images/pic3.jpg"; }
+                        else if (item.CategoryID == 4) { courseImageUrl = "~/Content/images/pic4.jpg"; }
+                        else if (item.CategoryID == 5) { courseImageUrl = "~/Content/images/pic5.jpg"; }
+                    }
+                    <img src="@Url.Content(courseImageUrl)" alt="@item.CourseName">
+
+                    <span class="category-badge">@(item.Category != null ? item.Category.CategoryName : "General")</span>
+
+                    <h4 class="mt-15 course-card-title">@item.CourseName</h4>
+
+                    <p class="course-card-instructor">Instructor: @(item.Instructor != null ? item.Instructor.FullName : "Updating")</p>
+
+                    <p class="course-card-duration"><i class="fa fa-clock-o"></i> @item.Duration</p>
+
+                    <p class="course-card-price">@string.Format("{0:C0}", item.Price)</p>
+
+                    <div class="row mt-15 course-card-actions" style="display: flex; justify-content: space-between; align-items: center;">
+                        <a href="@Url.Action("Login", "User")" class="btn btn-primary btn-enroll">Enroll Now</a>
+                        <a href="@Url.Action("Details", "Course", new { id = item.CourseID })" class="text-link link-details">Details</a>
+                    </div>
+                </div>
+            }
+        }
+        else
+        {
+            <div style="width: 100%; text-align: center; padding: 40px 0;">
+                <p style="font-style: italic; color: #888;">No courses found matching the database records.</p>
+            </div>
+        }
+    </div>
+</div>
