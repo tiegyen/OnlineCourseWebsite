@@ -1,0 +1,44 @@
+﻿@{
+    ViewBag.Title = "Login";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<div class="container mt-50 mb-50" style="max-width: 500px;">
+    <div class="card-box" style="padding: 40px; box-shadow: 0 4px 15px rgba(0,0,0,0.08); border-radius: 12px; background: #fff;">
+        <h2 class="text-center" style="margin-bottom: 30px; color: #333; font-weight: 700;">Welcome Back</h2>
+
+        @if (ViewBag.ErrorSystem != null)
+        {
+            <div style="background: #ffe0e6; color: #ff4d4d; padding: 10px; border-radius: 6px; margin-bottom: 20px; font-size: 14px; font-weight: 500; text-align: center;">
+                @ViewBag.ErrorSystem
+            </div>
+        }
+
+        <form action="@Url.Action("Login", "User")" method="post" id="loginForm">
+
+            <div class="form-group" style="margin-bottom: 20px;">
+                <label style="display: block; margin-bottom: 8px; font-weight: 500; color: #444;">Email Address</label>
+                <input type="email" name="Email" class="form-control" placeholder="Enter your registered email" value="@ViewBag.Email" required style="width: 100%; padding: 10px; border: 1px solid #ddd; border-radius: 6px;">
+                @if (ViewBag.ErrorEmail != null)
+                {
+                    <small style="color: #ff4d4d; font-size: 12px; margin-top: 5px; display: block;">@ViewBag.ErrorEmail</small>
+                }
+            </div>
+
+            <div class="form-group" style="margin-bottom: 20px;">
+                <label style="display: block; margin-bottom: 8px; font-weight: 500; color: #444;">Password</label>
+                <input type="password" name="Password" class="form-control" placeholder="Enter your password" required style="width: 100%; padding: 10px; border: 1px solid #ddd; border-radius: 6px;">
+                @if (ViewBag.ErrorPassword != null)
+                {
+                    <small style="color: #ff4d4d; font-size: 12px; margin-top: 5px; display: block;">@ViewBag.ErrorPassword</small>
+                }
+            </div>
+
+            <button type="submit" class="btn btn-primary w-100 mt-20" style="padding: 12px; font-weight: 600; border-radius: 6px; cursor: pointer;">Login Now</button>
+        </form>
+
+        <p class="text-center mt-20" style="color: #666; font-size: 14px; text-align: center; margin-top: 20px;">
+            Don't have an account yet? <a href="@Url.Action("Register", "User")" class="text-link" style="color: #764ba2; font-weight: 600; text-decoration: none;">Register here</a>
+        </p>
+    </div>
+</div>

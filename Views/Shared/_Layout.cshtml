@@ -18,11 +18,39 @@
                     <img src="~/Content/images/logo-one.png" width="125px" alt="Logo" />
                 </div>
                 <nav>
-                    <ul id="MenuItems" style="display: flex; gap: 20px;">
+                    <ul id="MenuItems">
                         <li><a href="@Url.Action("Index", "Home")">Home</a></li>
-                        <li><a href="@Url.Action("Course", "Course")">Courses</a></li>
-                        <li><a href="@Url.Action("Register", "Account")">Register</a></li>
-                        <li><a href="@Url.Action("Login", "Account")">Login</a></li>
+
+                        @if (Session["UserAccount"] == null)
+                        {
+                            <li><a href="@Url.Action("Course", "Course")">Courses</a></li>
+                            <li><a href="@Url.Action("Register", "User")">Register</a></li>
+                            <li><a href="@Url.Action("Login", "User")">Login</a></li>
+                        }
+                        else
+                        {
+                            // Đúc tài khoản và profile từ Session ra để xử lý điều hướng
+                            var account = Session["UserAccount"] as OnlineCourseWebsite.Models.User_Account;
+                            var student = Session["StudentProfile"] as OnlineCourseWebsite.Models.Student;
+
+                            if (account != null && account.Role == "Student")
+                            {
+                                <li><a href="@Url.Action("MyCourses", "Student")">My Courses</a></li>
+                                <li><a href="@Url.Action("Payment", "Student")">Payment</a></li>
+                                <li>
+                                    <a href="@Url.Action("Profile", "Student")" class="student-welcome" style="font-weight: 600; color: #764ba2;">
+                                        <i class="fa fa-user-circle"></i> Welcome, @(student != null ? student.FullName : "Learner")
+                                    </a>
+                                </li>
+                                <li><a href="@Url.Action("Logout", "User")" style="color: #ff523b; font-size: 13px; font-weight: 500;">(Logout)</a></li>
+                            }
+                            else
+                            {
+                                <li><a href="@Url.Action("Course", "Course")">Courses</a></li>
+                                <li style="color: #4cd137;">Admin Dashboard</li>
+                                <li><a href="@Url.Action("Logout", "User")" style="color: #ff523b;">Logout</a></li>
+                            }
+                        }
                     </ul>
                 </nav>
             </div>

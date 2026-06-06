@@ -42,23 +42,37 @@ namespace OnlineCourseWebsite.Controllers
             return View(allCourses.ToPagedList(pageNumber,pageSize));
         }
 
-        public ActionResult Details(int? id)
+        // GET: Course/Details/5
+        public ActionResult Details(int id)
         {
-            if (id == null)
-            {
-                return RedirectToAction("Course");
-            }
-
-            var course = db.Courses.SingleOrDefault(c => c.CourseID == id.Value);
-
-            if(course == null)
+            // 1. Lấy thông tin chi tiết của khóa học theo ID
+            var course = db.Courses.SingleOrDefault(c => c.CourseID == id);
+            if (course == null)
             {
                 return HttpNotFound();
             }
 
-            var reviews = db.Reviews.Where(r => r.CourseID == id.Value).OrderByDescending(r => r.ReviewDate).ToList();
+            // 🌟 2. ĐÃ BỔ SUNG LẠI: Bốc danh sách Reviews của khóa học này từ DB lên
+            // (Nhớ dùng .ToList() để View có thể duyệt danh sách ghen ní)
+            var reviews = db.Reviews.Where(r => r.CourseID == id).ToList();
             ViewBag.Reviews = reviews;
 
+            // 3. Xử lý Logic kiểm tra xem học viên hiện tại đã mua khóa học này chưa
+            bool isEnrolled = false;
+            var student = Session["StudentProfile"] as OnlineCourseWebsite.Models.Student;
+            if (student != null)
+            {
+                // Kiểm tra xem cặp (StudentID, CourseID) đã tồn tại trong bảng đăng ký chưa
+                // Ní nhớ đổi tên "Enrollments" thành đúng tên bảng lưu lịch sử mua của hai ní nha!
+                var checkEnroll = db.Enrollments.SingleOrDefault(e => e.StudentID == student.StudentID && e.CourseID == id);
+                if (checkEnroll != null)
+                {
+                    isEnrolled = true; // Đã mua rồi
+                }
+            }
+            ViewBag.IsEnrolled = isEnrolled;
+
+            // Truyền model khóa học sang View
             return View(course);
         }
 
