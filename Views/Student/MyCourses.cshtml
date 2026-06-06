@@ -1,0 +1,75 @@
+﻿@model IEnumerable<OnlineCourseWebsite.Models.Course>
+
+@{
+    ViewBag.Title = "My Courses | English Mastery";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<div class="small-container mt-50 mb-50">
+    <h2 class="title">My Enrolled Courses</h2>
+
+    @if (Model == null || !Model.Any())
+    {
+        <div class="text-center empty-state-container" style="text-align: center; padding: 40px 20px;">
+            <i class="fa fa-book empty-state-icon fa-5x" style="color: #ced4da; margin-bottom: 20px;"></i>
+
+            <h3 class="empty-state-title" style="font-size: 20px; color: #333; margin-bottom: 10px;">You haven't enrolled in any courses yet!</h3>
+            <p class="empty-state-text" style="color: #777; margin-bottom: 25px;">Let's master your English skills by choosing one of our expert-led courses.</p>
+
+            <a href="@Url.Action("Course", "Course")" class="btn btn-danger btn-empty-action" style="padding: 12px 25px; font-weight: 600; border-radius: 6px; text-decoration: none;">Find Your Perfect Course Now</a>
+        </div>
+    }
+    else
+    {
+        <div class="row" style="display: flex; gap: 20px; flex-wrap: wrap;">
+            @foreach (var item in Model)
+            {
+                <div class="col-4 card-box" style="flex: 1; min-width: 250px; max-width: 310px; box-shadow: 0 4px 12px rgba(0,0,0,0.05); padding: 20px; border-radius: 10px; background: #fff;">
+                    @{
+                        // Logic bốc ảnh theo CategoryID cho đồng bộ giao diện
+                        string courseImageUrl = "~/Content/images/picture1.jpg";
+                        if (item.CategoryID == 1) { courseImageUrl = "~/Content/images/pic1.jpg"; }
+                        else if (item.CategoryID == 2) { courseImageUrl = "~/Content/images/pic2.jpg"; }
+                        else if (item.CategoryID == 3) { courseImageUrl = "~/Content/images/pic3.jpg"; }
+                        else if (item.CategoryID == 4) { courseImageUrl = "~/Content/images/pic4.jpg"; }
+                        else if (item.CategoryID == 5) { courseImageUrl = "~/Content/images/pic5.jpg"; }
+                    }
+                    <img src="@Url.Content(courseImageUrl)" alt="@item.CourseName" style="width:100%; border-radius: 8px; object-fit: cover; height: 160px;">
+
+                    <h4 style="margin-top: 15px; font-size: 16px; color: #222; font-weight: 600;">@item.CourseName</h4>
+                    <p style="font-size: 13.5px; color: #777; margin-top: 5px;">Instructor: @(item.Instructor != null ? item.Instructor.FullName : "Updating")</p>
+
+                    <div style="margin: 15px 0;">
+                        <div style="display: flex; justify-content: space-between; font-size: 12px; margin-bottom: 5px; color: #555;">
+                            <span>Progress</span>
+                            <span id="progress-val-@item.CourseID">25%</span>
+                        </div>
+                        <div style="background: #e2e8f0; height: 8px; border-radius: 4px; overflow: hidden;">
+                            <div id="progress-bar-@item.CourseID" class="progress-bar-fill" style="width: 25%; height: 100%; background: #2ecc71; border-radius: 4px; transition: width 0.5s ease;"></div>
+                        </div>
+                    </div>
+
+                    <a href="@Url.Action("Classroom", "Student", new { id = item.CourseID })" class="btn btn-primary w-100" style="text-align: center; display: block; padding: 10px; font-weight: 600; text-decoration: none; font-size: 14px;">Continue Learning</a>
+                </div>
+            }
+        </div>
+    }
+</div>
+
+@* Đoạn script chuyển động mượt mà như sườn của ní, được tối ưu hóa cho vòng lặp động *@
+<script>
+    window.onload = function () {
+        setTimeout(() => {
+            // Tự động tìm tất cả thanh tiến độ và kích hoạt hiệu ứng chạy đầy
+            const fills = document.querySelectorAll('.progress-bar-fill');
+            fills.forEach(bar => {
+                // Giữ nguyên thuộc tính width đã đổ từ server
+                const currentWidth = bar.style.width;
+                bar.style.width = '0%';
+                setTimeout(() => {
+                    bar.style.width = currentWidth;
+                }, 100);
+            });
+        }, 300);
+    };
+</script>
