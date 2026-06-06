@@ -1,4 +1,5 @@
-﻿using System;
+﻿using OnlineCourseWebsite.Models;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Web;
@@ -8,23 +9,12 @@ namespace OnlineCourseWebsite.Controllers
 {
     public class HomeController : Controller
     {
+        dbOnlineCourseDataContext db = new dbOnlineCourseDataContext();
         public ActionResult Index()
         {
-            return View();
-        }
+            var currentCourses = from c in db.Courses select c;
 
-        public ActionResult About()
-        {
-            ViewBag.Message = "Your application description page.";
-
-            return View();
-        }
-
-        public ActionResult Contact()
-        {
-            ViewBag.Message = "Your contact page.";
-
-            return View();
+            return View(currentCourses.ToList());
         }
     }
 }

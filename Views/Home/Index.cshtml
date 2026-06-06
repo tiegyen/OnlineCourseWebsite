@@ -1,4 +1,6 @@
-﻿@{
+﻿@model IEnumerable<OnlineCourseWebsite.Models.Course>
+
+@{
     ViewBag.Title = "Home";
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
@@ -20,7 +22,7 @@
                 </a>
             </div>
             <div class="col-2">
-                <img src="~/Content/images/banner1.png" alt="Banner" />
+                <img src="@Url.Content("~/Content/images/banner1.png")" alt="Banner" />
             </div>
         </div>
     </div>
@@ -29,39 +31,39 @@
 <div class="small-container mt-50">
     <h2 class="title">Course Categories</h2>
     <div class="row" style="display: flex; justify-content: center; flex-wrap: wrap; gap: 20px;">
-        <div class="col-3" style="flex: 1; min-width: 180px;"><img src="~/Content/images/pic1.jpg" alt="IELTS"><h3 class="text-center mt-15">IELTS Preparation</h3></div>
-        <div class="col-3" style="flex: 1; min-width: 180px;"><img src="~/Content/images/pic2.jpg" alt="TOEIC"><h3 class="text-center mt-15">TOEIC Training</h3></div>
-        <div class="col-3" style="flex: 1; min-width: 180px;"><img src="~/Content/images/pic3.jpg" alt="TOEFL"><h3 class="text-center mt-15">TOEFL Prep</h3></div>
-        <div class="col-3" style="flex: 1; min-width: 180px;"><img src="~/Content/images/pic4.jpg" alt="Communication"><h3 class="text-center mt-15">English Communication</h3></div>
-        <div class="col-3" style="flex: 1; min-width: 180px;"><img src="~/Content/images/pic5.jpg" alt="Business"><h3 class="text-center mt-15">Business English</h3></div>
+        <div class="col-3" style="flex: 1; min-width: 180px;"><img src="@Url.Content("~/Content/images/pic1.jpg")" alt="IELTS"><h3 class="text-center mt-15">IELTS Preparation</h3></div>
+        <div class="col-3" style="flex: 1; min-width: 180px;"><img src="@Url.Content("~/Content/images/pic2.jpg")" alt="TOEIC"><h3 class="text-center mt-15">TOEIC Training</h3></div>
+        <div class="col-3" style="flex: 1; min-width: 180px;"><img src="@Url.Content("~/Content/images/pic3.jpg")" alt="TOEFL"><h3 class="text-center mt-15">TOEFL Prep</h3></div>
+        <div class="col-3" style="flex: 1; min-width: 180px;"><img src="@Url.Content("~/Content/images/pic4.jpg")" alt="Communication"><h3 class="text-center mt-15">English Communication</h3></div>
+        <div class="col-3" style="flex: 1; min-width: 180px;"><img src="@Url.Content("~/Content/images/pic5.jpg")" alt="Business"><h3 class="text-center mt-15">Business English</h3></div>
     </div>
 </div>
 
 <div class="small-container mt-50">
     <h2 class="title">Featured Courses</h2>
     <div class="row">
-        <div class="col-4 card-box">
-            <img src="~/Content/images/picture1.jpg" alt="Featured">
-            <h4 class="mt-15">IELTS Foundation</h4>
-            <p class="mt-15">Basic IELTS course for beginners.</p>
-            <a href="#" class="btn btn-primary w-100 mt-15">View Details</a>
-        </div>
-    </div>
-</div>
 
-<div class="small-container mt-50">
-    <h2 class="title">Top Rated Courses</h2>
-    <div class="row">
-        <div class="col-4 card-box">
-            <img src="~/Content/images/picture1.jpg" alt="Course">
-            <h4 class="mt-15">IELTS Foundation</h4>
-            <div class="rating" style="color: #f7c51e;">
-                <i class="fa fa-star"></i><i class="fa fa-star"></i><i class="fa fa-star"></i><i class="fa fa-star"></i><i class="fa fa-star"></i>
-                <span style="color: #777; font-size: 13px;">(5.0)</span>
-            </div>
-            <p class="mt-15" style="font-size: 14px;">"Excellent material!" - Alice Pham</p>
-            <a href="#" class="btn btn-primary w-100 mt-15">View Details</a>
-        </div>
+        @if (Model != null && Model.Any())
+        {
+            foreach (var item in Model)
+            {
+                <div class="col-4 card-box" style="margin-bottom: 30px;">
+                    <img src="@(string.IsNullOrEmpty(@item.Image) ? Url.Content("~/Content/images/picture1.jpg") : item.Image)" alt="@item.CourseName">
+
+                    <h4 class="mt-15">@item.CourseName</h4>
+                    <p class="mt-15" style="color: #555; font-size: 14px;">@item.Description</p>
+
+                    <p class="mt-10" style="font-weight: bold; color: #ff4757;">Price: @string.Format("{0:C0}", item.Price)</p>
+
+                    <a href="@Url.Action("Details", "Course", new { id = item.CourseID })" class="btn btn-primary w-100 mt-15">View Details</a>
+                </div>
+            }
+        }
+        else
+        {
+            <p class="text-center" style="width: 100%; font-style: italic; color: #888;">No courses available at the moment.</p>
+        }
+
     </div>
 </div>
 
@@ -69,19 +71,19 @@
     <h2 class="title">Our Featured Instructors</h2>
     <div class="row">
         <div class="col-3 text-center">
-            <img src="~/Content/images/instructor1.jpg" style="width: 120px; height: 120px; object-fit: cover; border-radius: 50%; border: 3px solid #764ba2;">
+            <img src="@Url.Content("~/Content/images/instructor1.jpg")" style="width: 120px; height: 120px; object-fit: cover; border-radius: 50%; border: 3px solid #764ba2;">
             <h3 class="mt-15">Mr. John Smith</h3>
             <p style="color: #764ba2; font-weight: 600;">Senior IELTS Trainer</p>
             <small style="display: block; color: #666; padding: 0 10px; font-size: 12px;" class="mt-10">8.5 IELTS with over 8 years of experience teaching academic English.</small>
         </div>
         <div class="col-3 text-center">
-            <img src="~/Content/images/instructor2.jpg" style="width: 120px; height: 120px; object-fit: cover; border-radius: 50%; border: 3px solid #764ba2;">
+            <img src="@Url.Content("~/Content/images/instructor2.jpg")" style="width: 120px; height: 120px; object-fit: cover; border-radius: 50%; border: 3px solid #764ba2;">
             <h3 class="mt-15">Ms. Anna Brown</h3>
             <p style="color: #764ba2; font-weight: 600;">TOEIC Trainer</p>
             <small style="display: block; color: #666; padding: 0 10px; font-size: 12px;" class="mt-10">Focus on core grammar and test-taking strategies.</small>
         </div>
         <div class="col-3 text-center">
-            <img src="~/Content/images/instructor3.jpg" style="width: 120px; height: 120px; object-fit: cover; border-radius: 50%; border: 3px solid #764ba2;">
+            <img src="@Url.Content("~/Content/images/instructor3.jpg")" style="width: 120px; height: 120px; object-fit: cover; border-radius: 50%; border: 3px solid #764ba2;">
             <h3 class="mt-15">Ms. Jane Doe</h3>
             <p style="color: #764ba2; font-weight: 600;">Business English Coach</p>
             <small style="display: block; color: #666; padding: 0 10px; font-size: 12px;" class="mt-10">Specialized in corporate workplace communication.</small>

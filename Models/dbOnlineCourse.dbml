@@ -30,6 +30,7 @@
       <Column Name="InstructorID" Type="System.Int32" DbType="Int NOT NULL" CanBeNull="false" />
       <Column Name="CategoryID" Type="System.Int32" DbType="Int NOT NULL" CanBeNull="false" />
       <Column Name="StatusID" Type="System.Int32" DbType="Int NOT NULL" CanBeNull="false" />
+      <Column Name="Image" Type="System.String" DbType="VarChar(255)" CanBeNull="true" />
       <Association Name="Course_Enrollment" Member="Enrollments" ThisKey="CourseID" OtherKey="CourseID" Type="Enrollment" />
       <Association Name="Course_Lesson" Member="Lessons" ThisKey="CourseID" OtherKey="CourseID" Type="Lesson" />
       <Association Name="Course_Review" Member="Reviews" ThisKey="CourseID" OtherKey="CourseID" Type="Review" />

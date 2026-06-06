@@ -70,8 +70,14 @@ namespace OnlineCourseWebsite.Models
 		{
 			OnCreated();
 		}
-		
-		public dbOnlineCourseDataContext(System.Data.IDbConnection connection) : 
+
+        public dbOnlineCourseDataContext() :
+base(global::System.Configuration.ConfigurationManager.ConnectionStrings[
+"OnlineCourseDBConnectionString"].ConnectionString, mappingSource)
+        {
+            OnCreated();
+        }
+        public dbOnlineCourseDataContext(System.Data.IDbConnection connection) : 
 				base(connection, mappingSource)
 		{
 			OnCreated();
@@ -578,6 +584,8 @@ namespace OnlineCourseWebsite.Models
 		
 		private int _StatusID;
 		
+		private string _Image;
+		
 		private EntitySet<Enrollment> _Enrollments;
 		
 		private EntitySet<Lesson> _Lessons;
@@ -612,6 +620,8 @@ namespace OnlineCourseWebsite.Models
     partial void OnCategoryIDChanged();
     partial void OnStatusIDChanging(int value);
     partial void OnStatusIDChanged();
+    partial void OnImageChanging(string value);
+    partial void OnImageChanged();
     #endregion
 		
 		public Course()
@@ -813,6 +823,26 @@ namespace OnlineCourseWebsite.Models
 					this._StatusID = value;
 					this.SendPropertyChanged("StatusID");
 					this.OnStatusIDChanged();
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_Image", DbType="VarChar(255)")]
+		public string Image
+		{
+			get
+			{
+				return this._Image;
+			}
+			set
+			{
+				if ((this._Image != value))
+				{
+					this.OnImageChanging(value);
+					this.SendPropertyChanging();
+					this._Image = value;
+					this.SendPropertyChanged("Image");
+					this.OnImageChanged();
 				}
 			}
 		}
