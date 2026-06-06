@@ -224,6 +224,7 @@
     <Content Include="Views\Home\Index.cshtml" />
     <Content Include="Views\Shared\_InsLayout.cshtml" />
     <Content Include="Views\Course\Course.cshtml" />
+    <Content Include="Views\Course\Details.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />

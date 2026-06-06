@@ -27,7 +27,7 @@
 
     <div class="filter-container">
         <div class="search-block">
-            <input type="text" class="form-control" placeholder="Search course by name or instructor...">
+            <input type="text" id="courseSearch" class="form-control" placeholder="Search course by name or instructor..." value="@ViewBag.CurrentSearch">
         </div>
         <div class="filter-block mt-15">
             <select id="categoryFilter" class="form-control filter-select">
@@ -91,7 +91,7 @@
             Page @(Model.PageCount < Model.PageNumber ? 0 : Model.PageNumber) of @Model.PageCount
         </p>
         <div class="pagination-buttons">
-            @Html.PagedListPager(Model, page => Url.Action("Course", new { page, currentCategory = ViewBag.CurrentCategory }))
+            @Html.PagedListPager(Model, page => Url.Action("Course", new { page, currentCategory = ViewBag.CurrentCategory, searchString = ViewBag.CurrentSearch }))
         </div>
     </div>
 </div>
@@ -139,19 +139,39 @@
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 <script>
     $(document).ready(function () {
-        // Bắt sự kiện khi hai ní thay đổi lựa chọn trong Dropdown danh mục
-        $('#categoryFilter').change(function () {
-            var selectedCategoryId = $(this).val();
 
-            // Tạo đường dẫn mới dẫn thẳng về hàm Course kèm theo tham số category tương ứng
+        // Hàm gom tham số và reload lại trang chuẩn chỉ
+        function performSearchAndFilter() {
+            var searchVal = $('#courseSearch').val().trim();
+            var categoryVal = $('#categoryFilter').val();
+
             var url = '@Url.Action("Course", "Course")';
+            var params = [];
 
-            if (selectedCategoryId) {
-                url += '?currentCategory=' + selectedCategoryId;
+            if (searchVal) {
+                params.push('searchString=' + encodeURIComponent(searchVal));
+            }
+            if (categoryVal) {
+                params.push('currentCategory=' + categoryVal);
             }
 
-            // Chuyển hướng trang web sang link mới để Controller lọc dữ liệu
+            if (params.length > 0) {
+                url += '?' + params.join('&');
+            }
+
             window.location.href = url;
+        }
+
+        // 1. Khi thay đổi bộ chọn Category -> Chạy lọc luôn
+        $('#categoryFilter').change(function () {
+            performSearchAndFilter();
+        });
+
+        // 2. Khi gõ từ khóa vào ô Search và nhấn nút ENTER trên bàn phím
+        $('#courseSearch').keypress(function (e) {
+            if (e.which == 13) { // 13 là mã phím Enter
+                performSearchAndFilter();
+            }
         });
     });
 </script>

@@ -1,0 +1,124 @@
+﻿@model OnlineCourseWebsite.Models.Course
+
+@{
+    ViewBag.Title = Model.CourseName + " | Details";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+
+    // Lấy danh sách reviews đã truyền từ ViewBag qua
+    var reviews = ViewBag.Reviews as List<OnlineCourseWebsite.Models.Review>;
+}
+
+<div class="header header-details" style="padding-bottom: 20px;">
+    @* Giữ lại khối này để ăn CSS header-details  *@
+</div>
+
+<div class="small-container mt-50 mb-50">
+    <div class="row align-start" style="display: flex; gap: 30px; align-items: flex-start; flex-wrap: wrap;">
+
+        <div class="col-2 details-left" style="flex: 1.5; min-width: 300px;">
+            @{
+                // Logic bốc ảnh theo CategoryID cho đồng bộ toàn hệ thống
+                string courseImageUrl = "~/Content/images/picture1.jpg";
+                if (Model.CategoryID == 1) { courseImageUrl = "~/Content/images/pic1.jpg"; }
+                else if (Model.CategoryID == 2) { courseImageUrl = "~/Content/images/pic2.jpg"; }
+                else if (Model.CategoryID == 3) { courseImageUrl = "~/Content/images/pic3.jpg"; }
+                else if (Model.CategoryID == 4) { courseImageUrl = "~/Content/images/pic4.jpg"; }
+                else if (Model.CategoryID == 5) { courseImageUrl = "~/Content/images/pic5.jpg"; }
+            }
+            <img src="@Url.Content(courseImageUrl)" alt="@Model.CourseName" class="p-0 details-course-img" style="width: 100%; border-radius: 12px; object-fit: cover;">
+
+            <h2 class="details-section-title" style="margin-top: 30px; font-size: 22px; color: #333; border-bottom: 2px solid #764ba2; padding-bottom: 5px;">Course Description</h2>
+            <p class="details-text-p" style="margin-top: 15px; color: #555; line-height: 1.6; font-size: 15px;">
+                @Model.Description
+            </p>
+        </div>
+
+        <div class="col-2 card-box details-right-box" style="flex: 1; min-width: 280px; box-shadow: 0 4px 15px rgba(0,0,0,0.08); padding: 25px; border-radius: 12px; background: #fff;">
+            <h1 class="details-course-title" style="font-size: 24px; color: #222; font-weight: 700;">@Model.CourseName</h1>
+
+            <p class="details-price-tag" style="font-size: 22px; color: #ff4757; font-weight: 700; margin-top: 15px;">
+                Price: @string.Format("{0:C0}", Model.Price)
+            </p>
+
+            <p class="details-info-p" style="margin-top: 15px; font-size: 14px; color: #444;">
+                <strong>Instructor:</strong> @(Model.Instructor != null ? Model.Instructor.FullName : "Updating")
+            </p>
+
+            <p class="details-info-p" style="margin-top: 10px; font-size: 14px; color: #444;">
+                <strong>Duration:</strong> @Model.Duration
+            </p>
+
+            <a href="@Url.Action("Login", "User")" class="btn btn-primary w-100 mt-20" style="text-align: center; display: block; padding: 12px; font-weight: 600;">Enroll Now</a>
+
+            <a href="@Url.Action("Course", "Course")" class="text-center d-block mt-20 link-back-courses" style="color: #ff523b; font-weight: 500; text-decoration: none;">Back to Courses</a>
+        </div>
+    </div>
+</div>
+
+<div class="small-container mb-50 details-extra-section" style="border-top: 1px solid #eee; padding-top: 30px;">
+    <div class="row align-start" style="display: flex; gap: 30px; align-items: flex-start; flex-wrap: wrap;">
+
+        <div class="col-2 details-left" style="flex: 1.5; min-width: 300px;">
+            <h3 class="details-section-title" style="font-size: 20px; color: #333;">Instructor Information</h3>
+
+            @if (Model.Instructor != null)
+            {
+                <div class="instructor-header" style="display: flex; gap: 15px; margin-top: 20px; align-items: center;">
+                    <img src="@Url.Content("~/Content/images/instructor1.jpg")" alt="@Model.Instructor.FullName" class="instructor-avatar p-0" style="width: 70px; height: 70px; object-fit: cover; border-radius: 50%;">
+                    <div>
+                        <h4 class="instructor-name" style="font-size: 18px; color: #222; font-weight: 600; margin: 0;">@Model.Instructor.FullName</h4>
+                        <p class="instructor-title" style="color: #764ba2; font-size: 13px; font-weight: 500; margin-top: 3px;">Senior Trainer</p>
+                    </div>
+                </div>
+                <p class="details-text-p" style="margin-top: 15px; color: #666; font-size: 14px; line-height: 1.5;">
+                    @Model.Instructor.Bio
+                </p>
+            }
+            else
+            {
+                <p style="font-style: italic; color: #888; margin-top: 15px;">Instructor information is being updated.</p>
+            }
+        </div>
+
+        <div class="col-2 details-right-box" style="flex: 1; min-width: 280px; box-shadow: none; padding: 0; background: transparent;">
+            <h3 class="details-section-title" style="font-size: 20px; color: #333; margin-bottom: 20px;">Student Reviews</h3>
+
+            @if (reviews != null && reviews.Any())
+            {
+                foreach (var rev in reviews)
+                {
+                    <div class="review-item" style="background: #fff; padding: 15px; border-radius: 8px; box-shadow: 0 2px 8px rgba(0,0,0,0.04); margin-bottom: 15px;">
+                        <div class="review-header" style="display: flex; justify-content: space-between; align-items: center;">
+                            <strong class="review-author" style="color: #333; font-size: 14px;">
+                                @(rev.Student != null ? rev.Student.FullName : "Anonymous")
+                            </strong>
+                            <div class="rating review-rating" style="color: #f7c51e; font-size: 12px;">
+                                @for (int i = 1; i <= 5; i++)
+                                {
+                                    if (i <= rev.Rating)
+                                    {
+                                        <i class="fa fa-star"></i>
+                                    }
+                                    else
+                                    {
+                                        <i class="fa fa-star-o" style="color: #ccc;"></i>
+                                    }
+                                }
+                            </div>
+                        </div>
+                        <p class="review-content" style="color: #666; font-size: 13.5px; margin-top: 8px; font-style: italic;">
+                            "@rev.Comment"
+                        </p>
+                    </div>
+                }
+            }
+            else
+            {
+                <div style="background: #fff; padding: 20px; border-radius: 8px; text-align: center; border: 1px dashed #ccc;">
+                    <p style="font-style: italic; color: #999; font-size: 14px; margin: 0;">No reviews yet for this course.</p>
+                </div>
+            }
+        </div>
+
+    </div>
+</div>
