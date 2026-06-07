@@ -1,0 +1,101 @@
+﻿@model List<OnlineCourseWebsite.Models.ViewModel.PaymentRow>
+
+@{
+    ViewBag.Title = "Payment History | English Mastery";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<div class="header">
+    @* Giữ nguyên để đồng bộ CSS Header *@
+</div>
+
+<div class="small-container mt-50 mb-50">
+
+    <h2 class="title">Payment History</h2>
+
+    <div class="row align-start" style="display: flex; flex-wrap: wrap; gap: 10px;">
+
+        <div class="payment-left-col">
+            <div class="card-box">
+                <h3 class="mb-20">
+                    <i class="fa fa-history"></i> Invoice History
+                </h3>
+
+                <div class="table-responsive">
+                    <table class="table-payment">
+                        <thead>
+                            <tr>
+                                <th>Invoice ID</th>
+                                <th>Course Name</th>
+                                <th>Amount</th>
+                                <th>Payment Method</th>
+                                <th>Status</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @if (Model != null && Model.Any())
+                            {
+                                foreach (var row in Model)
+                                {
+                                    // Kiểm tra nếu hóa đơn là Pending thì tự động gắn class đổi màu nền vàng nhạt 
+                                    string rowClass = row.PaymentStatus == "Pending" ? "invoice-pending" : "";
+
+                                    <tr class="@rowClass">
+                                        <td class="invoice-id">#INV-@row.PaymentID.ToString("D4")</td>
+                                        <td>@row.CourseName</td>
+                                        <td class="invoice-amount">@row.Amount.ToString("N0") VND</td>
+                                        <td>@(string.IsNullOrEmpty(row.PaymentMethod) ? "VNPay" : row.PaymentMethod)</td>
+                                        <td>
+                                            @if (row.PaymentStatus == "Paid")
+                                            {
+                                                <span class="badge badge-paid">Paid</span>
+                                            }
+                                            else if (row.PaymentStatus == "Pending")
+                                            {
+                                                <span class="badge badge-pending">Pending</span>
+                                            }
+                                            else
+                                            {
+                                                <span class="badge" style="background: #ffebee; color: #c62828;">@row.PaymentStatus</span>
+                                            }
+                                        </td>
+                                    </tr>
+                                }
+                            }
+                            else
+                            {
+                                <tr>
+                                    <td colspan="5" style="text-align: center; color: #aaa; font-style: italic; padding: 30px;">
+                                        You haven't made any transactions yet.
+                                    </td>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <div class="payment-right-col">
+            <div class="card-box">
+                <h3 class="mb-20">
+                    <i class="fa fa-university"></i> Payment Info
+                </h3>
+
+                <div class="bank-info-box">
+                    <p><strong>Bank:</strong> Vietcombank (VCB)</p>
+                    <p><strong>Account No:</strong> 1023456789</p>
+                    <p><strong>Account Name:</strong> ENGLISH MASTERY PORTAL</p>
+                    <p><strong>Content:</strong> <span class="bank-content-code">STU@(Session["StudentProfile"] != null ? ((OnlineCourseWebsite.Models.Student)Session["StudentProfile"]).StudentID.ToString("D4") : "0000") PAY</span></p>
+                </div>
+
+                <p class="payment-note">
+                    <i class="fa fa-info-circle"></i> Note: Please enter the correct content code above when making a bank transfer. Your course will be activated automatically within 10-15 minutes after the system verifies the transaction.
+                </p>
+            </div>
+        </div>
+
+    </div>
+
+</div>
+

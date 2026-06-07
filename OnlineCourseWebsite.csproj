@@ -139,6 +139,7 @@
       <DesignTime>True</DesignTime>
       <DependentUpon>dbOnlineCourse.dbml</DependentUpon>
     </Compile>
+    <Compile Include="Models\ViewModel\PaymentRow.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
@@ -163,13 +164,33 @@
     <Content Include="Content\bootstrap.rtl.css" />
     <Content Include="Content\bootstrap.rtl.min.css" />
     <Content Include="Content\images\banner1.png" />
+    <Content Include="Content\images\course1.jpg" />
+    <Content Include="Content\images\course10.jpg" />
+    <Content Include="Content\images\course2.jpg" />
+    <Content Include="Content\images\course3.jpg" />
+    <Content Include="Content\images\course4.jpg" />
+    <Content Include="Content\images\course6.jpg" />
+    <Content Include="Content\images\course7.jpg" />
+    <Content Include="Content\images\course8.jpg" />
+    <Content Include="Content\images\course9.jpg" />
     <Content Include="Content\images\instructor1.jpg" />
     <Content Include="Content\images\instructor2.jpg" />
     <Content Include="Content\images\instructor3.jpg" />
     <Content Include="Content\images\pic1.jpg" />
     <Content Include="Content\images\pic2.jpg" />
-    <Content Include="Content\images\student1.jpg" />
     <Content Include="Content\images\default-avatar.png" />
+    <Content Include="Content\images\pic3.jpg" />
+    <Content Include="Content\images\pic4.jpg" />
+    <Content Include="Content\images\pic5.jpg" />
+    <Content Include="Content\images\student1.jpg" />
+    <Content Include="Content\images\student10.jpg" />
+    <Content Include="Content\images\student2.jpg" />
+    <Content Include="Content\images\student3.jpg" />
+    <Content Include="Content\images\student5.jpg" />
+    <Content Include="Content\images\student6.jpg" />
+    <Content Include="Content\images\student7.jpg" />
+    <Content Include="Content\images\student8.jpg" />
+    <Content Include="Content\images\student9.jpg" />
     <Content Include="Content\PagedList.css" />
     <Content Include="Guest\courses.html" />
     <Content Include="css\style.css" />
@@ -240,6 +261,7 @@
     <Content Include="Views\Student\MyCourses.cshtml" />
     <Content Include="Views\Student\Classroom.cshtml" />
     <Content Include="Views\Student\Profile.cshtml" />
+    <Content Include="Views\Student\Payment.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />

@@ -27,30 +27,33 @@
     <div class="row align-start" style="display: flex; gap: 30px; align-items: flex-start; flex-wrap: wrap;">
 
         <div class="col-2" style="flex: 0.8; min-width: 280px;">
-            <div class="card-box profile-sidebar-card">
-                <div class="profile-avatar-wrapper">
+            <div class="card-box profile-sidebar-card" style="background: #fff; padding: 25px; border-radius: 8px; box-shadow: 0 2px 10px rgba(0,0,0,0.05); text-align: center;">
 
-                    <img src="@(string.IsNullOrEmpty(Model.Avatar) ? Url.Content("~/Content/images/user-1.png") : Url.Content(Model.Avatar))"
+                <div class="profile-avatar-wrapper" style="position: relative; width: 120px; height: 120px; margin: 0 auto 30px;">
+
+                    <img id="profile-avatar-display"
+                         src="@(string.IsNullOrEmpty(Model.Avatar) ? Url.Content("~/Content/images/user-1.png") : Url.Content(Model.Avatar))"
                          alt="Student Avatar"
-                         class="profile-avatar-img">
+                         class="profile-avatar-img"
+                         style="width: 100%; height: 100%; border-radius: 8px; object-fit: cover; border: 3px solid #764ba2; display: block;">
 
-                    <label for="avatar-input" class="avatar-upload-btn">
-                        <i class="fa fa-camera"></i>
+                    <label for="avatar-input" class="avatar-upload-btn" style="position: absolute; bottom: 0; right: 0; background: #764ba2; color: #fff; width: 34px; height: 34px; border-radius: 30%; display: flex; align-items: center; justify-content: center; cursor: pointer; box-shadow: 0 2px 5px rgba(0,0,0,0.2); margin: -40px;">
+                        <i class="fa fa-camera" style="font-size: 14px;"></i>
                     </label>
-                    <input type="file" id="avatar-input" style="display:none;">
+                    <input type="file" id="avatar-input" accept="image/*" style="display:none;">
                 </div>
 
                 <div class="profile-main-info">
-                    <h3 style="margin: 0; font-size: 20px; font-weight: 600;">@Model.FullName</h3>
+                    <h3 style="margin: 0; font-size: 20px; font-weight: 600; color: #333;">@Model.FullName</h3>
 
-                    <p style="margin-top: 8px; font-size: 14px;">
+                    <p style="margin-top: 8px; font-size: 14px; color: #666;">
                         Student ID:
                         <span id="display-student-id" style="font-weight: 600; color: #2c3e50;">
                             #STU-@Model.StudentID.ToString("D4")
                         </span>
                     </p>
 
-                    <p class="mt-15" style="margin-top: 15px;">
+                    <p class="mt-15" style="margin-top: 15px; color: #999; font-size: 13px;">
                         Member since:
                         <span>Jan 2026</span>
                     </p>
@@ -76,21 +79,13 @@
                     </div>
 
                     <div class="form-group" style="margin-bottom: 15px;">
-                        <label style="display: block; font-size: 14px; color: #555; margin-bottom: 5px; font-weight: 500;">Email Address</label>
-                        <input type="email" class="form-control" value="student1@gmail.com" disabled style="width: 100%; padding: 10px; border: 1px solid #ddd; border-radius: 6px; background: #f8f9fa; color: #aaa; cursor: not-allowed;">
-                        <small class="form-text-muted" style="color: #999; font-size: 12px; display: block; margin-top: 5px;">
-                            <i class="fa fa-info-circle"></i> Email cannot be changed.
-                        </small>
-                    </div>
-
-                    <div class="form-group" style="margin-bottom: 15px;">
                         <label style="display: block; font-size: 14px; color: #555; margin-bottom: 5px; font-weight: 500;">Phone Number</label>
-                        <input type="text" name="Phone" class="form-control" value="@Model.Phone" style="width: 100%; padding: 10px; border: 1px solid #ddd; border-radius: 6px;">
+                        <input type="text" name="Phone" class="form-control" value="@Model.Phone" style="width: 100%; padding: 10px; border: 1px solid #ddd; border-radius: 6px; font-family: inherit;">
                     </div>
 
                     <div class="form-group" style="margin-bottom: 20px;">
                         <label style="display: block; font-size: 14px; color: #555; margin-bottom: 5px; font-weight: 500;">Address</label>
-                        <input type="text" name="Address" class="form-control" value="@Model.Address" style="width: 100%; padding: 10px; border: 1px solid #ddd; border-radius: 6px;">
+                        <input type="text" name="Address" class="form-control" value="@Model.Address" style="width: 100%; padding: 10px; border: 1px solid #ddd; border-radius: 6px; font-family: inherit;">
                     </div>
 
                     <button type="submit" class="btn btn-primary w-100" style="background: #764ba2; color: #fff; border: 0; padding: 12px; font-weight: 600; border-radius: 6px; cursor: pointer; width: 100%;">
@@ -110,17 +105,17 @@
 
                     <div class="form-group" style="margin-bottom: 15px;">
                         <label style="display: block; font-size: 14px; color: #555; margin-bottom: 5px; font-weight: 500;">Current Password</label>
-                        <input type="password" name="CurrentPassword" class="form-control" placeholder="Enter current password" style="width: 100%; padding: 10px; border: 1px solid #ddd; border-radius: 6px;">
+                        <input type="password" name="CurrentPassword" class="form-control" placeholder="Enter current password" style="width: 100%; padding: 10px; border: 1px solid #ddd; border-radius: 6px; font-family: inherit;">
                     </div>
 
                     <div class="form-group" style="margin-bottom: 15px;">
                         <label style="display: block; font-size: 14px; color: #555; margin-bottom: 5px; font-weight: 500;">New Password</label>
-                        <input type="password" name="NewPassword" class="form-control" placeholder="Enter new password" style="width: 100%; padding: 10px; border: 1px solid #ddd; border-radius: 6px;">
+                        <input type="password" name="NewPassword" class="form-control" placeholder="Enter new password" style="width: 100%; padding: 10px; border: 1px solid #ddd; border-radius: 6px; font-family: inherit;">
                     </div>
 
                     <div class="form-group" style="margin-bottom: 20px;">
                         <label style="display: block; font-size: 14px; color: #555; margin-bottom: 5px; font-weight: 500;">Confirm New Password</label>
-                        <input type="password" name="ConfirmPassword" class="form-control" placeholder="Confirm new password" style="width: 100%; padding: 10px; border: 1px solid #ddd; border-radius: 6px;">
+                        <input type="password" name="ConfirmPassword" class="form-control" placeholder="Confirm new password" style="width: 100%; padding: 10px; border: 1px solid #ddd; border-radius: 6px; font-family: inherit;">
                     </div>
 
                     <button type="submit" class="btn btn-dark w-100" style="background: #333; color: #fff; border: 0; padding: 12px; font-weight: 600; border-radius: 6px; cursor: pointer; width: 100%;">
@@ -134,5 +129,35 @@
     </div>
 </div>
 
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script>
+    $(document).ready(function () {
+        $('#avatar-input').change(function () {
+            var file = this.files[0];
+            if (file) {
+                var formData = new FormData();
+                formData.append('avatarFile', file);
 
-
+                $.ajax({
+                    url: '@Url.Action("UploadAvatar", "Student")',
+                    type: 'POST',
+                    data: formData,
+                    contentType: false,
+                    processData: false,
+                    success: function (response) {
+                        if (response.success) {
+                            // Đổi hình hiển thị trên giao diện lập tức ghen ní
+                            $('#profile-avatar-display').attr('src', response.imgUrl);
+                            alert('Avatar updated successfully!');
+                        } else {
+                            alert(response.message);
+                        }
+                    },
+                    error: function () {
+                        alert('An error occurred during file upload.');
+                    }
+                });
+            }
+        });
+    });
+</script>

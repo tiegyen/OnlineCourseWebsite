@@ -743,6 +743,7 @@ h4 {
     width: 150px;
     height: 150px;
     margin: 0 auto 20px;
+    position: relative
 }
 
 .profile-avatar-img {
@@ -758,8 +759,8 @@ h4 {
 
 .avatar-upload-btn {
     position: absolute;
-    bottom: 0;
-    right: 0;
+    bottom: 5px;
+    right: -10px;
     background: #ff523b;
     color: #fff;
     width: 35px;

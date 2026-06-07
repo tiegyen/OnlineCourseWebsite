@@ -70,6 +70,12 @@ namespace OnlineCourseWebsite.Models
 		{
 			OnCreated();
 		}
+		
+		public dbOnlineCourseDataContext(System.Data.IDbConnection connection) : 
+				base(connection, mappingSource)
+		{
+			OnCreated();
+		}
 
         public dbOnlineCourseDataContext() :
 base(global::System.Configuration.ConfigurationManager.ConnectionStrings[
@@ -77,13 +83,8 @@ base(global::System.Configuration.ConfigurationManager.ConnectionStrings[
         {
             OnCreated();
         }
-        public dbOnlineCourseDataContext(System.Data.IDbConnection connection) : 
-				base(connection, mappingSource)
-		{
-			OnCreated();
-		}
-		
-		public dbOnlineCourseDataContext(string connection, System.Data.Linq.Mapping.MappingSource mappingSource) : 
+
+        public dbOnlineCourseDataContext(string connection, System.Data.Linq.Mapping.MappingSource mappingSource) : 
 				base(connection, mappingSource)
 		{
 			OnCreated();
@@ -2681,6 +2682,8 @@ base(global::System.Configuration.ConfigurationManager.ConnectionStrings[
 		
 		private int _UserID;
 		
+		private string _Password;
+		
 		private EntitySet<Enrollment> _Enrollments;
 		
 		private EntitySet<Review> _Reviews;
@@ -2703,6 +2706,8 @@ base(global::System.Configuration.ConfigurationManager.ConnectionStrings[
     partial void OnAvatarChanged();
     partial void OnUserIDChanging(int value);
     partial void OnUserIDChanged();
+    partial void OnPasswordChanging(string value);
+    partial void OnPasswordChanged();
     #endregion
 		
 		public Student()
@@ -2833,6 +2838,26 @@ base(global::System.Configuration.ConfigurationManager.ConnectionStrings[
 					this._UserID = value;
 					this.SendPropertyChanged("UserID");
 					this.OnUserIDChanged();
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_Password", DbType="VarChar(50) NOT NULL", CanBeNull=false)]
+		public string Password
+		{
+			get
+			{
+				return this._Password;
+			}
+			set
+			{
+				if ((this._Password != value))
+				{
+					this.OnPasswordChanging(value);
+					this.SendPropertyChanging();
+					this._Password = value;
+					this.SendPropertyChanged("Password");
+					this.OnPasswordChanged();
 				}
 			}
 		}

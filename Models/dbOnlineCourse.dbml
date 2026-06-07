@@ -125,6 +125,7 @@
       <Column Name="Address" Type="System.String" DbType="NVarChar(200)" CanBeNull="true" />
       <Column Name="Avatar" Type="System.String" DbType="VarChar(255)" CanBeNull="true" />
       <Column Name="UserID" Type="System.Int32" DbType="Int NOT NULL" CanBeNull="false" />
+      <Column Name="Password" Type="System.String" DbType="VarChar(50) NOT NULL" CanBeNull="false" />
       <Association Name="Student_Enrollment" Member="Enrollments" ThisKey="StudentID" OtherKey="StudentID" Type="Enrollment" />
       <Association Name="Student_Review" Member="Reviews" ThisKey="StudentID" OtherKey="StudentID" Type="Review" />
       <Association Name="User_Account_Student" Member="User_Account" ThisKey="UserID" OtherKey="UserID" Type="User_Account" IsForeignKey="true" DeleteRule="CASCADE" DeleteOnNull="true" />

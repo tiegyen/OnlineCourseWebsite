@@ -30,8 +30,8 @@ namespace OnlineCourseWebsite.Controllers
                                      .Select(e => e.Course) // Bốc thẳng dữ liệu Model Course đi kèm ra
                                      .ToList();
 
-            // 🌟 MẸO NHỎ (Tùy chọn): Nếu bảng Enrollment của ní có lưu sẵn cột Progress (Tiến độ % học), 
-            // ní có thể quăng nguyên danh sách Enrollment sang View luôn. 
+            // 🌟 MẸO NHỎ (Tùy chọn): Nếu bảng Enrollment có lưu sẵn cột Progress (Tiến độ % học), 
+            // có thể quăng nguyên danh sách Enrollment sang View luôn. 
             // Ở đây Gen truyền List<Course> làm Model chính để khớp với sườn giao diện của ní ghen.
 
             return View(myEnrolledCourses);
@@ -98,7 +98,8 @@ namespace OnlineCourseWebsite.Controllers
             return View(student);
         }
 
-        // POST: Student/UpdateProfile
+        
+
         [HttpPost]
         [ValidateAntiForgeryToken]
         public ActionResult UpdateProfile(string FullName, string Phone, string Address)
@@ -115,20 +116,130 @@ namespace OnlineCourseWebsite.Controllers
                     return RedirectToAction("Profile");
                 }
 
-                // Cập nhật thông tin mới
                 student.FullName = FullName;
                 student.Phone = Phone;
                 student.Address = Address;
 
-                // 🌟 SỬA TẠI ĐÂY: Đổi SaveChanges thành SubmitChanges ghen ní!
                 db.SubmitChanges();
+                Session["StudentProfile"] = student; // Cập nhật Session hiển thị tên mới
 
-                Session["StudentProfile"] = student;
                 TempData["Success"] = "Profile updated successfully!";
             }
-
             return RedirectToAction("Profile");
         }
+
+        // 2. XỬ LÝ UPLOAD HÌNH ẢNH AVATAR
+        [HttpPost]
+        public ActionResult UploadAvatar(HttpPostedFileBase avatarFile)
+        {
+            var studentSession = Session["StudentProfile"] as Student;
+            if (studentSession == null) return Json(new { success = false, message = "Session expired." });
+
+            if (avatarFile != null && avatarFile.ContentLength > 0)
+            {
+                try
+                {
+                    // Kiểm tra đuôi file có phải là hình ảnh không
+                    string ext = Path.GetExtension(avatarFile.FileName).ToLower();
+                    if (ext != ".jpg" && ext != ".jpeg" && ext != ".png" && ext != ".gif")
+                    {
+                        return Json(new { success = false, message = "Only JPG, JPEG, PNG, or GIF files are allowed." });
+                    }
+
+                    // Tạo tên file duy nhất theo ID của học viên để không bị đè hình trùng tên
+                    string fileName = "avatar_student_" + studentSession.StudentID + ext;
+
+                    // Đường dẫn thư mục lưu file trên Server (Ví dụ: ~/Content/images/)
+                    string folderPath = Server.MapPath("~/Content/images/");
+
+                    // Nếu chưa có thư mục thì tự tạo luôn cho an toàn
+                    if (!Directory.Exists(folderPath)) Directory.CreateDirectory(folderPath);
+
+                    string fullPath = Path.Combine(folderPath, fileName);
+
+                    // Lưu file hình vật lý vào thư mục dự án
+                    avatarFile.SaveAs(fullPath);
+
+                    // Cập nhật đường dẫn hình mới vào Database (cột Avatar của hai ní)
+                    var student = db.Students.SingleOrDefault(s => s.StudentID == studentSession.StudentID);
+                    student.Avatar = "~/Content/images/" + fileName;
+
+                    db.SubmitChanges();
+                    Session["StudentProfile"] = student; // Cập nhật lại Session hình ảnh mới
+
+                    return Json(new { success = true, imgUrl = Url.Content(student.Avatar) });
+                }
+                catch (Exception ex)
+                {
+                    return Json(new { success = false, message = "Error: " + ex.Message });
+                }
+            }
+            return Json(new { success = false, message = "No file selected." });
+        }
+
+        // 3. XỬ LÝ ĐỔI MẬT KHẨU (BẢO MẬT)
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public ActionResult ChangePassword(string CurrentPassword, string NewPassword, string ConfirmPassword)
+        {
+            var studentSession = Session["StudentProfile"] as Student;
+            if (studentSession == null) return RedirectToAction("Login", "User");
+
+            var student = db.Students.SingleOrDefault(s => s.StudentID == studentSession.StudentID);
+            if (student != null)
+            {
+                // 🌟 Giờ thuộc tính student.Password đã tồn tại mượt mà rồi nè ní!
+                if (student.Password != CurrentPassword)
+                {
+                    TempData["Error"] = "Current password is incorrect!";
+                    return RedirectToAction("Profile");
+                }
+
+                if (string.IsNullOrEmpty(NewPassword) || NewPassword.Length < 6)
+                {
+                    TempData["Error"] = "New password must be at least 6 characters long!";
+                    return RedirectToAction("Profile");
+                }
+
+                if (NewPassword != ConfirmPassword)
+                {
+                    TempData["Error"] = "Confirm password does not match!";
+                    return RedirectToAction("Profile");
+                }
+
+                // Cập nhật và lưu
+                student.Password = NewPassword;
+                db.SubmitChanges();
+
+                TempData["Success"] = "Password changed successfully!";
+            }
+            return RedirectToAction("Profile");
+        }
+
+        public ActionResult Payment()
+        {
+            var studentSession = Session["StudentProfile"] as OnlineCourseWebsite.Models.Student;
+            if(studentSession == null)
+            {
+                return RedirectToAction("Login", "User");
+            }
+
+            var paymentHistory = (from p in db.Payments
+                                  join e in db.Enrollments on p.EnrollmentID equals e.EnrollmentID
+                                  join c in db.Courses on e.CourseID equals c.CourseID
+                                  where e.StudentID == studentSession.StudentID
+                                  orderby p.PaymentDate descending
+                                  select new OnlineCourseWebsite.Models.ViewModel.PaymentRow
+                                  {
+                                      PaymentID = p.PaymentID,
+                                      CourseName = c.CourseName,
+                                      Amount = p.Amount,
+                                      PaymentMethod = p.PaymentMethod,
+                                      PaymentStatus = p.PaymentStatus
+                                  }).ToList();
+            return View(paymentHistory);
+        }
+
 
     }
 }
