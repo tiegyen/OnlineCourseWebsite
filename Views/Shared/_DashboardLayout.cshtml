@@ -1,0 +1,46 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>@ViewBag.Title | English Mastery</title>
+    <link href="~/css/style.css" rel="stylesheet" />
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css">
+</head>
+<body>
+    <div class="admin-wrapper">
+        <div class="admin-sidebar">
+            <div class="sidebar-brand sidebar-brand-admin">
+                <i class="fa fa-sliders"></i> Admin Control
+            </div>
+            <ul class="sidebar-menu">
+                <li class="@(ViewContext.RouteData.Values["Action"].ToString() == "Dashboard" ? "active" : "")">
+                    <a href="@Url.Action("Dashboard", "Admin")"><i class="fa fa-dashboard"></i> Dashboard</a>
+                </li>
+                <li><a href="@Url.Action("ManageCourses", "Admin")"><i class="fa fa-book"></i> Courses & Categories</a></li>
+                <li><a href="@Url.Action("ManageUsers", "Admin")"><i class="fa fa-users"></i> Instructors & Students</a></li>
+                <li><a href="@Url.Action("ManagePayments", "Admin")"><i class="fa fa-credit-card"></i> Enrollments & Payments</a></li>
+                <li class="mt-50"><a href="@Url.Action("Logout", "User")"><i class="fa fa-sign-out"></i> Logout</a></li>
+            </ul>
+        </div>
+
+        <div class="admin-content">
+            <div class="admin-header">
+                <div>
+                    <h2>@ViewBag.HeaderTitle</h2>
+                    <p class="text-link">@ViewBag.HeaderDesc</p>
+                </div>
+                <div class="user-info">
+                    <span class="student-welcome welcome-super-admin"><i class="fa fa-shield"></i> Super Admin</span>
+                </div>
+            </div>
+
+            @RenderBody()
+        </div>
+    </div>
+
+    @Scripts.Render("~/bundles/jquery")
+    @RenderSection("scripts", required: false)
+</body>
+</html>

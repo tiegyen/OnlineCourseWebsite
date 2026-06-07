@@ -1,0 +1,128 @@
+﻿@*@{
+        ViewBag.Title = "Dashboard";
+        Layout = "~/Views/Shared/_DashboardLayout.cshtml";
+    }
+
+    <h2>Dashboard</h2>*@
+
+
+@{
+    ViewBag.Title = "Admin Dashboard";
+    ViewBag.HeaderTitle = "Global System Overview";
+    ViewBag.HeaderDesc = "Root administrator command center.";
+    Layout = "~/Views/Shared/_DashboardLayout.cshtml";
+}
+
+<div class="admin-stats-grid">
+    <div class="stat-card">
+        <div class="stat-info">
+            <h3>@ViewBag.TotalCourses</h3>
+            <p>Total Courses</p>
+        </div>
+        <div class="stat-icon"><i class="fa fa-book"></i></div>
+    </div>
+
+    <div class="stat-card">
+        <div class="stat-info">
+            <h3>@ViewBag.TotalStudents</h3>
+            <p>Total Students</p>
+        </div>
+        <div class="stat-icon icon-blue"><i class="fa fa-graduation-cap"></i></div>
+    </div>
+
+    <div class="stat-card">
+        <div class="stat-info">
+            <h3>@ViewBag.TotalInstructors</h3>
+            <p>Total Instructors</p>
+        </div>
+        <div class="stat-icon icon-orange"><i class="fa fa-user-secret"></i></div>
+    </div>
+
+    <div class="stat-card">
+        <div class="stat-info">
+            <h3>@ViewBag.TotalEnrollments</h3>
+            <p>Total Enrollments</p>
+        </div>
+        <div class="stat-icon icon-green"><i class="fa fa-check-square-o"></i></div>
+    </div>
+
+    <div class="stat-card">
+        <div class="stat-info">
+            @* Định dạng tiền tệ VND cho đẹp mắt ghen bà chị *@
+            <h3>@ViewBag.TotalRevenue.ToString("N0") VND</h3>
+            <p>Total Revenue</p>
+        </div>
+        <div class="stat-icon icon-gold"><i class="fa fa-money"></i></div>
+    </div>
+</div>
+
+<div class="card-box mt-30">
+    <div class="review-mod-box">
+        <h3 class="profile-section-title"><i class="fa fa-star"></i> Global Reviews Moderation</h3>
+        <span class="text-link" style="font-size: 13px;">Review Statistics: <strong>4.6 Avg Rating</strong></span>
+    </div>
+
+    @* Đang để cứng giao diện tĩnh để đồng bộ đồ án của ní *@
+    <div class="review-card" style="margin-top: 15px; margin-bottom: 15px;">
+        <div class="review-header">
+            <div>
+                <span class="review-author">Alice Pham</span>
+                <small class="text-link"> on Course: <strong>Business English</strong></small>
+                <div class="review-rating">
+                    <i class="fa fa-star"></i><i class="fa fa-star"></i><i class="fa fa-star"></i><i class="fa fa-star"></i><i class="fa fa-star"></i>
+                </div>
+            </div>
+            <button class="btn-action-icon btn-delete-review" title="Delete Inappropriate Review">
+                <i class="fa fa-trash"></i> Delete
+            </button>
+        </div>
+        <p class="review-comment">"Highly recommend"</p>
+    </div>
+
+    <div class="review-card">
+        <div class="review-header">
+            <div>
+                <span class="review-author">Pham Thi D</span>
+                <small class="text-link"> on Course: <strong>TOEIC Advanced</strong></small>
+                <div class="review-rating">
+                    <i class="fa fa-star"></i><i class="fa fa-star"></i><i class="fa fa-star"></i><i class="fa fa-star"></i><i class="fa fa-star-o"></i>
+                </div>
+            </div>
+            <button class="btn-action-icon btn-delete-review-bold" title="Delete Inappropriate Review">
+                <i class="fa fa-trash"></i> Delete
+            </button>
+        </div>
+        <p class="review-comment">"Easy to understand"</p>
+    </div>
+</div>
+
+@section scripts {
+    <script>
+        document.addEventListener("DOMContentLoaded", function () {
+            const deleteButtons = document.querySelectorAll(".btn-delete-review, .btn-delete-review-bold");
+
+            deleteButtons.forEach(button => {
+                button.addEventListener("click", function (event) {
+                    event.preventDefault();
+
+                    const confirmDelete = confirm("Are you sure you want to delete this inappropriate review?");
+
+                    if (confirmDelete) {
+                        const reviewCard = this.closest(".review-card");
+                        if (reviewCard) {
+                            reviewCard.style.transition = "opacity 0.3s ease";
+                            reviewCard.style.opacity = "0";
+
+                            setTimeout(() => {
+                                reviewCard.remove();
+                                alert("Data removed from Database successfully!");
+                            }, 300);
+                        }
+                    } else {
+                        alert("Action cancelled. Review is safe!");
+                    }
+                });
+            });
+        });
+    </script>
+}
