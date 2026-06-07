@@ -90,60 +90,105 @@ namespace OnlineCourseWebsite.Controllers
             return View(course);
         }
 
-        // GET: Course/Enroll/5
+        // 1. Trang xác nhận đơn hàng
         public ActionResult Enroll(int id)
         {
-            // 1. Kiểm tra đăng nhập
-            var studentSession = Session["StudentProfile"] as OnlineCourseWebsite.Models.Student;
-            if (studentSession == null)
-            {
-                TempData["Error"] = "Please log in to enroll in this course!";
-                return RedirectToAction("Login", "User");
-            }
-
-            // 2. Tìm khóa học bằng SingleOrDefault (Thay cho hàm Find bị lỗi ghen ní)
+            // Lấy thông tin khóa học và truyền sang view EnrollPage
             var course = db.Courses.SingleOrDefault(c => c.CourseID == id);
+            return View("EnrollPage", course);
+        }
+
+        // 2. Sau khi xác nhận xong, dẫn sang trang Thanh toán (QR Code)
+        public ActionResult PaymentDetails(int paymentId)
+        {
+            var payment = db.Payments.SingleOrDefault(p => p.PaymentID == paymentId);
+            if (payment == null) return HttpNotFound();
+
+            // Truyền dữ liệu qua View bằng ViewBag (để view QR cũ hoạt động được)
+            ViewBag.CourseName = payment.Enrollment.Course.CourseName;
+            ViewBag.Price = payment.Amount;
+
+            return View("PaymentDetails", payment); // Tên file .cshtml chứa QR Code
+        }
+
+        // POST: Course/ConfirmEnroll
+        //[HttpPost]
+        //[ValidateAntiForgeryToken]
+        //public ActionResult ConfirmEnroll(int courseID)
+        //{
+        //    var studentSession = Session["StudentProfile"] as OnlineCourseWebsite.Models.Student;
+        //    if (studentSession == null) return RedirectToAction("Login", "User");
+
+        //    var course = db.Courses.SingleOrDefault(c => c.CourseID == courseID);
+        //    if (course == null) return HttpNotFound();
+
+        //    // BƯỚC 1: TẠO ENROLLMENT
+        //    var newEnroll = new Enrollment
+        //    {
+        //        StudentID = studentSession.StudentID,
+        //        CourseID = courseID,
+        //        EnrollmentDate = DateTime.Now,
+        //        Progress = 0,
+        //        LearningStatus = "Learning"
+        //    };
+        //    db.Enrollments.InsertOnSubmit(newEnroll);
+        //    db.SubmitChanges();
+
+        //    // BƯỚC 2: TẠO PAYMENT
+        //    var newPayment = new Payment
+        //    {
+        //        EnrollmentID = newEnroll.EnrollmentID,
+        //        Amount = course.Price.GetValueOrDefault(0),
+        //        PaymentDate = DateTime.Now,
+        //        PaymentMethod = "Bank Transfer",
+        //        PaymentStatus = "Pending"
+        //    };
+        //    db.Payments.InsertOnSubmit(newPayment);
+        //    db.SubmitChanges();
+
+        //    return RedirectToAction("Payment", "Student"); // Đá về trang lịch sử để thấy hóa đơn vừa tạo
+        //}
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public ActionResult ConfirmEnroll(int courseID)
+        {
+            var studentSession = Session["StudentProfile"] as OnlineCourseWebsite.Models.Student;
+            if (studentSession == null) return RedirectToAction("Login", "User");
+
+            var course = db.Courses.SingleOrDefault(c => c.CourseID == courseID);
             if (course == null) return HttpNotFound();
 
-            // 3. Kiểm tra xem học viên đã đăng ký khóa này chưa
-            var existingEnroll = db.Enrollments.FirstOrDefault(e => e.StudentID == studentSession.StudentID && e.CourseID == id);
-            if (existingEnroll != null)
-            {
-                return RedirectToAction("EnrollPage", "Course", new { enrollmentId = existingEnroll.EnrollmentID });
-            }
-
-            // 4. TIẾN HÀNH TẠO ENROLLMENT VÀ PAYMENT TẠM THỜI (PENDING)
-            var newEnroll = new OnlineCourseWebsite.Models.Enrollment
+            // BƯỚC 1: TẠO ENROLLMENT
+            var newEnroll = new Enrollment
             {
                 StudentID = studentSession.StudentID,
-                CourseID = id,
+                CourseID = courseID,
                 EnrollmentDate = DateTime.Now,
                 Progress = 0,
-                LearningStatus = "Learning" // Mặc định ban đầu là đang học 
+                LearningStatus = "Learning"
             };
-
-            // 🌟 Trong LINQ to SQL dùng InsertOnSubmit thay cho Add nha
             db.Enrollments.InsertOnSubmit(newEnroll);
-            db.SubmitChanges(); // Lưu xuống để sinh ra ID tự tăng
+            db.SubmitChanges();
 
-            var newPayment = new OnlineCourseWebsite.Models.Payment
+            // BƯỚC 2: TẠO PAYMENT
+            var newPayment = new Payment
             {
                 EnrollmentID = newEnroll.EnrollmentID,
                 Amount = course.Price.GetValueOrDefault(0),
                 PaymentDate = DateTime.Now,
                 PaymentMethod = "Bank Transfer",
-                PaymentStatus = "Pending" // Trạng thái hóa đơn là chờ duyệt thanh toán
+                PaymentStatus = "Pending"
             };
-
-            // 🌟 Thay thế Add thành InsertOnSubmit cho bảng Payment luôn
             db.Payments.InsertOnSubmit(newPayment);
             db.SubmitChanges();
 
-            // 5. Đá học viên sang trang hiển thị thông tin chuyển khoản kèm theo ID hóa đơn vừa tạo
-            return RedirectToAction("EnrollPage", "Course", new { enrollmentId = newEnroll.EnrollmentID });
+            // 🌟 SỬA Ở ĐÂY: Đá về trang chi tiết thanh toán có mã QR
+            // Ní thay "PaymentDetails" bằng tên View chứa QR Code của ní
+            return RedirectToAction("PaymentDetails", "Course", new { paymentId = newPayment.PaymentID });
         }
 
-        
+
         // GET: Course/EnrollPage?enrollmentId=... HOẶC ?paymentId=...
         public ActionResult EnrollPage(int? enrollmentId, int? paymentId) // 🌟 Nhận cả 2 đầu 
         {

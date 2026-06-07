@@ -50,42 +50,38 @@
 
             @* 🌟 KHỐI XỬ LÝ BIẾN ĐỔI NÚT BẤM THÔNG MINH ĐÃ ĐƯỢC SỬA LINK CHUẨN LUỒNG *@
             @* 🌟 KHỐI NÚT BẤM ĐÃ ĐƯỢC THẮT CHẶT AN NINH: PHẢI THANH TOÁN MỚI ĐƯỢC VÀO CLASSROOM *@
-            <div class="details-action-group" style="margin-top: 25px; display: flex; flex-direction: column; gap: 12px;">
-                @if (ViewBag.IsEnrolled != null && (bool)ViewBag.IsEnrolled == true)
+        <div class="details-action-group" style="margin-top: 25px; display: flex; flex-direction: column; gap: 12px;">
+            @if (ViewBag.IsEnrolled != null && (bool)ViewBag.IsEnrolled == true)
+            {
+                if (ViewBag.IsPaid != null && (bool)ViewBag.IsPaid == true)
                 {
-                    if (ViewBag.IsPaid != null && (bool)ViewBag.IsPaid == true)
-                    {
-                        <a href="@Url.Action("Classroom", "Student", new { id = Model.CourseID })" class="btn btn-primary w-100" style="text-align: center; display: block; padding: 12px; font-weight: 600; text-decoration: none;">
-                            <i class="fa fa-graduation-cap"></i> Go to Classroom
-                        </a>
-
-                        <button class="btn btn-feedback w-100" onclick="document.getElementById('feedbackModal').classList.add('open')" style="padding: 12px; font-weight: 600; background: #f1f2f6; color: #2f3542; border: 1px solid #ced4da; border-radius: 6px; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 8px;">
-                            <i class="fa fa-pencil"></i> Write Feedback
-                        </button>
-                    }
-                    else
-                    {
-                        <a href="@Url.Action("EnrollPage", "Course", new { enrollmentId = ViewBag.EnrollmentID })" class="btn btn-primary w-100" style="text-align: center; display: block; padding: 12px; font-weight: 600; text-decoration: none; background: #f1c40f; border-color: #f1c40f; color: #fff;">
-                            <i class="fa fa-credit-card"></i> Payment Pending - Pay Now
-                        </a>
-                    }
+                    <a href="@Url.Action("Classroom", "Student", new { id = Model.CourseID })" class="btn btn-primary w-100" style="display: flex; align-items: center; justify-content: center; gap: 8px;">
+                        <i class="fa fa-graduation-cap"></i> <span>Go to Classroom</span>
+                    </a>
                 }
                 else
                 {
-                    if (Session["StudentProfile"] == null)
-                    {
-                        <a href="@Url.Action("Login", "User")" class="btn btn-primary w-100" style="text-align: center; display: block; padding: 12px; font-weight: 600; text-decoration: none; background: #ff4757; border-color: #ff4757;">
-                            <i class="fa fa-sign-in"></i> Login to Enroll
-                        </a>
-                    }
-                    else
-                    {
-                        <a href="@Url.Action("Enroll", "Course", new { id = Model.CourseID })" class="btn btn-primary w-100" style="text-align: center; display: block; padding: 12px; font-weight: 600; text-decoration: none; background: #ff4757; border-color: #ff4757;">
-                            <i class="fa fa-shopping-cart"></i> Enroll Now
-                        </a>
-                    }
+                    <a href="@Url.Action("PaymentDetails", "Course", new { paymentId = ViewBag.PaymentID })" class="btn btn-warning w-100" style="display: flex; align-items: center; justify-content: center; gap: 8px;">
+                        <i class="fa fa-credit-card"></i> <span>Pay Now</span>
+                    </a>
                 }
-            </div>
+            }
+            else
+            {
+                if (Session["StudentProfile"] == null)
+                {
+                    <a href="@Url.Action("Login", "User")" class="btn btn-primary w-100" style="display: flex; align-items: center; justify-content: center; gap: 8px;">
+                        <i class="fa fa-sign-in"></i> <span>Login to Enroll</span>
+                    </a>
+                }
+                else
+                {
+                    <a href="@Url.Action("Enroll", "Course", new { id = Model.CourseID })" class="btn btn-primary w-100" style="background: #ff4757; border: none; display: flex; align-items: center; justify-content: center; gap: 8px;">
+                        <i class="fa fa-shopping-cart"></i> <span>Enroll Now</span>
+                    </a>
+                }
+            }
+        </div>
 
             <a href="@Url.Action("Course", "Course")" class="text-center d-block mt-20 link-back-courses" style="color: #ff523b; font-weight: 500; text-decoration: none; margin-top: 20px;">Back to Courses</a>
         </div>

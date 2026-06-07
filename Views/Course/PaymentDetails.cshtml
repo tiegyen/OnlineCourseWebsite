@@ -1,0 +1,89 @@
+﻿@model OnlineCourseWebsite.Models.Payment
+
+@{
+    ViewBag.Title = "Complete Your Payment | English Mastery";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<div class="header">
+    @* Giữ nguyên để đồng bộ CSS Header của Layout *@
+</div>
+
+<div class="small-container mt-50 mb-50">
+    <h2 class="title" style="margin-top: 40px; margin-bottom: 20px;">Course Payment</h2>
+
+    <div class="row align-start" style="display: flex; flex-wrap: wrap; gap: 25px; align-items: flex-start;">
+
+        <div class="payment-left-col" style="flex: 1.2; min-width: 320px;">
+            <div class="card-box" style="background: #fff; padding: 25px; border-radius: 10px; box-shadow: 0 5px 15px rgba(0,0,0,0.05);">
+                <h3 class="mb-20" style="color: #2c3e50; font-size: 18px; font-weight: 600; margin-bottom: 15px;">
+                    <i class="fa fa-shopping-bag" style="color: #ff4757; margin-right: 8px;"></i> Order Summary
+                </h3>
+
+                <div class="table-responsive">
+                    <table class="table-payment">
+                        <thead>
+                            <tr>
+                                <th>Invoice ID</th>
+                                <th>Course Name</th>
+                                <th style="text-align: right;">Total Amount</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td class="invoice-id">#INV-@Model.PaymentID.ToString("D4")</td>
+                                <td style="font-weight: 500; color: #333;">@ViewBag.CourseName</td>
+                                <td class="invoice-amount" style="text-align: right; color: #ff4757; font-size: 16px; font-weight: bold;">
+                                    @(((decimal?)ViewBag.Price).GetValueOrDefault(0).ToString("N0")) VND
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <div class="payment-right-col" style="flex: 0.8; min-width: 280px; box-shadow: 0 5px 15px rgba(0,0,0,0.05);">
+            <div class="card-box" style="background: #fff; padding: 25px; border-radius: 10px;">
+                <h3 class="mb-20" style="color: #2c3e50; font-size: 18px; font-weight: 600; margin-bottom: 20px;">
+                    <i class="fa fa-university" style="color: #764ba2; margin-right: 8px;"></i> Bank Transfer Payment
+                </h3>
+
+                <p style="font-size: 13px; color: #666; margin-bottom: 15px;">Please scan the QR code or transfer manually using the information below to unlock your course.</p>
+
+                @{
+                    // 🌟 THIẾT LẬP THÔNG TIN NGÂN HÀNG CHÍNH CHỦ
+                    string bankID = "VCB"; // Mã Vietcombank
+                    string accountNo = "1023456789";
+                    string accountName = "NGUYEN VAN A"; // Tên viết hoa không dấu
+                    string description = "PAY INV" + Model.PaymentID.ToString("D4");
+
+                    // Gọi API tạo mã QR Code động theo số tiền của khóa học
+                    string qrUrl = $"https://img.vietqr.io/image/{bankID}-{accountNo}-compact2.png?amount={ViewBag.Price}&addInfo={Uri.EscapeDataString(description)}&accountName={Uri.EscapeDataString(accountName)}";
+                }
+
+                <div class="bank-info-box" style="background: #fafafa; padding: 12px; border-radius: 6px; font-size: 13px; margin-bottom: 15px; border: 1px dashed #ccc; line-height: 1.6;">
+                    <p style="margin: 4px 0;"><strong>Bank:</strong> Vietcombank (VCB)</p>
+                    <p style="margin: 4px 0;"><strong>Account Number:</strong> @accountNo</p>
+                    <p style="margin: 4px 0;"><strong>Account Holder:</strong> @accountName</p>
+                    <p style="margin: 4px 0;"><strong>Transfer Content:</strong> <span style="color: #764ba2; font-weight: bold;">@description</span></p>
+                </div>
+
+                <div class="qr-code-box" style="text-align: center; margin-bottom: 15px; padding: 10px; background: #f9f9f9; border-radius: 6px;">
+                    <span style="font-size: 11px; color: #888; display: block; margin-bottom: 5px;"><i class="fa fa-camera"></i> Open your banking app & scan this QR:</span>
+                    <img src="@qrUrl" alt="Scan QR Code" style="max-width: 100%; height: auto; width: 180px; border: 1px solid #eee; padding: 5px; background: #fff; border-radius: 4px;" />
+                </div>
+
+                @using (Html.BeginForm("SubmitManualPayment", "Course", FormMethod.Post))
+                {
+                    @Html.AntiForgeryToken()
+                    <input type="hidden" name="paymentId" value="@Model.PaymentID" />
+                    <button type="submit" class="btn" style="background: #2ecc71; color: #fff; padding: 12px; font-weight: 600; width: 100%; border-radius: 6px; cursor: pointer; font-size: 14px; border: none; display: block; text-align: center;">
+                        <i class="fa fa-check-circle"></i> I Have Transferred - Unlock Now
+                    </button>
+                }
+            </div>
+        </div>
+
+    </div>
+</div>
