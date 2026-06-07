@@ -140,7 +140,9 @@
       <DesignTime>True</DesignTime>
       <DependentUpon>dbOnlineCourse.dbml</DependentUpon>
     </Compile>
+    <Compile Include="Models\ViewModel\CoursesViewModel.cs" />
     <Compile Include="Models\ViewModel\PaymentRow.cs" />
+    <Compile Include="Models\ViewModel\UserManagementViewModel.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
@@ -266,6 +268,8 @@
     <Content Include="Views\Course\EnrollPage.cshtml" />
     <Content Include="Views\Shared\_DashboardLayout.cshtml" />
     <Content Include="Views\Admin\Dashboard.cshtml" />
+    <Content Include="Views\Admin\Courses.cshtml" />
+    <Content Include="Views\Admin\Users.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />

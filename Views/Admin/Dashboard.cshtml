@@ -5,6 +5,7 @@
 
     <h2>Dashboard</h2>*@
 
+@model List<OnlineCourseWebsite.Models.Review>
 
 @{
     ViewBag.Title = "Admin Dashboard";
@@ -48,7 +49,6 @@
 
     <div class="stat-card">
         <div class="stat-info">
-            @* Định dạng tiền tệ VND cho đẹp mắt ghen bà chị *@
             <h3>@ViewBag.TotalRevenue.ToString("N0") VND</h3>
             <p>Total Revenue</p>
         </div>
@@ -59,67 +59,62 @@
 <div class="card-box mt-30">
     <div class="review-mod-box">
         <h3 class="profile-section-title"><i class="fa fa-star"></i> Global Reviews Moderation</h3>
-        <span class="text-link" style="font-size: 13px;">Review Statistics: <strong>4.6 Avg Rating</strong></span>
+        <span class="text-link" style="font-size: 13px;">Review Statistics: <strong>@ViewBag.AvgRating Avg Rating</strong></span>
     </div>
 
-    @* Đang để cứng giao diện tĩnh để đồng bộ đồ án của ní *@
-    <div class="review-card" style="margin-top: 15px; margin-bottom: 15px;">
-        <div class="review-header">
-            <div>
-                <span class="review-author">Alice Pham</span>
-                <small class="text-link"> on Course: <strong>Business English</strong></small>
-                <div class="review-rating">
-                    <i class="fa fa-star"></i><i class="fa fa-star"></i><i class="fa fa-star"></i><i class="fa fa-star"></i><i class="fa fa-star"></i>
-                </div>
-            </div>
-            <button class="btn-action-icon btn-delete-review" title="Delete Inappropriate Review">
-                <i class="fa fa-trash"></i> Delete
-            </button>
-        </div>
-        <p class="review-comment">"Highly recommend"</p>
-    </div>
+    @if (Model != null && Model.Any())
+    {
+        foreach (var rev in Model)
+        {
+            <div class="review-card" style="margin-top: 15px; margin-bottom: 15px;">
+                <div class="review-header">
+                    <div>
+                        <span class="review-author">@rev.Student.FullName</span>
+                        <small class="text-link"> on Course: <strong>@rev.Course.CourseName</strong></small>
 
-    <div class="review-card">
-        <div class="review-header">
-            <div>
-                <span class="review-author">Pham Thi D</span>
-                <small class="text-link"> on Course: <strong>TOEIC Advanced</strong></small>
-                <div class="review-rating">
-                    <i class="fa fa-star"></i><i class="fa fa-star"></i><i class="fa fa-star"></i><i class="fa fa-star"></i><i class="fa fa-star-o"></i>
+                        <div class="review-rating">
+                            @for (int i = 1; i <= 5; i++)
+                            {
+                                if (i <= rev.Rating)
+                                {
+                                    <i class="fa fa-star"></i>
+                                }
+                                else
+                                {
+                                    <i class="fa fa-star-o"></i>
+                                }
+                            }
+                        </div>
+                    </div>
+
+                    @using (Html.BeginForm("DeleteReview", "Admin", FormMethod.Post, new { @class = "delete-review-form" }))
+                    {
+                        <input type="hidden" name="reviewId" value="@rev.ReviewID" />
+                        <button type="submit" class="btn-action-icon btn-delete-review" title="Delete Inappropriate Review" style="background:none; border:none; cursor:pointer;">
+                            <i class="fa fa-trash"></i> Delete
+                        </button>
+                    }
                 </div>
+                <p class="review-comment">"@rev.Comment"</p>
             </div>
-            <button class="btn-action-icon btn-delete-review-bold" title="Delete Inappropriate Review">
-                <i class="fa fa-trash"></i> Delete
-            </button>
-        </div>
-        <p class="review-comment">"Easy to understand"</p>
-    </div>
+        }
+    }
+    else
+    {
+        <p style="text-align: center; color: #aaa; font-style: italic; padding: 20px;">No reviews available in the system yet.</p>
+    }
 </div>
 
 @section scripts {
     <script>
         document.addEventListener("DOMContentLoaded", function () {
-            const deleteButtons = document.querySelectorAll(".btn-delete-review, .btn-delete-review-bold");
+            const deleteForms = document.querySelectorAll(".delete-review-form");
 
-            deleteButtons.forEach(button => {
-                button.addEventListener("click", function (event) {
-                    event.preventDefault();
-
-                    const confirmDelete = confirm("Are you sure you want to delete this inappropriate review?");
-
-                    if (confirmDelete) {
-                        const reviewCard = this.closest(".review-card");
-                        if (reviewCard) {
-                            reviewCard.style.transition = "opacity 0.3s ease";
-                            reviewCard.style.opacity = "0";
-
-                            setTimeout(() => {
-                                reviewCard.remove();
-                                alert("Data removed from Database successfully!");
-                            }, 300);
-                        }
-                    } else {
-                        alert("Action cancelled. Review is safe!");
+            deleteForms.forEach(form => {
+                form.addEventListener("submit", function (event) {
+                    const confirmDelete = confirm("Are you sure you want to delete this inappropriate review from the Database?");
+                    if (!confirmDelete) {
+                        event.preventDefault(); // Hủy lệnh submit nếu bấm Cancel
                     }
                 });
             });
