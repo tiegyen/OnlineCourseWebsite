@@ -746,11 +746,14 @@ h4 {
 }
 
 .profile-avatar-img {
-    width: 150px;
-    height: 150px;
+    width: 150px !important;
+    height: 150px !important;
+    max-width: 150px !important;
+    padding: 0 !important;
     border-radius: 50%;
     object-fit: cover;
     border: 3px solid #764ba2;
+    display: block;
 }
 
 .avatar-upload-btn {
@@ -1677,4 +1680,3 @@ input[name="user-tabs"] {
     width: 0%; /* Bắt đầu từ 0 */
     transition: width 1.5s ease-in-out; /* Mấu chốt nằm ở đây nè */
 }
-

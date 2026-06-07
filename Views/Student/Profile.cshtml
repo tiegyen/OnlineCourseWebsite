@@ -29,19 +29,10 @@
         <div class="col-2" style="flex: 0.8; min-width: 280px;">
             <div class="card-box profile-sidebar-card">
                 <div class="profile-avatar-wrapper">
-                   <img src="@(string.IsNullOrEmpty(Model.Avatar)
-    ? Url.Content("~/Content/images/user-1.png")
-    : Url.Content(Model.Avatar))"
-     class="profile-avatar-img"
-     style="
-        width:150px !important;
-        height:150px !important;
-        object-fit:cover !important;
-        border-radius:50% !important;
-        display:block !important;
-        padding:0 !important;
-        margin:0 auto !important;
-     ">
+
+                    <img src="@(string.IsNullOrEmpty(Model.Avatar) ? Url.Content("~/Content/images/user-1.png") : Url.Content(Model.Avatar))"
+                         alt="Student Avatar"
+                         class="profile-avatar-img">
 
                     <label for="avatar-input" class="avatar-upload-btn">
                         <i class="fa fa-camera"></i>
@@ -143,7 +134,5 @@
     </div>
 </div>
 
-<div class="footer">
-    @* Giữ nguyên *@
-</div>
+
 

@@ -162,7 +162,12 @@
     <Content Include="Content\bootstrap.min.css" />
     <Content Include="Content\bootstrap.rtl.css" />
     <Content Include="Content\bootstrap.rtl.min.css" />
-    <Content Include="Content\images\picture1.png" />
+    <Content Include="Content\images\banner1.png" />
+    <Content Include="Content\images\instructor1.jpg" />
+    <Content Include="Content\images\instructor2.jpg" />
+    <Content Include="Content\images\instructor3.jpg" />
+    <Content Include="Content\images\pic1.jpg" />
+    <Content Include="Content\images\pic2.jpg" />
     <Content Include="Content\images\student1.jpg" />
     <Content Include="Content\images\default-avatar.png" />
     <Content Include="Content\PagedList.css" />
