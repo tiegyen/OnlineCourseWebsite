@@ -5,16 +5,19 @@
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
 
-<div class="small-container mt-50">
-    <h2>Confirm Enrollment</h2>
-    <p>You are about to enroll in: <strong>@Model.CourseName</strong></p>
-    <p>Price: <strong>@Model.Price.Value.ToString("N0") VNĐ</strong></p>
+<div class="small-container mt-50" style="text-align: center; max-width: 600px; margin: 50px auto; padding: 20px; box-shadow: 0 4px 15px rgba(0,0,0,0.1); border-radius: 12px; background: #fff;">
+    <h2 style="color: #2c3e50; margin-bottom: 20px;">Confirm Enrollment</h2>
+    <p style="font-size: 16px; color: #555;">You are about to enroll in: <strong>@Model.CourseName</strong></p>
+    <p style="font-size: 18px; font-weight: bold; color: #ff4757; margin-bottom: 30px;">Price: @Model.Price.Value.ToString("N0") VNĐ</p>
 
     @using (Html.BeginForm("ConfirmEnroll", "Course", FormMethod.Post))
     {
         @Html.AntiForgeryToken()
         <input type="hidden" name="courseID" value="@Model.CourseID" />
-        <button type="submit" class="btn btn-primary">Confirm & Create Payment</button>
-        <a href="@Url.Action("Details", "Course", new { id = Model.CourseID })" class="btn">Cancel</a>
+
+        <div style="display: flex; gap: 15px; justify-content: center; margin-top: 20px;">
+            <button type="submit" class="btn btn-primary" style="padding: 10px 25px;">Confirm & Create Payment</button>
+            <a href="@Url.Action("Details", "Course", new { id = Model.CourseID })" class="btn" style="background: #f1f1f1; color: #333; padding: 10px 25px;">Cancel</a>
+        </div>
     }
 </div>
