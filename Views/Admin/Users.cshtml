@@ -1,8 +1,177 @@
-﻿
+﻿@model OnlineCourseWebsite.ViewModels.UsersViewModel
 @{
-    ViewBag.Title = "Users";
     Layout = "~/Views/Shared/_DashboardLayout.cshtml";
 }
 
-<h2>Users</h2>
+<div class="admin-content">
+    <div class="admin-header">
+        <div>
+            <h2>Users Accounts Management</h2>
+            <p class="text-link">Monitor system users, modify information, and activate/deactivate accounts.</p>
+        </div>
+    </div>
 
+    <div class="card-box mt-30 tab-wrapper">
+
+        <input type="radio" id="tab-instructors" name="user-tabs" checked>
+        <input type="radio" id="tab-students" name="user-tabs">
+
+        <div class="tab-nav">
+            <label for="tab-instructors" class="tab-link"><i class="fa fa-user-secret"></i> Instructors</label>
+            <label for="tab-students" class="tab-link"><i class="fa fa-graduation-cap"></i> Students</label>
+        </div>
+
+        <div class="tab-container">
+
+            <div class="tab-content" id="content-instructors">
+                <div class="tab-header-actions">
+                    <button class="btn" onclick="alert('Open Add Instructor Modal Popup!')"><i class="fa fa-plus"></i> Add New Instructor</button>
+                </div>
+                <div class="data-table-wrapper">
+                    <table class="data-table">
+                        <thead>
+                            <tr>
+                                <th>Name / Email</th>
+                                <th>Biography</th>
+                                <th>Status</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @if (Model.Instructors != null && Model.Instructors.Any())
+                            {
+                                foreach (var inst in Model.Instructors)
+                                {
+                                    <tr data-user-id="@inst.UserID">
+                                        <td><strong>@inst.FullName</strong><br><small class="text-link">@inst.Email</small></td>
+                                        <td>@(string.IsNullOrEmpty(inst.Bio) ? "No biography provided." : inst.Bio)</td>
+                                        <td>
+                                            @if (inst.Status == "Active")
+                                            {
+                                                <span class="account-badge active">Active</span>
+                                            }
+                                            else
+                                            {
+                                                <span class="account-badge disabled">Deactivated</span>
+                                            }
+                                        </td>
+                                        <td>
+                                            <a href="@Url.Action("EditInstructor", "Admin", new { id = inst.DetailID })" class="btn-action-icon text-link" title="Edit Info">
+                                                <i class="fa fa-edit"></i>
+                                            </a>
+                                            <button class="btn-status-action @(inst.Status == "Active" ? "deactivate" : "activate")">
+                                                @(inst.Status == "Active" ? "Block" : "Activate")
+                                            </button>
+                                        </td>
+                                    </tr>
+                                }
+                            }
+                            else
+                            {
+                                <tr>
+                                    <td colspan="4" style="text-align:center; color:#94a3b8; padding:20px;">No instructors found.</td>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <div class="tab-content" id="content-students">
+                <div class="data-table-wrapper">
+                    <table class="data-table">
+                        <thead>
+                            <tr>
+                                <th>Student Name</th>
+                                <th>Email</th>
+                                <th>Status</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @if (Model.Students != null && Model.Students.Any())
+                            {
+                                foreach (var std in Model.Students)
+                                {
+                                    <tr data-user-id="@std.UserID">
+                                        <td><strong>@std.FullName</strong></td>
+                                        <td>@std.Email</td>
+                                        <td>
+                                            @if (std.Status == "Active")
+                                            {
+                                                <span class="account-badge active">Active</span>
+                                            }
+                                            else
+                                            {
+                                                <span class="account-badge disabled">Deactivated</span>
+                                            }
+                                        </td>
+                                        <td>
+                                            <a href="@Url.Action("EditStudent", "Admin", new { id = std.DetailID })" class="btn-action-icon text-link" title="Edit Student Info">
+                                                <i class="fa fa-edit"></i>
+                                            </a>
+                                            <button class="btn-status-action @(std.Status == "Active" ? "deactivate" : "activate")">
+                                                @(std.Status == "Active" ? "Block" : "Activate")
+                                            </button>
+                                        </td>
+                                    </tr>
+                                }
+                            }
+                            else
+                            {
+                                <tr>
+                                    <td colspan="4" style="text-align:center; color:#94a3b8; padding:20px;">No students found.</td>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+        </div>
+    </div>
+</div>
+
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script>
+    $(document).ready(function () {
+        $(".tab-container").on("click", ".btn-status-action", function (e) {
+            e.preventDefault();
+            var btn = $(this);
+            var row = btn.closest("tr");
+            var userId = row.data("user-id");
+            var badge = row.find(".account-badge");
+
+            var isDeactivating = btn.hasClass("deactivate");
+            var confirmMsg = isDeactivating
+                ? "Are you sure you want to suspend this user account?"
+                : "Do you want to restore this user account?";
+
+            if (confirm(confirmMsg)) {
+                $.ajax({
+                    url: '@Url.Action("ToggleUserStatus", "Admin")',
+                    type: 'POST',
+                    data: { userId: userId },
+                    success: function (response) {
+                        if (response.success) {
+                            if (response.newStatus === "Inactive") {
+                                badge.removeClass("active").addClass("disabled").text("Deactivated");
+                                btn.removeClass("deactivate").addClass("activate").text("Activate");
+                                alert("User account has been suspended!");
+                            } else {
+                                badge.removeClass("disabled").addClass("active").text("Active");
+                                btn.removeClass("activate").addClass("deactivate").text("Block");
+                                alert("User account restored successfully!");
+                            }
+                        } else {
+                            alert(response.message);
+                        }
+                    },
+                    error: function () {
+                        alert("Error connecting to server.");
+                    }
+                });
+            }
+        });
+    });
+</script>

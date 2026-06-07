@@ -138,103 +138,141 @@ public class AdminController : Controller
         return View(payments);
     }
 
-    // GET: Admin/Users
-        public ActionResult Users()
+    public ActionResult Users()
     {
-        var model = new UserManagementViewModel();
+        var model = new UsersViewModel();
 
-        using (SqlConnection conn = new SqlConnection(connectionString))
-        {
-            conn.Open();
+        // LINQ lấy danh sách Instructors
+        model.Instructors = (from inst in db.Instructors
+                             join acc in db.User_Accounts on inst.UserID equals acc.UserID
+                             select new UserDto
+                             {
+                                 UserID = acc.UserID,
+                                 DetailID = inst.InstructorID,
+                                 FullName = inst.FullName,
+                                 Email = acc.Email,
+                                 Bio = inst.Bio,
+                                 Status = acc.Status
+                             }).ToList();
 
-            // 1. Đọc danh sách Instructor
-            string queryInstructors = @"
-                    SELECT i.InstructorID, i.UserID, i.FullName, i.Bio, u.Email, u.Status 
-                    FROM Instructor i
-                    INNER JOIN User_Account u ON i.UserID = u.UserID";
-            using (SqlCommand cmd = new SqlCommand(queryInstructors, conn))
-            using (SqlDataReader reader = cmd.ExecuteReader())
-            {
-                while (reader.Read())
-                {
-                    model.Instructors.Add(new InstructorUserDTO
-                    {
-                        InstructorID = (int)reader["InstructorID"],
-                        UserID = (int)reader["UserID"],
-                        FullName = reader["FullName"].ToString(),
-                        Email = reader["Email"].ToString(),
-                        Bio = reader["Bio"] != DBNull.Value ? reader["Bio"].ToString() : "",
-                        Status = reader["Status"].ToString()
-                    });
-                }
-            }
-
-            // 2. Đọc danh sách Student
-            string queryStudents = @"
-                    SELECT s.StudentID, s.UserID, s.FullName, u.Email, u.Status 
-                    FROM Student s
-                    INNER JOIN User_Account u ON s.UserID = u.UserID";
-            using (SqlCommand cmd = new SqlCommand(queryStudents, conn))
-            using (SqlDataReader reader = cmd.ExecuteReader())
-            {
-                while (reader.Read())
-                {
-                    model.Students.Add(new StudentUserDTO
-                    {
-                        StudentID = (int)reader["StudentID"],
-                        UserID = (int)reader["UserID"],
-                        FullName = reader["FullName"].ToString(),
-                        Email = reader["Email"].ToString(),
-                        Status = reader["Status"].ToString()
-                    });
-                }
-            }
-        }
+        // LINQ lấy danh sách Students
+        model.Students = (from std in db.Students
+                          join acc in db.User_Accounts on std.UserID equals acc.UserID
+                          select new UserDto
+                          {
+                              UserID = acc.UserID,
+                              DetailID = std.StudentID,
+                              FullName = std.FullName,
+                              Email = acc.Email,
+                              Status = acc.Status
+                          }).ToList();
 
         return View(model);
     }
 
-    // POST: Admin/ToggleUserStatus
+    // 2. AJAX API: Đổi trạng thái từ Active <-> Inactive
     [HttpPost]
     public JsonResult ToggleUserStatus(int userId)
     {
         try
         {
-            string currentStatus = "";
-            string newStatus = "";
-
-            using (SqlConnection conn = new SqlConnection(connectionString))
+            var account = db.User_Accounts.FirstOrDefault(u => u.UserID == userId);
+            if (account == null)
             {
-                conn.Open();
-
-                // Lấy trạng thái hiện tại
-                string selectQuery = "SELECT Status FROM User_Account WHERE UserID = @UserID";
-                using (SqlCommand cmd = new SqlCommand(selectQuery, conn))
-                {
-                    cmd.Parameters.AddWithValue("@UserID", userId);
-                    var result = cmd.ExecuteScalar();
-                    if (result != null) currentStatus = result.ToString();
-                }
-
-                // Đảo ngược trạng thái dựa trên CHECK CONSTRAINT ('Active', 'Inactive')
-                newStatus = (currentStatus == "Active") ? "Inactive" : "Active";
-
-                // Cập nhật trạng thái mới
-                string updateQuery = "UPDATE User_Account SET Status = @NewStatus WHERE UserID = @UserID";
-                using (SqlCommand cmd = new SqlCommand(updateQuery, conn))
-                {
-                    cmd.Parameters.AddWithValue("@NewStatus", newStatus);
-                    cmd.Parameters.AddWithValue("@UserID", userId);
-                    cmd.ExecuteNonQuery();
-                }
+                return Json(new { success = false, message = "User account not found." });
             }
 
-            return Json(new { success = true, newStatus = newStatus });
+            // Chuyển đổi qua lại giữa Active và Inactive
+            if (account.Status == "Active")
+            {
+                account.Status = "Inactive";
+            }
+            else
+            {
+                account.Status = "Active";
+            }
+
+            db.SubmitChanges(); // Lưu vào SQL Server
+
+            return Json(new { success = true, newStatus = account.Status });
         }
         catch (Exception ex)
         {
-            return Json(new { success = false, message = ex.Message });
+            return Json(new { success = false, message = "Error: " + ex.Message });
         }
     }
+
+        // ==================== QUẢN LÝ INSTRUCTOR ====================
+
+        // 1. Get: Hiển thị form chỉnh sửa Instructor
+    public ActionResult EditInstructor(int id)
+    {
+        var instructor = db.Instructors.FirstOrDefault(i => i.InstructorID == id);
+        if (instructor == null) return HttpNotFound();
+
+        return View(instructor);
+    }
+
+    // 2. Post: Xử lý cập nhật thông tin Instructor
+    [HttpPost]
+    [ValidateAntiForgeryToken]
+    public ActionResult EditInstructor(Instructor model)
+    {
+        if (ModelState.IsValid)
+        {
+            var instructor = db.Instructors.FirstOrDefault(i => i.InstructorID == model.InstructorID);
+            if (instructor != null)
+            {
+                instructor.FullName = model.FullName;
+                instructor.Phone = model.Phone;
+                instructor.Address = model.Address;
+                instructor.Bio = model.Bio;
+
+                db.SubmitChanges();
+                return RedirectToAction("Users");
+            }
+        }
+        return View(model);
+    }
+
+
+    // ==================== QUẢN LÝ STUDENT ====================
+
+    // 3. Get: Hiển thị form chỉnh sửa Student
+    public ActionResult EditStudent(int id)
+    {
+        var student = db.Students.FirstOrDefault(s => s.StudentID == id);
+        if (student == null) return HttpNotFound();
+
+        return View(student);
+    }
+
+    // 4. Post: Xử lý cập nhật thông tin Student
+    [HttpPost]
+    [ValidateAntiForgeryToken]
+    public ActionResult EditStudent(Student model)
+    {
+        if (ModelState.IsValid)
+        {
+            var student = db.Students.FirstOrDefault(s => s.StudentID == model.StudentID);
+            if (student != null)
+            {
+                student.FullName = model.FullName;
+                student.Phone = model.Phone;
+                student.Address = model.Address;
+
+                db.SubmitChanges();
+                return RedirectToAction("Users");
+            }
+        }
+        return View(model);
+    }
+
+
 }
+
+
+
+    
+
 
