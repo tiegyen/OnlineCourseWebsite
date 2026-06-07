@@ -1,0 +1,65 @@
+﻿@model List<OnlineCourseWebsite.ViewModels.AdminPaymentDisplayDto>
+
+@{
+    ViewBag.Title = "Admin Dashboard";
+    ViewBag.HeaderTitle = "Global System Overview";
+    ViewBag.HeaderDesc = "Root administrator command center.";
+    Layout = "~/Views/Shared/_DashboardLayout.cshtml";
+}
+
+<div class="card-box mt-30">
+    <h3 class="profile-section-title mb-20">
+        <i class="fa fa-exchange"></i> Global Transaction Ledger (@Model.Count Total Records)
+    </h3>
+
+    <div class="data-table-wrapper">
+        <table class="data-table">
+            <thead>
+                <tr>
+                    <th>Enrollment ID</th>
+                    <th>Student & Course</th>
+                    <th>Method</th>
+                    <th>Amount</th>
+                    <th>Payment Status</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var item in Model)
+                {
+                    <tr data-id="@item.PaymentID">
+                        <td>#ENR-@item.EnrollmentID.ToString("D3")</td>
+                        <td>
+                            <strong>@item.StudentName</strong><br>
+                            <small class="text-link">Course: @item.CourseName</small>
+                        </td>
+                        <td>@item.PaymentMethod</td>
+                        <td><strong>@item.Amount.ToString("N0")đ</strong></td>
+
+                        <td>
+                            <span class="payment-badge @item.PaymentStatus.ToLower()">
+                                @item.PaymentStatus
+                            </span>
+                        </td>
+
+                        <td class="action-cell">
+                            @if (item.PaymentStatus == "Pending")
+                            {
+                                <button class="btn-payment-action confirm approve-btn">Approve</button>
+                                <button class="btn-payment-action cancel cancel-btn">Cancel</button>
+                            }
+                            else if (item.PaymentStatus == "Paid" && (DateTime.Now - item.PaymentDate).TotalHours <= 24 && item.Progress < 5)
+                            {
+                                <button class="btn-payment-action cancel cancel-btn">Cancel Course</button>
+                            }
+                            else
+                            {
+                                <span class="tooltip-wrapper" title="Locked: Progress >= 5% or > 24h">Fixed</span>
+                            }
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+</div>

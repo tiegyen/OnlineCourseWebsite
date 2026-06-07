@@ -1681,3 +1681,37 @@ input[name="user-tabs"] {
     width: 0%; /* Bắt đầu từ 0 */
     transition: width 1.5s ease-in-out; /* Mấu chốt nằm ở đây nè */
 }
+
+/* Container chứa tooltip */
+.tooltip-wrapper {
+    position: relative;
+    display: inline-block;
+    cursor: help;
+    color: #999;
+    font-size: 12px;
+}
+
+    /* Nội dung tooltip hiện lên khi hover */
+    .tooltip-wrapper::after {
+        content: attr(title); /* Lấy nội dung từ thuộc tính title */
+        position: absolute;
+        bottom: 125%; /* Nằm phía trên chữ */
+        left: 50%;
+        transform: translateX(-50%);
+        background-color: #333;
+        color: #fff;
+        padding: 5px 10px;
+        border-radius: 4px;
+        font-size: 11px;
+        white-space: nowrap;
+        opacity: 0;
+        visibility: hidden;
+        transition: opacity 0.3s;
+        z-index: 10;
+    }
+
+    /* Hiệu ứng hiện tooltip */
+    .tooltip-wrapper:hover::after {
+        opacity: 1;
+        visibility: visible;
+    }

@@ -360,6 +360,64 @@ public class AdminController : Controller
         return RedirectToAction("Courses");
     }
 
+    public ActionResult Transactions()
+    {
+        var transactions = (from p in db.Payments
+                            join e in db.Enrollments on p.EnrollmentID equals e.EnrollmentID
+                            join s in db.Students on e.StudentID equals s.StudentID
+                            join c in db.Courses on e.CourseID equals c.CourseID
+                            orderby p.PaymentDate descending
+                            select new AdminPaymentDisplayDto
+                            {
+                                PaymentID = p.PaymentID,
+                                EnrollmentID = e.EnrollmentID,
+                                StudentName = s.FullName,
+                                CourseName = c.CourseName,
+                                Amount = p.Amount,
+                                PaymentMethod = p.PaymentMethod,
+                                PaymentStatus = p.PaymentStatus,
+                                PaymentDate = p.PaymentDate ?? DateTime.Now,
+                                Progress = (double)(e.Progress ?? 0)
+                            }).ToList();
+        return View(transactions);
+    }
+
+    [HttpPost]
+    public JsonResult ApprovePayment(int paymentId)
+    {
+        var payment = db.Payments.SingleOrDefault(p => p.PaymentID == paymentId);
+        if (payment == null || payment.PaymentStatus != "Pending")
+            return Json(new { success = false });
+
+        payment.PaymentStatus = "Paid";
+        db.SubmitChanges();
+        return Json(new { success = true });
+    }
+
+    [HttpPost]
+    public JsonResult CancelPayment(int paymentId)
+    {
+        var data = (from p in db.Payments
+                    join e in db.Enrollments on p.EnrollmentID equals e.EnrollmentID
+                    where p.PaymentID == paymentId
+                    select new { Payment = p, Enrollment = e }).SingleOrDefault();
+
+        if (data == null) return Json(new { success = false, message = "Not found!" });
+
+        // Logic "thép": Chỉ cho huỷ nếu Pending HOẶC (Paid + <24h + <5% Progress)
+        bool isPending = data.Payment.PaymentStatus == "Pending";
+        bool canRefund = (data.Payment.PaymentStatus == "Paid" &&
+                         (DateTime.Now - data.Payment.PaymentDate.Value).TotalHours <= 24 &&
+                         data.Enrollment.Progress < 5);
+
+        if (!isPending && !canRefund)
+            return Json(new { success = false, message = "Cannot cancel: Course is in progress or refund window closed." });
+
+        data.Payment.PaymentStatus = "Cancelled";
+        db.SubmitChanges();
+        return Json(new { success = true, message = "Cancelled successfully." });
+    }
+
 }
 
 

@@ -140,6 +140,7 @@
       <DesignTime>True</DesignTime>
       <DependentUpon>dbOnlineCourse.dbml</DependentUpon>
     </Compile>
+    <Compile Include="Models\ViewModel\AdminPaymentDisplayDto.cs" />
     <Compile Include="Models\ViewModel\CoursesViewModel.cs" />
     <Compile Include="Models\ViewModel\PaymentRow.cs" />
     <Compile Include="Models\ViewModel\UserDto.cs" />
@@ -273,6 +274,7 @@
     <Content Include="Views\Admin\Users.cshtml" />
     <Content Include="Views\Admin\EditInstructor.cshtml" />
     <Content Include="Views\Admin\EditStudent.cshtml" />
+    <Content Include="Views\Admin\Transactions.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
