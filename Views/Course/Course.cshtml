@@ -72,7 +72,15 @@
                     <p class="course-card-price">@string.Format("{0:C0}", item.Price)</p>
 
                     <div class="row mt-15 course-card-actions" style="display: flex; justify-content: space-between; align-items: center;">
-                        <a href="@Url.Action("Login", "User")" class="btn btn-primary btn-enroll">Enroll Now</a>
+                        @if (Session["StudentProfile"] == null)
+                        {
+                            <a href="@Url.Action("Login", "User")" class="btn btn-primary btn-enroll">Enroll Now</a>
+                        }
+                        else
+                        {
+                            <a href="@Url.Action("Enroll", "Course", new { id = item.CourseID })" class="btn btn-primary btn-enroll" style="background: #ff4757; border-color: #ff4757;">Enroll Now</a>
+                        }
+
                         <a href="@Url.Action("Details", "Course", new { id = item.CourseID })" class="text-link link-details">Details</a>
                     </div>
                 </div>
