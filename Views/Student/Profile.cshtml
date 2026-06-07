@@ -32,7 +32,7 @@
                 <div class="profile-avatar-wrapper" style="position: relative; width: 120px; height: 120px; margin: 0 auto 30px;">
 
                     <img id="profile-avatar-display"
-                         src="@(string.IsNullOrEmpty(Model.Avatar) ? Url.Content("~/Content/images/user-1.png") : Url.Content(Model.Avatar))"
+                         src="@(string.IsNullOrEmpty(Model.Avatar) ? Url.Content("~/Content/images/default-avatar.png") : Url.Content(Model.Avatar))"
                          alt="Student Avatar"
                          class="profile-avatar-img"
                          style="width: 100%; height: 100%; border-radius: 8px; object-fit: cover; border: 3px solid #764ba2; display: block;">
