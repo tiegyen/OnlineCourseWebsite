@@ -15,6 +15,8 @@ namespace OnlineCourseWebsite.Controllers
         // GET: Student/MyCourses
         public ActionResult MyCourses()
         {
+
+            
             // 1. Kiểm tra xem học viên đã đăng nhập chưa
             var student = Session["StudentProfile"] as Student;
             if (student == null)
@@ -24,10 +26,13 @@ namespace OnlineCourseWebsite.Controllers
             }
 
             // 2. Lấy danh sách các khóa học mà học viên này đã đăng ký/mua thành công
-            // Chỗ này ní lấy từ bảng trung gian (Enrollment) dựa vào ID học viên hiện tại
+            
+            // 2. Lấy danh sách các khóa học mà học viên này đã THANH TOÁN THÀNH CÔNG (Paid)
+            // 🌟 ĐÃ SỬA: Dùng Any để kiểm tra bảng Payments đi kèm phải có trạng thái là "Paid"
             var myEnrolledCourses = db.Enrollments
-                                     .Where(e => e.StudentID == student.StudentID)
-                                     .Select(e => e.Course) // Bốc thẳng dữ liệu Model Course đi kèm ra
+                                     .Where(e => e.StudentID == student.StudentID &&
+                                                 db.Payments.Any(p => p.EnrollmentID == e.EnrollmentID && p.PaymentStatus == "Paid"))
+                                     .Select(e => e.Course)
                                      .ToList();
 
             // 🌟 MẸO NHỎ (Tùy chọn): Nếu bảng Enrollment có lưu sẵn cột Progress (Tiến độ % học), 
@@ -50,7 +55,12 @@ namespace OnlineCourseWebsite.Controllers
 
             // Đổi tất cả những chỗ check id thành id.Value vì lúc này nó là Nullable ghen ní
             var checkEnroll = db.Enrollments.FirstOrDefault(e => e.StudentID == student.StudentID && e.CourseID == id.Value);
-            if (checkEnroll == null) return RedirectToAction("MyCourses");
+
+            // 🌟 THẮT CHẶT AN NINH: Nếu không có đăng ký HOẶC hóa đơn chưa "Paid" thì sút bay về trang MyCourses liền!
+            if (checkEnroll == null || !db.Payments.Any(p => p.EnrollmentID == checkEnroll.EnrollmentID && p.PaymentStatus == "Paid"))
+            {
+                return RedirectToAction("MyCourses");
+            }
 
             var course = db.Courses.SingleOrDefault(c => c.CourseID == id.Value);
             if (course == null) return HttpNotFound();
@@ -239,6 +249,7 @@ namespace OnlineCourseWebsite.Controllers
                                   }).ToList();
             return View(paymentHistory);
         }
+
 
 
     }
