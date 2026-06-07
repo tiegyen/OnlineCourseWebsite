@@ -1677,3 +1677,4 @@ input[name="user-tabs"] {
     width: 0%; /* Bắt đầu từ 0 */
     transition: width 1.5s ease-in-out; /* Mấu chốt nằm ở đây nè */
 }
+

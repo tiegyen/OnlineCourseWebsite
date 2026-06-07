@@ -27,31 +27,39 @@
     <div class="row align-start" style="display: flex; gap: 30px; align-items: flex-start; flex-wrap: wrap;">
 
         <div class="col-2" style="flex: 0.8; min-width: 280px;">
-            <div class="card-box profile-sidebar-card" style="background: #fff; padding: 25px; border-radius: 8px; box-shadow: 0 2px 10px rgba(0,0,0,0.05); text-align: center;">
+            <div class="card-box profile-sidebar-card">
+                <div class="profile-avatar-wrapper">
+                   <img src="@(string.IsNullOrEmpty(Model.Avatar)
+    ? Url.Content("~/Content/images/user-1.png")
+    : Url.Content(Model.Avatar))"
+     class="profile-avatar-img"
+     style="
+        width:150px !important;
+        height:150px !important;
+        object-fit:cover !important;
+        border-radius:50% !important;
+        display:block !important;
+        padding:0 !important;
+        margin:0 auto !important;
+     ">
 
-                <div class="profile-avatar-wrapper" style="position: relative; width: 120px; height: 120px; margin: 0 auto 15px;">
-                    <img src="@(string.IsNullOrEmpty(Model.Avatar) ? Url.Content("~/images/user-1.png") : Url.Content(Model.Avatar))"
-                         alt="Student Avatar"
-                         class="profile-avatar-img"
-                         style="width: 120px; height: 120px; border-radius: 50%; object-fit: cover; object-position: center; border: 3px solid #764ba2; display: block; margin: 0 auto;">
-
-                    <label for="avatar-input" class="avatar-upload-btn" style="position: absolute; bottom: 0; right: 0; background: #764ba2; color: #fff; width: 32px; height: 32px; border-radius: 50%; display: flex; align-items: center; justify-content: center; cursor: pointer; box-shadow: 0 2px 5px rgba(0,0,0,0.2);">
+                    <label for="avatar-input" class="avatar-upload-btn">
                         <i class="fa fa-camera"></i>
                     </label>
                     <input type="file" id="avatar-input" style="display:none;">
                 </div>
 
                 <div class="profile-main-info">
-                    <h3 style="margin: 0; font-size: 20px; color: #333; font-weight: 600;">@Model.FullName</h3>
+                    <h3 style="margin: 0; font-size: 20px; font-weight: 600;">@Model.FullName</h3>
 
-                    <p style="color: #777; margin-top: 8px; font-size: 14px;">
+                    <p style="margin-top: 8px; font-size: 14px;">
                         Student ID:
                         <span id="display-student-id" style="font-weight: 600; color: #2c3e50;">
                             #STU-@Model.StudentID.ToString("D4")
                         </span>
                     </p>
 
-                    <p class="mt-15" style="color: #999; font-size: 13px; margin-top: 15px;">
+                    <p class="mt-15" style="margin-top: 15px;">
                         Member since:
                         <span>Jan 2026</span>
                     </p>
@@ -139,39 +147,3 @@
     @* Giữ nguyên *@
 </div>
 
-<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-
-<script>
-    $(document).ready(function () {
-        // Khi người dùng bấm nút camera và chọn file hình xong
-        $('#avatar-input').on('change', function () {
-            var file = this.files[0];
-            if (file) {
-                // Tạo FormData để đóng gói file gửi đi
-                var formData = new FormData();
-                formData.append('avatarFile', file);
-
-                // Tiến hành gửi AJAX lên Controller
-                $.ajax({
-                    url: '@Url.Action("UploadAvatar", "Student")',
-                    type: 'POST',
-                    data: formData,
-                    contentType: false,
-                    processData: false,
-                    success: function (response) {
-                        if (response.success) {
-                            // Cập nhật ngay lập tức cái hình mới lên giao diện cho học viên thấy luôn
-                            $('.profile-avatar-img').attr('src', response.avatarUrl);
-                            alert('Avatar updated successfully!');
-                        } else {
-                            alert('Upload failed: ' + response.message);
-                        }
-                    },
-                    error: function () {
-                        alert('An error occurred during upload.');
-                    }
-                });
-            }
-        });
-    });
-</script>

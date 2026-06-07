@@ -162,6 +162,9 @@
     <Content Include="Content\bootstrap.min.css" />
     <Content Include="Content\bootstrap.rtl.css" />
     <Content Include="Content\bootstrap.rtl.min.css" />
+    <Content Include="Content\images\picture1.png" />
+    <Content Include="Content\images\student1.jpg" />
+    <Content Include="Content\images\default-avatar.png" />
     <Content Include="Content\PagedList.css" />
     <Content Include="Guest\courses.html" />
     <Content Include="css\style.css" />
@@ -235,7 +238,6 @@
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
-    <Folder Include="Content\image\" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="Content\bootstrap.rtl.min.css.map" />

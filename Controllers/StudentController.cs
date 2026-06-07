@@ -1,10 +1,10 @@
-﻿using System;
+﻿using OnlineCourseWebsite.Models; // Ní nhớ check đúng namespace Models của hai ní nha
+using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Web;
 using System.Web.Mvc;
-
-using OnlineCourseWebsite.Models; // Ní nhớ check đúng namespace Models của hai ní nha
 
 namespace OnlineCourseWebsite.Controllers
 {
@@ -128,58 +128,6 @@ namespace OnlineCourseWebsite.Controllers
             }
 
             return RedirectToAction("Profile");
-        }
-
-        [HttpPost]
-        public ActionResult UploadAvatar(HttpPostedFileBase avatarFile)
-        {
-            var studentSession = Session["StudentProfile"] as Student;
-            if (studentSession == null) return Json(new { success = false, message = "Session expired!" });
-
-            if (avatarFile != null && avatarFile.ContentLength > 0)
-            {
-                try
-                {
-                    // 1. Lấy đuôi file (ví dụ: .jpg, .png)
-                    string fileExtension = System.IO.Path.GetExtension(avatarFile.FileName);
-
-                    // 2. Đặt tên file mới theo ID sinh viên để không bị trùng (Ví dụ: avatar_1.jpg)
-                    string fileName = "avatar_" + studentSession.StudentID + fileExtension;
-
-                    // 3. Đường dẫn vật lý để lưu file vào thư mục trên máy/server
-                    string targetFolder = Server.MapPath("~/images/");
-
-                    // Kiểm tra nếu thư mục images chưa tồn tại thì tự tạo luôn
-                    if (!System.IO.Directory.Exists(targetFolder))
-                    {
-                        System.IO.Directory.CreateDirectory(targetFolder);
-                    }
-
-                    string path = System.IO.Path.Combine(targetFolder, fileName);
-
-                    // 4. Lưu file hình thực tế vào thư mục
-                    avatarFile.SaveAs(path);
-
-                    // 5. Cập nhật đường dẫn ảo vào Database (để thẻ img src gọi được)
-                    var student = db.Students.SingleOrDefault(s => s.StudentID == studentSession.StudentID);
-                    if (student != null)
-                    {
-                        student.Avatar = "~/images/" + fileName; // Lưu đường dẫn này xuống DB
-                        db.SubmitChanges(); // LINQ to SQL thần thánh
-
-                        // Cập nhật lại Session liền cho đồng bộ ghen ní
-                        Session["StudentProfile"] = student;
-
-                        return Json(new { success = true, avatarUrl = Url.Content(student.Avatar) });
-                    }
-                }
-                catch (Exception ex)
-                {
-                    return Json(new { success = false, message = ex.Message });
-                }
-            }
-
-            return Json(new { success = false, message = "No file selected!" });
         }
 
     }
