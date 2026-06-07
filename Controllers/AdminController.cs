@@ -385,13 +385,15 @@ public class AdminController : Controller
     [HttpPost]
     public JsonResult ApprovePayment(int paymentId)
     {
+        // Thêm dòng log này để biết nó có chạy vào hàm không
+        System.Diagnostics.Debug.WriteLine("Đã vào được hàm với ID: " + paymentId);
+
         var payment = db.Payments.SingleOrDefault(p => p.PaymentID == paymentId);
-        if (payment == null || payment.PaymentStatus != "Pending")
-            return Json(new { success = false });
+        if (payment == null) return Json(new { success = false, message = "Không tìm thấy!" });
 
         payment.PaymentStatus = "Paid";
         db.SubmitChanges();
-        return Json(new { success = true });
+        return Json(new { success = true, message = "Duyệt thành công!" });
     }
 
     [HttpPost]

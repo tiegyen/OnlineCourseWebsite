@@ -96,46 +96,49 @@ namespace OnlineCourseWebsite.Controllers
 
             bool hasError = false;
 
-            if(string.IsNullOrEmpty(email))
-            {
-                ViewBag.ErrorEmail = "Please enter your email!";
-                hasError = true;
-            }
+            if (string.IsNullOrEmpty(email)) { ViewBag.ErrorEmail = "Please enter your email!"; hasError = true; }
+            if (string.IsNullOrEmpty(password)) { ViewBag.ErrorPassword = "Please enter your password!"; hasError = true; }
 
-            if(string.IsNullOrEmpty(password))
-            {
-                ViewBag.ErrorPassword = "Please enter your password!";
-                hasError = true;
-            }
-
-            if(hasError)
+            if (hasError)
             {
                 ViewBag.Email = email;
                 return View();
             }
 
+            // 1. Kiểm tra tài khoản tồn tại
             var account = db.User_Accounts.SingleOrDefault(u => u.Email == email && u.Password == password);
 
-            if(account != null)
+            if (account != null)
             {
-                if(account.Status == "Inactive")
+                // 2. Check trạng thái khóa
+                if (account.Status == "Inactive")
                 {
                     ViewBag.ErrorSystem = "Your account has been locked. Please contact Admin!";
                     ViewBag.Email = email;
                     return View();
                 }
 
+                // Lưu thông tin đăng nhập vào Session
                 Session["UserAccount"] = account;
 
-                if(account.Role == "Student")
+                // 3. PHÂN LUỒNG ĐĂNG NHẬP (Cái này là cái ní cần nè)
+                if (account.Role == "Admin")
+                {
+                    // Nếu là Admin, đá sang Dashboard của Admin
+                    return RedirectToAction("Dashboard", "Admin");
+                }
+                else if (account.Role == "Student")
                 {
                     var student = db.Students.SingleOrDefault(s => s.UserID == account.UserID);
-                    if(student != null)
+                    if (student != null)
                     {
                         Session["StudentProfile"] = student;
                     }
+                    // Nếu là Student, về lại trang khóa học
+                    return RedirectToAction("Course", "Course");
                 }
-                return RedirectToAction("Course", "Course"); 
+
+                return RedirectToAction("Index", "Home");
             }
             else
             {

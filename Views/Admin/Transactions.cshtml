@@ -61,5 +61,41 @@
                 }
             </tbody>
         </table>
+        @section scripts {
+            <script>
+        $(document).ready(function () {
+            $(document).on("click", ".approve-btn, .cancel-btn", function (e) {
+                e.preventDefault();
+                var $btn = $(this);
+                var $row = $btn.closest("tr");
+                var paymentId = $row.data("id");
+
+                var isApprove = $btn.hasClass("approve-btn");
+                var actionType = isApprove ? "Approve" : "Cancel";
+                var url = isApprove ? "@Url.Action("ApprovePayment", "Admin")" : "@Url.Action("CancelPayment", "Admin")";
+
+                if (confirm("Are you sure you want to " + actionType + " this payment?")) {
+                    $.ajax({
+                        url: url,
+                        type: 'POST',
+                        data: { paymentId: paymentId },
+                        success: function (res) {
+                            if (res.success) {
+                                alert(res.message);
+                                location.reload();
+                            } else {
+                                alert(res.message);
+                            }
+                        },
+                        error: function () {
+                            alert("Có lỗi xảy ra, ní kiểm tra lại Controller nhé!");
+                        }
+                    });
+                }
+            });
+        });
+            </script>
+        }
     </div>
 </div>
+
