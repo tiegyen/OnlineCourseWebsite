@@ -12,5 +12,6 @@ namespace OnlineCourseWebsite.Models.ViewModel
         public decimal Amount { get; set; }
         public string PaymentMethod { get; set; }
         public string PaymentStatus { get; set; }
+        public DateTime? PaymentDate { get; set; } //add payment date
     }
 }

@@ -8,6 +8,19 @@
 <div class="small-container mt-50 mb-50">
     <h2 class="title">My Enrolled Courses</h2>
 
+    @if (TempData["Success"] != null)
+    {
+        <div class="alert alert-success" style="background: #d4edda; color: #155724; padding: 15px; border-radius: 5px; margin-bottom: 20px;">
+            <i class="fa fa-check-circle"></i> @TempData["Success"]
+        </div>
+    }
+    @if (TempData["Error"] != null)
+    {
+        <div class="alert alert-danger" style="background: #f8d7da; color: #721c24; padding: 15px; border-radius: 5px; margin-bottom: 20px;">
+            <i class="fa fa-exclamation-circle"></i> @TempData["Error"]
+        </div>
+    }
+
     @if (Model == null || !Model.Any())
     {
         <div class="text-center empty-state-container" style="text-align: center; padding: 40px 20px;">

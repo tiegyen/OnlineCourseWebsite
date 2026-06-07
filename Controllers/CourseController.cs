@@ -212,49 +212,64 @@ namespace OnlineCourseWebsite.Controllers
             return RedirectToAction("Payment", "Student");
         }
 
-        // POST: Course/ConfirmPayment
+        //// POST: Course/SubmitManualPayment
+        //[HttpPost]
+        //[ValidateAntiForgeryToken]
+        //public ActionResult SubmitManualPayment(int paymentId)
+        //{
+        //    var studentSession = Session["StudentProfile"] as Student;
+        //    if (studentSession == null) return RedirectToAction("Login", "User");
+
+        //    // 1. Tìm hóa đơn
+        //    var payment = db.Payments.SingleOrDefault(p => p.PaymentID == paymentId);
+        //    if (payment == null) return HttpNotFound();
+
+        //    if (payment.PaymentStatus == "Pending")
+        //    {
+        //        // 2. Chuyển trạng thái thành "Awaiting" (Chờ admin duyệt) 
+        //        // Muốn nhanh cho đồ án mượt thì chuyển thẳng thành "Paid"
+        //        payment.PaymentStatus = "Paid"; 
+        //        payment.PaymentMethod = "Bank Transfer";
+        //        payment.PaymentDate = DateTime.Now;
+
+        //        db.SubmitChanges();
+        //    }
+
+        //    TempData["Success"] = "Payment verification submitted! Your course is now unlocked.";
+        //    return RedirectToAction("MyCourses", "Student");
+        //}
+
         [HttpPost]
-        public ActionResult ConfirmPayment(int paymentId)
+        [ValidateAntiForgeryToken]
+        public ActionResult SubmitManualPayment(int paymentId)
         {
-            // Tìm hóa đơn bằng SingleOrDefault
-            var payment = db.Payments.SingleOrDefault(p => p.PaymentID == paymentId);
-            if (payment != null)
-            {
-                payment.PaymentStatus = "Paid"; // Đổi trạng thái hóa đơn thành Đã thanh toán
+            var studentSession = Session["StudentProfile"] as OnlineCourseWebsite.Models.Student;
+            if (studentSession == null) return RedirectToAction("Login", "User");
 
-                // Vì bảng Enrollment của ní không cần đổi trạng thái (do mặc định đã là 'Learning' rồi)
-                // Nên ở đây tụi mình chỉ cần lưu cập nhật hóa đơn là quá đẹp bài
-
-                db.SubmitChanges(); // Lưu thay đổi trong LINQ to SQL
-                TempData["Success"] = "Payment confirmed successfully! Welcome to your course.";
-            }
-
-            // Thanh toán xong, đá thẳng student về trang Lịch sử mua hàng
-            return RedirectToAction("Payment", "Student");
-        }
-
-        // POST: Course/PaymentWithVnPay
-        [HttpPost]
-        public ActionResult PaymentWithVnPay(int paymentId)
-        {
-            // 1. Tìm thông tin hóa đơn dựa trên PaymentID
             var payment = db.Payments.SingleOrDefault(p => p.PaymentID == paymentId);
             if (payment == null) return HttpNotFound();
 
-            // 2. Lấy số tiền cần thanh toán (VNPAY tính bằng VND và nhân thêm 100 theo tài liệu của họ)
-            double amountInVnd = (double)payment.Amount;
+            if (payment.PaymentStatus == "Pending")
+            {
+                // Không dùng "Awaiting" nữa vì SQL chặn
+                // Ní có thể giữ nguyên "Pending" hoặc đổi thành trạng thái hợp lệ dưới DB của ní
+                payment.PaymentStatus = "Pending";
+                payment.PaymentMethod = "Bank Transfer";
+                payment.PaymentDate = DateTime.Now;
 
-            // 🌟 KHÚC NÀY SAU NÀY SẼ LÀ CODE TẠO URL VNPAY (bốc từ file Guid_payment_VnPay.pdf qua nè)
-            // Hiện tại để test luồng điều hướng, Gen tạo tạm một dòng chuyển hướng tạm thời ghen ní:
-            //todo
+                db.SubmitChanges();
+            }
 
-            // Ví dụ sau này có link: string vnpayUrl = "https://sandbox.vnpayment.vn/paymentv2/vpcpay.html?...";
-            // return Redirect(vnpayUrl);
+            // Đổi lại câu thông báo cho đúng ngữ cảnh nè
+            TempData["Success"] = "Payment submitted successfully! Please wait for Admin approval.";
+            TempData.Keep();
 
-            // Tạm thời cho quay về trang lịch sử kèm thông báo để test nút bấm không bị lỗi:
-            TempData["Success"] = "Connecting to VNPAY Gateway for Invoice #INV-" + paymentId.ToString("D4") + "...";
-            return RedirectToAction("Payment", "Student");
+            return RedirectToAction("MyCourses", "Student");
         }
+
+
+
+
 
     }
 }

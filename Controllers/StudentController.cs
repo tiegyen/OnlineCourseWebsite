@@ -187,7 +187,6 @@ namespace OnlineCourseWebsite.Controllers
             return Json(new { success = false, message = "No file selected." });
         }
 
-        // 3. XỬ LÝ ĐỔI MẬT KHẨU (BẢO MẬT)
         [HttpPost]
         [ValidateAntiForgeryToken]
         public ActionResult ChangePassword(string CurrentPassword, string NewPassword, string ConfirmPassword)
@@ -195,31 +194,31 @@ namespace OnlineCourseWebsite.Controllers
             var studentSession = Session["StudentProfile"] as Student;
             if (studentSession == null) return RedirectToAction("Login", "User");
 
-            var student = db.Students.SingleOrDefault(s => s.StudentID == studentSession.StudentID);
-            if (student != null)
+            // Lấy UserID từ thông tin Student hiện tại
+            var userId = studentSession.UserID;
+
+            // Truy vấn vào bảng User_Account để đổi mật khẩu
+            var userAcc = db.User_Accounts.SingleOrDefault(u => u.UserID == userId);
+
+            if (userAcc != null)
             {
-                // 🌟 Giờ thuộc tính student.Password đã tồn tại mượt mà rồi nè ní!
-                if (student.Password != CurrentPassword)
+                // So sánh với Password trong User_Account
+                if (userAcc.Password.Trim() != CurrentPassword.Trim())
                 {
                     TempData["Error"] = "Current password is incorrect!";
                     return RedirectToAction("Profile");
                 }
 
-                if (string.IsNullOrEmpty(NewPassword) || NewPassword.Length < 6)
-                {
-                    TempData["Error"] = "New password must be at least 6 characters long!";
-                    return RedirectToAction("Profile");
-                }
-
+                // Validate mật khẩu mới...
                 if (NewPassword != ConfirmPassword)
                 {
-                    TempData["Error"] = "Confirm password does not match!";
+                    TempData["Error"] = "New passwords do not match!";
                     return RedirectToAction("Profile");
                 }
 
-                // Cập nhật và lưu
-                student.Password = NewPassword;
-                db.SubmitChanges();
+                // Cập nhật và Submit
+                userAcc.Password = NewPassword;
+                db.SubmitChanges(); 
 
                 TempData["Success"] = "Password changed successfully!";
             }
@@ -245,7 +244,8 @@ namespace OnlineCourseWebsite.Controllers
                                       CourseName = c.CourseName,
                                       Amount = p.Amount,
                                       PaymentMethod = p.PaymentMethod,
-                                      PaymentStatus = p.PaymentStatus
+                                      PaymentStatus = p.PaymentStatus,
+                                      PaymentDate = p.PaymentDate
                                   }).ToList();
             return View(paymentHistory);
         }

@@ -52,23 +52,42 @@
                                             }
                                             else if (row.PaymentStatus == "Pending")
                                             {
-                                                <div style="display: flex; flex-direction: column; gap: 6px; align-items: flex-start;">
-                                                    <span class="badge badge-pending">Pending</span>
+                                        <div style="display: flex; flex-direction: column; gap: 6px; align-items: flex-start;">
 
-                                                    <div style="display: flex; gap: 5px;">
-                                                        <a href="@Url.Action("EnrollPage", "Course", new { paymentId = row.PaymentID })" class="btn-pay-now" style="background: #764ba2; color: #fff; padding: 4px 10px; border-radius: 4px; text-decoration: none; font-size: 12px; font-weight: 500;">
-                                                            <i class="fa fa-credit-card"></i> Pay Now
-                                                        </a>
+                                            @* 🌟 BÙA CHÚ LOGIC CHỖ NÀY NÈ BÀ CHỊ *@
+                                            @if (row.PaymentDate != null)
+                                            {
+                                                @* Nếu trạng thái là Pending nhưng PaymentDate đã có dữ liệu (tức là đã bấm nút xác nhận ở trang trước) *@
+                                                <span class="badge" style="background: #f1c40f; color: #fff; padding: 5px 10px; border-radius: 4px; font-size: 13px; font-weight: bold;">
+                                                    <i class="fa fa-clock-o"></i> Awaiting Approval
+                                                </span>
+                                                <span style="font-size: 11px; color: #888; font-style: italic;">Admin is verifying your transfer</span>
 
-                                                        @using (Html.BeginForm("CancelOrder", "Course", FormMethod.Post, new { style = "display:inline;", onsubmit = "return confirm('Are you sure you want to cancel this order?');" }))
-                                                        {
-                                                            <input type="hidden" name="paymentId" value="@row.PaymentID" />
-                                                            <button type="submit" style="background: #ff4757; color: #fff; padding: 4px 10px; border-radius: 4px; border: none; font-size: 12px; cursor: pointer; font-weight: bold;" title="Cancel Order">
-                                                                <i class="fa fa-times"></i>
-                                                            </button>
-                                                        }
-                                                    </div>
+                                                <span style="font-size: 11px; color: #999; display: block; margin-top: 2px;">
+                                                    Sent: @row.PaymentDate.Value.ToString("dd/MM/yyyy HH:mm")
+                                                </span>
+                                            }
+                                            else
+                                            {
+                                                @* Ngược lại, nếu mới tạo hóa đơn hoàn toàn (PaymentDate bị null) thì mới cho hiện nút Pay Now với nút Hủy *@
+                                                <span class="badge badge-pending">Pending</span>
+
+                                                <div style="display: flex; gap: 5px;">
+                                                    <a href="@Url.Action("EnrollPage", "Course", new { paymentId = row.PaymentID })" class="btn-pay-now" style="background: #764ba2; color: #fff; padding: 4px 10px; border-radius: 4px; text-decoration: none; font-size: 12px; font-weight: 500;">
+                                                        <i class="fa fa-credit-card"></i> Pay Now
+                                                    </a>
+
+                                                    @using (Html.BeginForm("CancelOrder", "Course", FormMethod.Post, new { style = "display:inline;", onsubmit = "return confirm('Are you sure you want to cancel this order?');" }))
+                                                    {
+                                                        <input type="hidden" name="paymentId" value="@row.PaymentID" />
+                                                        <button type="submit" style="background: #ff4757; color: #fff; padding: 4px 10px; border-radius: 4px; border: none; font-size: 12px; cursor: pointer; font-weight: bold;" title="Cancel Order">
+                                                            <i class="fa fa-times"></i>
+                                                        </button>
+                                                    }
                                                 </div>
+                                            }
+
+                                        </div>
                                             }
                                             else if (row.PaymentStatus == "Cancelled")
                                             {
