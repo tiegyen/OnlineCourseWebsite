@@ -3,7 +3,9 @@ using OnlineCourseWebsite.ViewModels;
 using System;
 using System.Configuration;
 using System.Data.SqlClient;
+using System.IO;
 using System.Linq;
+using System.Web;
 using System.Web.Mvc;
 
 public class AdminController : Controller
@@ -39,29 +41,28 @@ public class AdminController : Controller
 
     public ActionResult Courses()
     {
-        // LINQ Query JOIN thuần, gọi đúng tên bảng không có "s"
-        var courseQuery = from c in db.Courses
-                          join cat in db.Categories on c.CategoryID equals cat.CategoryID
-                          join stat in db.CourseStatus on c.StatusID equals stat.StatusID
-                          join inst in db.Instructors on c.InstructorID equals inst.InstructorID
-                          select new CourseDisplayDto
-                          {
-                              CourseID = c.CourseID,
-                              CourseName = c.CourseName,
-                              Price = c.Price ?? 0,
-                              CategoryName = cat.CategoryName,
-                              InstructorName = inst.FullName,
-                              InstructorID = c.InstructorID,
-                              StatusName = stat.StatusName, // Active, Pending...
-                              StatusID = c.StatusID
-                          };
+        var viewModel = new CoursesViewModel();
 
-        var viewModel = new CoursesViewModel
-        {
-            Courses = courseQuery.ToList(),
-            Categories = db.Categories.ToList(), // Gọi đúng tên tập hợp trong dbml
-            Instructors = db.Instructors.ToList()
-        };
+        // 1. Lấy danh sách khóa học (sau khi ní đã JOIN hoặc SELECT ra CourseDisplayDto)
+        viewModel.Courses = (from c in db.Courses
+                             join cat in db.Categories on c.CategoryID equals cat.CategoryID
+                             select new CourseDisplayDto
+                             {
+                                 CourseID = c.CourseID,
+                                 CourseName = c.CourseName,
+                                 Price = c.Price ?? 0,
+                                 CategoryName = cat.CategoryName,
+                                 InstructorID = c.InstructorID,
+                                 StatusID = c.StatusID,
+                                 Duration = c.Duration
+                             }).ToList();
+
+        // 2. Lấy danh sách Categories và Instructors
+        viewModel.Categories = db.Categories.ToList();
+        viewModel.Instructors = db.Instructors.ToList();
+
+        // 3. ĐỪNG QUÊN NẠP THẰNG NÀY ĐỂ ĐỔ VÀO DROPDOWN TRÊN MODAL:
+        viewModel.CourseStatuses = db.CourseStatus.ToList();
 
         return View(viewModel);
     }
@@ -268,6 +269,96 @@ public class AdminController : Controller
         return View(model);
     }
 
+    // POST: Admin/CreateCourse
+    [HttpPost]
+    [ValidateAntiForgeryToken]
+    public ActionResult CreateCourse(Course model)
+    {
+        try
+        {
+            if (ModelState.IsValid)
+            {
+                // Khởi tạo đối tượng Course thuần LINQ to SQL
+                Course newCourse = new Course
+                {
+                    CourseName = model.CourseName.Trim(),
+                    Description = model.Description?.Trim(),
+                    Price = model.Price,
+                    Duration = model.Duration?.Trim(),
+                    CreatedDate = System.DateTime.Now, // Set thời gian tạo thực tế
+                    InstructorID = model.InstructorID,
+                    CategoryID = model.CategoryID,
+                    StatusID = model.StatusID
+                };
+
+                // Thần chú LINQ thuần: InsertOnSubmit + SubmitChanges
+                db.Courses.InsertOnSubmit(newCourse);
+                db.SubmitChanges();
+
+                return RedirectToAction("Courses");
+            }
+        }
+        catch
+        {
+            // Nếu có lỗi hệ thống, ní có thể gán ViewBag.Error để báo lỗi
+        }
+
+        // Nếu lỗi dữ liệu, quay về trang danh sách
+        return RedirectToAction("Courses");
+    }
+
+    [HttpPost]
+    [ValidateAntiForgeryToken]
+    public ActionResult EditCourse(Course model, HttpPostedFileBase EditImageFile, string OldImage)
+    {
+        try
+        {
+            if (ModelState.IsValid)
+            {
+                // Tìm khóa học gốc trong DB bằng LINQ thuần
+                var course = db.Courses.SingleOrDefault(c => c.CourseID == model.CourseID);
+
+                if (course != null)
+                {
+                    course.CourseName = model.CourseName.Trim();
+                    course.Description = model.Description?.Trim();
+                    course.Price = model.Price;
+                    course.Duration = model.Duration?.Trim();
+                    course.CategoryID = model.CategoryID;
+                    course.InstructorID = model.InstructorID;
+                    course.StatusID = model.StatusID;
+
+                    // Xử lý ảnh nếu Admin upload ảnh mới thay thế
+                    if (EditImageFile != null && EditImageFile.ContentLength > 0)
+                    {
+                        string extension = Path.GetExtension(EditImageFile.FileName);
+                        string imageName = "course_" + System.Guid.NewGuid().ToString().Substring(0, 8) + extension;
+                        string path = Path.Combine(Server.MapPath("~/Content/images/courses/"), imageName);
+
+                        EditImageFile.SaveAs(path);
+
+                        // Gán tên ảnh mới vào DB
+                        course.Image = imageName;
+                    }
+                    else
+                    {
+                        // Nếu không đổi ảnh, giữ nguyên tên ảnh cũ truyền từ hidden field qua
+                        course.Image = OldImage;
+                    }
+
+                    // Lưu thay đổi xuống Database
+                    db.SubmitChanges();
+                }
+                return RedirectToAction("Courses");
+            }
+        }
+        catch
+        {
+            // Xử lý báo lỗi nếu cần
+        }
+
+        return RedirectToAction("Courses");
+    }
 
 }
 

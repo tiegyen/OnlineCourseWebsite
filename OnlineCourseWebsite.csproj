@@ -179,6 +179,7 @@
     <Content Include="Content\images\instructor1.jpg" />
     <Content Include="Content\images\instructor2.jpg" />
     <Content Include="Content\images\instructor3.jpg" />
+    <Content Include="Content\images\logo-one.jpg" />
     <Content Include="Content\images\pic1.jpg" />
     <Content Include="Content\images\pic2.jpg" />
     <Content Include="Content\images\default-avatar.png" />

@@ -143,8 +143,8 @@
             var badge = row.find(".account-badge");
 
             var isDeactivating = btn.hasClass("deactivate");
-            var confirmMsg = isDeactivating
-                ? "Are you sure you want to suspend this user account?"
+            var confirmMsg = isDeactivating 
+                ? "Are you sure you want to suspend this user account?" 
                 : "Do you want to restore this user account?";
 
             if (confirm(confirmMsg)) {

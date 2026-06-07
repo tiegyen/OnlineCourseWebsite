@@ -150,7 +150,7 @@ nav ul {
     }
 
 .footer-col-1, .footer-col-2, .footer-col-3 {
-    min-width: 250px;
+    min-width: 50px;
     margin-bottom: 20px;
 }
 
@@ -164,7 +164,7 @@ nav ul {
 }
 
     .footer-col-2 img {
-        width: 100%;
+        width: 10%;
         margin-bottom: 20px;
     }
 
