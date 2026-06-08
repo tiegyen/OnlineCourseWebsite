@@ -23,32 +23,46 @@
 
                         @if (Session["UserAccount"] == null)
                         {
+                            // 1. GIAO DIỆN KHI CHƯA ĐĂNG NHẬP (KHÁCH VÃI LAI)
                             <li><a href="@Url.Action("Course", "Course")">Courses</a></li>
                             <li><a href="@Url.Action("Register", "User")">Register</a></li>
                             <li><a href="@Url.Action("Login", "User")">Login</a></li>
                         }
                         else
                         {
-                            // Đúc tài khoản và profile từ Session ra để xử lý điều hướng
+                            // Đúc tài khoản an toàn từ Session ra
                             var account = Session["UserAccount"] as OnlineCourseWebsite.Models.User_Account;
-                            var student = Session["StudentProfile"] as OnlineCourseWebsite.Models.Student;
 
-                            if (account != null && account.Role == "Student")
+                            if (account != null)
                             {
-                                <li><a href="@Url.Action("MyCourses", "Student")">My Courses</a></li>
-                                <li><a href="@Url.Action("Payment", "Student")">Payment</a></li>
-                                <li>
-                                    <a href="@Url.Action("Profile", "Student")" class="student-welcome" style="font-weight: 600; color: #764ba2;">
-                                        <i class="fa fa-user-circle"></i> Welcome, @(student != null ? student.FullName : "Learner")
-                                    </a>
-                                </li>
-                                <li><a href="@Url.Action("Logout", "User")" style="color: #ff523b; font-size: 13px; font-weight: 500;">(Logout)</a></li>
-                            }
-                            else
-                            {
-                                <li><a href="@Url.Action("Course", "Course")">Courses</a></li>
-                                <li style="color: #4cd137;">Admin Dashboard</li>
-                                <li><a href="@Url.Action("Logout", "User")" style="color: #ff523b;">Logout</a></li>
+                                // 2. PHÂN HỆ: STUDENT
+                                if (account.Role == "Student")
+                                {
+                                    var student = Session["StudentProfile"] as OnlineCourseWebsite.Models.Student;
+                                    <li><a href="@Url.Action("MyCourses", "Student")">My Courses</a></li>
+                                    <li><a href="@Url.Action("Payment", "Student")">Payment</a></li>
+                                    <li>
+                                        <a href="@Url.Action("Profile", "Student")" class="student-welcome" style="font-weight: 600; color: #764ba2;">
+                                            <i class="fa fa-user-circle"></i> Welcome, @(student != null ? student.FullName : "Learner")
+                                        </a>
+                                    </li>
+                                }
+
+                                // 3. PHÂN HỆ: INSTRUCTOR (THÊM PHẦN NÀY VÀO NÈ NÍ)
+                                else if (account.Role == "Instructor")
+                                {
+                                    <li><a href="@Url.Action("Dashboard", "Instructor")" style="color: #4cd137; font-weight: 600;"><i class="fa fa-dashboard"></i> Instructor Dashboard</a></li>
+                                    <li><a href="@Url.Action("MyCourses", "Instructor")">Manage Courses</a></li>
+                                }
+
+                                // 4. PHÂN HỆ: ADMIN
+                                else if (account.Role == "Admin")
+                                {
+                                    <li><a href="@Url.Action("Dashboard", "Admin")" style="color: #eccc68; font-weight: 600;"><i class="fa fa-user-shield"></i> Admin Panel</a></li>
+                                }
+
+                                // NÚT LOGOUT CHUNG CHO TOÀN BỘ CÁC TÀI KHOẢN ĐÃ ĐĂNG NHẬP
+                                <li><a href="@Url.Action("Logout", "User")" style="color: #ff523b; font-size: 13px; font-weight: 500;"><i class="fa fa-sign-out"></i> Logout</a></li>
                             }
                         }
                     </ul>

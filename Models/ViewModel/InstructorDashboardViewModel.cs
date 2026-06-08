@@ -73,5 +73,14 @@ namespace OnlineCourseWebsite.Models
         public string StatusName { get; set; }
     }
 
+    public class EnrolledStudentViewModel
+    {
+        public string StudentName { get; set; }
+        public string Email { get; set; }
+        public string CourseName { get; set; }
+        public DateTime EnrollmentDate { get; set; }
+        public string PaymentStatus { get; set; }
+        public int Progress { get; set; }
+    }
 
 }

@@ -281,9 +281,12 @@
     <Content Include="Views\Admin\CreateInstructor.cshtml" />
     <Content Include="Views\Instructor\Dashboard.cshtml" />
     <Content Include="Views\Instructor\MyCourses.cshtml" />
+    <Content Include="Views\Instructor\Curriculum.cshtml" />
+    <Content Include="Views\Instructor\EnrolledStudents.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
+    <Folder Include="Content\materials\" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="Content\bootstrap.rtl.min.css.map" />

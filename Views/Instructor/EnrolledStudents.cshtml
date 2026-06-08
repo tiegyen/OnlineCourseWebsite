@@ -1,0 +1,62 @@
+﻿@model IEnumerable<OnlineCourseWebsite.Models.EnrolledStudentViewModel>
+
+@{
+    ViewBag.Title = "Enrolled Students";
+    Layout = "~/Views/Shared/_InsLayout.cshtml"; // Thay tên Layout của bạn vào đây
+}
+
+<div class="admin-content">
+    <div class="admin-header">
+        <div>
+            <h2>Enrolled Students Management</h2>
+            <p class="text-link">Track student enrollment dates, tuition payment status, and learning progress.</p>
+        </div>
+    </div>
+
+    <div class="table-filter-zone">
+        <select class="form-control filter-select">
+            <option value="all">All My Courses</option>
+            @* Bạn có thể render động danh sách khóa học ở đây nếu muốn *@
+        </select>
+    </div>
+
+    <div class="data-table-wrapper">
+        <table class="data-table">
+            <thead>
+                <tr>
+                    <th>Student Name</th>
+                    <th>Enrolled Course</th>
+                    <th>Enrollment Date</th>
+                    <th>Payment Status</th>
+                    <th>Learning Progress</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var item in Model)
+                {
+                    <tr>
+                        <td>
+                            <strong>@item.StudentName</strong><br>
+                            <small class="text-link">@item.Email</small>
+                        </td>
+                        <td>@item.CourseName</td>
+                        <td>@item.EnrollmentDate.ToString("MMMM dd, yyyy")</td>
+                        <td>
+                            <span class="payment-badge @(item.PaymentStatus == "Paid" ? "paid" : "pending")">
+                                @item.PaymentStatus
+                            </span>
+                        </td>
+                        <td>
+                            <div class="progress-container">
+                                <div class="progress-bar-bg">
+                                    <div class="progress-bar-fill" style="width: @(item.Progress)%;"></div>
+                                </div>
+                                <span class="progress-text">@item.Progress%</span>
+                            </div>
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+</div>

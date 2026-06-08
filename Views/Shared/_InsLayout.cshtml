@@ -20,23 +20,14 @@
                     <a href="@Url.Action("Dashboard", "Instructor")"><i class="fa fa-dashboard"></i> Dashboard</a>
                 </li>
                 <li><a href="@Url.Action("MyCourses", "Instructor")"><i class="fa fa-book"></i> My Courses</a></li>
-                <li><a href="@Url.Action("Curriculum", "Instructor")"><i class="fa fa-tasks"></i> Curriculum</a></li>
-                <li><a href="@Url.Action("Students", "Instructor")"><i class="fa fa-users"></i> Enrolled Students</a></li>
+                @*<li><a href="@Url.Action("Curriculum", "Instructor")"><i class="fa fa-tasks"></i> Curriculum</a></li>*@
+                <li><a href="@Url.Action("EnrolledStudents", "Instructor")"><i class="fa fa-users"></i> Enrolled Students</a></li>
                 <li><a href="@Url.Action("Reviews", "Instructor")"><i class="fa fa-star"></i> Reviews</a></li>
-                <li class="mt-50"><a href="@Url.Action("Index", "Home")"><i class="fa fa-sign-out"></i> Logout</a></li>
+                <li class="mt-50"><a href="@Url.Action("Index", "Home")"><i class="fa fa-sign-out"></i> View Page Home</a></li>
             </ul>
         </div>
 
-        <div class="admin-content">
-            <div class="admin-header">
-                <div>
-                    <h2>Instructor Command Center</h2>
-                    <p class="text-link">Monitor your overall statistics and detailed course metrics.</p>
-                </div>
-                <div class="user-info">
-                    <span class="student-welcome"><i class="fa fa-user-circle"></i> Jane Doe (Instructor Mode)</span>
-                </div>
-            </div>
+        
 
             @RenderBody()
 

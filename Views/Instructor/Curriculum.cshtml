@@ -1,0 +1,114 @@
+﻿@model OnlineCourseWebsite.Models.Course
+@{
+    ViewBag.Title = "Manage Curriculum";
+    Layout = "~/Views/Shared/_InsLayout.cshtml";
+    var lessons = ViewBag.Lessons as List<OnlineCourseWebsite.Models.Lesson>;
+}
+
+<div class="curriculum-container">
+    <div class="curriculum-header">
+        <div class="header-text">
+            <h2>@Model.CourseName</h2>
+            <p>Quản lý giáo trình và tài liệu khóa học.</p>
+        </div>
+        <button class="btn-add" onclick="openAddLessonModal()">+ Add New Lesson</button>
+    </div>
+
+    @foreach (var secItem in lessons.GroupBy(l => l.SectionName))
+    {
+        <div class="section-block">
+            <div class="section-title">@secItem.Key</div>
+            <ul class="lesson-list">
+                @foreach (var lesson in secItem.OrderBy(l => l.LessonOrder))
+                {
+                    <li class="lesson-row">
+                        <span class="lesson-name">@lesson.LessonTitle</span>
+                        <div class="lesson-actions">
+                            <button class="btn-icon edit" onclick="openEditLessonModal('@lesson.LessonID', '@secItem.Key', '@lesson.LessonTitle', '@lesson.VideoURL')">
+                                <i class="fa fa-edit"></i>
+                            </button>
+                            <a href="@Url.Action("DeleteLesson", "Instructor", new { id = lesson.LessonID, courseId = Model.CourseID })"
+                               class="btn-icon delete" onclick="return confirm('Xóa bài này?');">
+                                <i class="fa fa-trash"></i>
+                            </a>
+                        </div>
+                    </li>
+                }
+            </ul>
+        </div>
+    }
+</div>
+
+<div class="custom-modal-overlay" id="lessonModal">
+    <div class="custom-modal-box">
+        <span class="close-btn" onclick="closeModal()">&times;</span>
+        <h3>Lesson Details</h3>
+        <div class="video-preview" id="videoContainer">
+            <iframe id="lessonVideo" src="" frameborder="0" allowfullscreen></iframe>
+        </div>
+        <form action="@Url.Action("SaveLesson", "Instructor")" method="post" enctype="multipart/form-data">
+            <input type="hidden" name="CourseID" value="@Model.CourseID" />
+            <input type="hidden" name="LessonID" id="inputLessonID" value="0" />
+            <div class="input-group">
+                <label>Section Name</label>
+                <input type="text" name="SecName" id="inputSecName" required />
+            </div>
+            <div class="input-group">
+                <label>Lesson Title</label>
+                <input type="text" name="LessonTitle" id="inputLessonTitle" required />
+            </div>
+            <div class="input-group">
+                <label>Video URL</label>
+                <input type="text" name="VideoURL" id="inputVideoURL" onchange="updateVideo(this.value)" />
+            </div>
+            <button type="submit" class="btn-save">Save Lesson</button>
+        </form>
+    </div>
+</div>
+
+<script>
+    function updateVideo(url) {
+        const videoFrame = document.getElementById('lessonVideo');
+        if (!url) {
+            videoFrame.src = ""; // Clear video nếu không có url
+            return;
+        }
+        if (url.includes('youtube.com/watch?v=')) {
+            videoFrame.src = "https://www.youtube.com/embed/" + url.split('v=')[1].split('&')[0];
+        } else {
+            videoFrame.src = url;
+        }
+    }
+
+    function openAddLessonModal() {
+        // Reset ID về 0
+        document.getElementById('inputLessonID').value = 0;
+
+        // Clear các input
+        document.getElementById('inputSecName').value = '';
+        document.getElementById('inputLessonTitle').value = '';
+        document.getElementById('inputVideoURL').value = '';
+
+        // Reset video frame
+        document.getElementById('lessonVideo').src = "";
+
+        // Mở modal
+        document.getElementById('lessonModal').classList.add('show');
+    }
+
+    function openEditLessonModal(id, sec, title, url) {
+        document.getElementById('inputLessonID').value = id;
+        document.getElementById('inputSecName').value = sec;
+        document.getElementById('inputLessonTitle').value = title;
+        document.getElementById('inputVideoURL').value = url;
+
+        // Cập nhật video theo URL cũ
+        updateVideo(url);
+
+        document.getElementById('lessonModal').classList.add('show');
+    }
+
+    function closeModal() {
+        document.getElementById('lessonModal').classList.remove('show');
+    }
+</script>
