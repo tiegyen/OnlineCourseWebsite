@@ -17,13 +17,46 @@
 
         <div class="col-2 details-left" style="flex: 1.5; min-width: 300px;">
             @{
-                // Logic bốc ảnh theo CategoryID cho đồng bộ toàn hệ thống
-                string courseImageUrl = "~/Content/images/picture1.jpg";
-                if (Model.CategoryID == 1) { courseImageUrl = "~/Content/images/pic1.jpg"; }
-                else if (Model.CategoryID == 2) { courseImageUrl = "~/Content/images/pic2.jpg"; }
-                else if (Model.CategoryID == 3) { courseImageUrl = "~/Content/images/pic3.jpg"; }
-                else if (Model.CategoryID == 4) { courseImageUrl = "~/Content/images/pic4.jpg"; }
-                else if (Model.CategoryID == 5) { courseImageUrl = "~/Content/images/pic5.jpg"; }
+                // Logic bốc ảnh thông minh: Cân cả ảnh mới upload, ảnh cũ chứa đường dẫn và ảnh mặc định
+                string courseImageUrl = "";
+
+                // 1. Kiểm tra nếu cột Image trong DB không bị null hoặc rỗng
+                if (Model.Image != null && !string.IsNullOrEmpty(Model.Image.ToString().Trim()))
+                {
+                    string dbImageValue = Model.Image.ToString().Trim();
+
+                    // TRƯỜNG HỢP A: Nếu trong DB đã chứa sẵn cụm đường dẫn "Content/images" (Ảnh cũ của ní)
+                    if (dbImageValue.ToLower().Contains("content/images"))
+                    {
+                        if (dbImageValue.StartsWith("/"))
+                        {
+                            courseImageUrl = "~" + dbImageValue;
+                        }
+                        else if (dbImageValue.StartsWith("~/"))
+                        {
+                            courseImageUrl = dbImageValue;
+                        }
+                        else
+                        {
+                            courseImageUrl = "~/" + dbImageValue;
+                        }
+                    }
+                    // TRƯỜNG HỢP B: Nếu trong DB chỉ lưu mỗi tên file kiểu "course_9822dc82.jpg" (Ảnh mới upload)
+                    else
+                    {
+                        courseImageUrl = "~/Content/images/" + dbImageValue;
+                    }
+                }
+                // 2. Nếu cột Image trống huơ trống hoác -> Dùng logic gán cứng theo Category làm cứu cánh giống ngày xưa
+                else
+                {
+                    if (Model.CategoryID == 1) { courseImageUrl = "~/Content/images/pic1.jpg"; }
+                    else if (Model.CategoryID == 2) { courseImageUrl = "~/Content/images/pic2.jpg"; }
+                    else if (Model.CategoryID == 3) { courseImageUrl = "~/Content/images/pic3.jpg"; }
+                    else if (Model.CategoryID == 4) { courseImageUrl = "~/Content/images/pic4.jpg"; }
+                    else if (Model.CategoryID == 5) { courseImageUrl = "~/Content/images/pic5.jpg"; }
+                    else { courseImageUrl = "~/Content/images/picture1.jpg"; }
+                }
             }
             <img src="@Url.Content(courseImageUrl)" alt="@Model.CourseName" class="p-0 details-course-img" style="width: 100%; border-radius: 12px; object-fit: cover;">
 

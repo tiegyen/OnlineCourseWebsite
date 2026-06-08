@@ -1061,8 +1061,8 @@ h4 {
     }
 
 /* Badge trạng thái khóa học */
-.status-badge {
-    padding: 5px 10px;
+/*.status-badge {
+    padding: -1px 10px;
     border-radius: 20px;
     font-size: 12px;
     font-weight: 500;
@@ -1076,7 +1076,44 @@ h4 {
     .status-badge.draft {
         background-color: #fef3c7;
         color: #92400e;
-    }
+    }*/
+
+/* Định dạng chung cho Badge Trạng thái: chữ đậm, bo góc, thụt lề chuẩn UI */
+.status-badge {
+    padding: 6px 12px;
+    border-radius: 20px;
+    font-size: 12px;
+    font-weight: 600;
+    text-transform: uppercase;
+    display: inline-block;
+    letter-spacing: 0.5px;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+}
+
+/* Màu sắc động theo từng StatusID trong DB của ní */
+.status-1 {
+    background-color: #e8f5e9;
+    color: #2e7d32;
+}
+/* Open - Xanh lá quý phái */
+
+.status-2 {
+    background-color: #ffebee;
+    color: #c62828;
+}
+/* Closed - Đỏ rực rỡ */
+
+.status-3 {
+    background-color: #fff3e0;
+    color: #ef6c00;
+}
+/* Full - Cam ấm áp */
+
+.status-4 {
+    background-color: #e3f2fd;
+    color: #1565c0;
+}
+/* Coming Soon - Xanh dương thanh lịch */
 
 /* Biến tấu nút bấm hành động trong bảng */
 .btn-action-icon {
@@ -1715,3 +1752,4 @@ input[name="user-tabs"] {
         opacity: 1;
         visibility: visible;
     }
+

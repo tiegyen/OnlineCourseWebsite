@@ -4,79 +4,82 @@
 }
 
 <style>
-    .admin-actions-bar {
-        display: flex;
-        justify-content: flex-end;
-        margin-bottom: 20px;
-    }
 
-    .btn-add-primary {
-        background-color: #3498db;
-        color: #fff;
-        padding: 10px 16px;
-        border: none;
-        border-radius: 4px;
-        font-weight: 500;
-        cursor: pointer;
-        display: flex;
-        align-items: center;
-        gap: 8px;
-    }
+
+
+        .admin-actions-bar {
+            display: flex;
+            justify-content: flex-end;
+            margin-bottom: 20px;
+        }
+
+        .btn-add-primary {
+            background-color: #3498db;
+            color: #fff;
+            padding: 10px 16px;
+            border: none;
+            border-radius: 4px;
+            font-weight: 500;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
 
         .btn-add-primary:hover {
             background-color: #2980b9;
         }
 
-    /* Modal Styling */
-    .custom-modal {
-        display: none;
-        position: fixed;
-        z-index: 9999;
-        left: 0;
-        top: 0;
-        width: 100%;
-        height: 100%;
-        background-color: rgba(0,0,0,0.5);
-        align-items: center;
-        justify-content: center;
-    }
+        /* Modal Styling */
+        .custom-modal {
+            display: none;
+            position: fixed;
+            z-index: 9999;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0,0,0,0.5);
+            align-items: center;
+            justify-content: center;
+        }
 
-    .modal-content-box {
-        background-color: #fff;
-        padding: 25px;
-        border-radius: 8px;
-        width: 100%;
-        max-width: 600px;
-        box-shadow: 0 4px 20px rgba(0,0,0,0.15);
-        animation: fadeIn 0.3s ease;
-    }
+        .modal-content-box {
+            background-color: #fff;
+            padding: 25px;
+            border-radius: 8px;
+            width: 100%;
+            max-width: 600px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.15);
+            animation: fadeIn 0.3s ease;
+        }
 
-    .modal-header-custom {
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-        border-bottom: 1px solid #e2e8f0;
-        padding-bottom: 15px;
-        margin-bottom: 20px;
-    }
+        .modal-header-custom {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 1px solid #e2e8f0;
+            padding-bottom: 15px;
+            margin-bottom: 20px;
+        }
 
-    .modal-close-btn {
-        background: none;
-        border: none;
-        font-size: 20px;
-        cursor: pointer;
-        color: #64748b;
-    }
+        .modal-close-btn {
+            background: none;
+            border: none;
+            font-size: 20px;
+            cursor: pointer;
+            color: #64748b;
+        }
 
-    .form-grid-2 {
-        display: grid;
-        grid-template-columns: 1fr 1fr;
-        gap: 15px;
-    }
+        .form-grid-2 {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+        }
 
-    .form-group-custom {
-        margin-bottom: 15px;
-    }
+        .form-group-custom {
+            margin-bottom: 15px;
+        }
 
         .form-group-custom label {
             display: block;
@@ -86,38 +89,38 @@
             color: #334155;
         }
 
-    .form-control-custom {
-        width: 100%;
-        padding: 8px 12px;
-        border: 1px solid #cbd5e1;
-        border-radius: 4px;
-        font-size: 14px;
-    }
+        .form-control-custom {
+            width: 100%;
+            padding: 8px 12px;
+            border: 1px solid #cbd5e1;
+            border-radius: 4px;
+            font-size: 14px;
+        }
 
-    .modal-footer-custom {
-        display: flex;
-        justify-content: flex-end;
-        gap: 10px;
-        border-top: 1px solid #e2e8f0;
-        padding-top: 15px;
-        margin-top: 20px;
-    }
+        .modal-footer-custom {
+            display: flex;
+            justify-content: flex-end;
+            gap: 10px;
+            border-top: 1px solid #e2e8f0;
+            padding-top: 15px;
+            margin-top: 20px;
+        }
 
-    .btn-modal-close {
-        background-color: #94a3b8;
-        color: white;
-        border: none;
-        padding: 8px 16px;
-        border-radius: 4px;
-        cursor: pointer;
-    }
+        .btn-modal-close {
+            background-color: #94a3b8;
+            color: white;
+            border: none;
+            padding: 8px 16px;
+            border-radius: 4px;
+            cursor: pointer;
+        }
 
+        
     @@keyframes fadeIn {
         from {
             opacity: 0;
             transform: translateY(-20px);
         }
-
         to {
             opacity: 1;
             transform: translateY(0);
@@ -160,7 +163,7 @@
 
                 <div class="form-group-custom">
                     <label>Change Thumbnail (Để trống nếu giữ nguyên ảnh cũ)</label>
-                    <input type="file" name="EditImageFile" class="form-control-custom" accept="image/*" />
+                    <input type="file" id="fileEditImage" name="EditImageFile" class="form-control-custom" accept="image/*" />
                     <div class="mt-10">
                         <small>Ảnh hiện tại: </small>
                         <img id="edit_PreviewImage" src="" style="width: 60px; height: 45px; object-fit: cover; border-radius: 4px; display:inline-block; vertical-align:middle;" />
@@ -228,7 +231,6 @@
         <div class="admin-main-col card-box">
             <h3 class="profile-section-title mb-20"><i class="fa fa-book"></i> Global Course List</h3>
             <div class="data-table-wrapper">
-
                 <table class="data-table">
                     <thead>
                         <tr>
@@ -247,13 +249,43 @@
                             {
                                 <tr>
                                     <td>
-                                        <strong>@course.CourseName</strong><br>
-                                        <small class="text-link">Price: @course.Price.ToString("N0")đ</small>
+                                        <div style="display: flex; gap: 10px; align-items: center;">
+                                            @{
+                                                string tblImg = "";
+                                                if (!string.IsNullOrEmpty(course.Image) && course.Image.ToString().Trim().ToLower() != "null")
+                                                {
+                                                    string imgTrim = course.Image.ToString().Trim();
+                                                    // Nếu đã chứa sẵn đường dẫn Content/images
+                                                    if (imgTrim.ToLower().Contains("content/images"))
+                                                    {
+                                                        tblImg = Url.Content("~/" + imgTrim.Replace("~/", "").TrimStart('/'));
+                                                    }
+                                                    else
+                                                    {
+                                                        tblImg = Url.Content("~/Content/images/" + imgTrim);
+                                                    }
+                                                }
+                                                else
+                                                {
+                                                    // Cứu cánh bằng CategoryID nếu cột Image trống huơ trống hoác
+                                                    if (course.CategoryID == 1) { tblImg = Url.Content("~/Content/images/pic1.jpg"); }
+                                                    else if (course.CategoryID == 2) { tblImg = Url.Content("~/Content/images/pic2.jpg"); }
+                                                    else if (course.CategoryID == 3) { tblImg = Url.Content("~/Content/images/pic3.jpg"); }
+                                                    else if (course.CategoryID == 4) { tblImg = Url.Content("~/Content/images/pic4.jpg"); }
+                                                    else if (course.CategoryID == 5) { tblImg = Url.Content("~/Content/images/pic5.jpg"); }
+                                                    else { tblImg = Url.Content("~/Content/images/picture1.jpg"); }
+                                                }
+                                            }
+                                            <img src="@tblImg?t=@DateTime.Now.Ticks" style="width: 50px; height: 38px; object-fit: cover; border-radius: 4px;" />
+
+                                            <div>
+                                                <strong>@course.CourseName</strong><br>
+                                                <small class="text-link">Price: @course.Price.ToString("N0")đ</small>
+                                            </div>
+                                        </div>
                                     </td>
                                     <td>@course.CategoryName</td>
-
                                     <td><span class="text-link">@course.Duration</span></td>
-
                                     <td>
                                         <select class="assign-select ddl-assign-instructor" data-course-id="@course.CourseID">
                                             <option value="">-- Unassigned --</option>
@@ -266,14 +298,9 @@
                                         </select>
                                     </td>
                                     <td>
-                                        @if (course.StatusID == 1)
-                                        {
-                                            <span class="status-badge active">Active</span>
-                                        }
-                                        else
-                                        {
-                                            <span class="status-badge pending">Pending</span>
-                                        }
+                                        <span class="status-badge status-@course.StatusID">
+                                            @course.StatusName
+                                        </span>
                                     </td>
                                     <td>
                                         <button class="btn-action-icon text-link btn-edit-course"
@@ -304,7 +331,6 @@
                         }
                     </tbody>
                 </table>
-
             </div>
         </div>
 
@@ -370,7 +396,11 @@
 
             <div class="form-group-custom">
                 <label>Course Thumbnail (Hình ảnh)</label>
-                <input type="file" name="ImageFile" class="form-control-custom" accept="image/*" />
+                <input type="file" id="fileAddImage" name="ImageFile" class="form-control-custom" accept="image/*" />
+                <div class="mt-10" id="previewAddContainer" style="display: none;">
+                    <small>Xem trước: </small>
+                    <img id="add_PreviewImage" src="" style="width: 60px; height: 45px; object-fit: cover; border-radius: 4px; display:inline-block; vertical-align:middle;" />
+                </div>
             </div>
 
             <div class="form-grid-2">
@@ -429,8 +459,6 @@
                 <button type="submit" class="btn-admin-submit" style="width: auto; padding: 8px 20px;">Save Course</button>
             </div>
         }
-
-
     </div>
 </div>
 
@@ -447,10 +475,13 @@
             $('#courseModal').hide();
         });
 
-        // 3. Đóng Modal Add khi click ra ngoài
+        // 3. Đóng các Modal khi click ra ngoài vùng xám
         $(window).click(function (e) {
             if ($(e.target).is('#courseModal')) {
                 $('#courseModal').hide();
+            }
+            if ($(e.target).is('#editCourseModal')) {
+                $('#editCourseModal').hide();
             }
         });
 
@@ -465,8 +496,11 @@
                 type: 'POST',
                 data: { courseId: courseId, instructorId: instructorId },
                 success: function (response) {
-                    if (response.success) { alert('Instructor assigned successfully!'); }
-                    else { alert('Failed to update assignment.'); }
+                    if (response.success) {
+                        alert('Instructor assigned successfully!');
+                    } else {
+                        alert('Failed to update assignment.');
+                    }
                 },
                 error: function () { alert('Error system connectivity.'); }
             });
@@ -485,72 +519,99 @@
                     success: function (response) {
                         if (response.success) {
                             row.fadeOut(400, function () { $(this).remove(); });
-                        } else { alert(response.message); }
+                        } else {
+                            alert(response.message);
+                        }
                     },
                     error: function () { alert('Error while processing delete operation.'); }
                 });
             }
         });
 
-        // ========================================================
-        // TẤT CẢ LOGIC EDIT ĐƯỢC ĐƯA VÀO ĐÂY ĐỂ CHẠY CHO ĐÚNG NHA NÍ
-        // ========================================================
-
-        // 6. Mở modal Edit và điền dữ liệu tự động
+        // 6. Mở modal Edit và đổ dữ liệu tự động
         $('.btn-edit-course').click(function () {
-            var id = $(this).data('id');
-
-            // Ép kiểu chuỗi tường minh và dùng .data() hoặc .attr() bọc thêm String() cho an toàn
+            var id = $(this).attr('data-id');
             var name = $(this).attr('data-name') || '';
             var price = $(this).attr('data-price') || '0';
-
-            // TUYỆT CHIÊU: Nếu .attr() không ra, ta fallback sang .data(), thêm || '' để không bao giờ bị dính null/undefined
             var duration = $(this).attr('data-duration') || $(this).data('duration') || '';
-
             var category = $(this).data('category');
             var instructor = $(this).data('instructor');
             var status = $(this).data('status');
             var image = $(this).data('image') || '';
             var desc = $(this).attr('data-description') || '';
 
-            // TEST THỬ NGAY TRÊN CONSOLE XEM NÓ ĐÃ RA CHỮ CHƯA
-            console.log("Dữ liệu duration lấy được:", duration);
-
-            // Đổ dữ liệu có sẵn vào Form trong Modal Edit
+            // Đổ các trường dữ liệu vào form Edit
             $('#edit_CourseID').val(id);
-
-            // Giải mã ngược HTML và thực hiện trim() xóa khoảng trắng thừa
             $('#edit_CourseName').val($('<div/>').html(name).text().trim());
             $('#edit_Price').val(parseFloat(price) || 0);
-
-            // Đổ thẳng vào input edit_Duration
             $('#edit_Duration').val($('<div/>').html(duration).text().trim());
-
             $('#edit_CategoryID').val(category);
             $('#edit_InstructorID').val(instructor);
             $('#edit_StatusID').val(status);
             $('#edit_Description').val($('<div/>').html(desc).text().trim());
             $('#edit_OldImage').val(image);
 
-            // Xử lý ảnh preview
-            var imgPath = "/Content/images/courses/" + (image ? image : "default-course.png");
-            $('#edit_PreviewImage').attr('src', imgPath);
+            // Xử lý logic hiển thị ảnh Preview
+            var finalImgPath = "";
+            var cleanImage = image.trim();
 
-            // Bật modal Edit lên
+            if (cleanImage !== "" && cleanImage.toLowerCase() !== "null") {
+                if (cleanImage.toLowerCase().indexOf('content/images') !== -1) {
+                    finalImgPath = cleanImage.startsWith('/') ? cleanImage : '/' + cleanImage;
+                } else {
+                    finalImgPath = '/Content/images/' + cleanImage;
+                }
+            } else {
+                if (category == 1) finalImgPath = '/Content/images/pic1.jpg';
+                else if (category == 2) finalImgPath = '/Content/images/pic2.jpg';
+                else if (category == 3) finalImgPath = '/Content/images/pic3.jpg';
+                else if (category == 4) finalImgPath = '/Content/images/pic4.jpg';
+                else if (category == 5) finalImgPath = '/Content/images/pic5.jpg';
+                else finalImgPath = '/Content/images/picture1.jpg';
+            }
+
+            // Ép trình duyệt xóa cache ảnh cũ bằng dấu timestamp
+            $('#edit_PreviewImage').attr('src', finalImgPath + '?t=' + new Date().getTime()).show();
+
+            // Hiển thị modal edit
             $('#editCourseModal').css('display', 'flex');
         });
 
-        // 7. Đóng modal Edit khi click nút Cancel hoặc dấu X
+        // 7. Đóng modal Edit khi bấm Cancel hoặc dấu X
         $('#btnCloseEditModalX, #btnCloseEditModalBtn').click(function () {
             $('#editCourseModal').hide();
         });
 
-        // 8. Đóng modal Edit khi click ra rìa ngoài
-        $(window).click(function (e) {
-            if ($(e.target).is('#editCourseModal')) {
-                $('#editCourseModal').hide();
+        // 8. Đổi ảnh preview lập tức khi chọn file mới trên máy tính
+        $('#fileEditImage').change(function (event) {
+            var input = event.target;
+            if (input.files && input.files[0]) {
+                var reader = new FileReader();
+                reader.onload = function (e) {
+                    $('#edit_PreviewImage').attr('src', e.target.result);
+                };
+                reader.readAsDataURL(input.files[0]);
             }
         });
 
-    }); // Kết thúc document.ready
+        $('#fileAddImage').change(function (event) {
+            var input = event.target;
+            if (input.files && input.files[0]) {
+                var reader = new FileReader();
+                reader.onload = function (e) {
+                    $('#add_PreviewImage').attr('src', e.target.result);
+                    $('#previewAddContainer').show();
+                };
+                reader.readAsDataURL(input.files[0]);
+            }
+        });
+
+        // Reset lại form và ẩn ảnh preview cũ khi đóng modal Add
+        $('#btnCloseModalX, #btnCloseModalBtn').click(function () {
+            $('#courseModal').hide();
+            $('#fileAddImage').val('');
+            $('#add_PreviewImage').attr('src', '');
+            $('#previewAddContainer').hide();
+        });
+    });
 </script>

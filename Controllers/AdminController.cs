@@ -43,17 +43,20 @@ public class AdminController : Controller
     {
         var viewModel = new CoursesViewModel();
 
-        // 1. Lấy danh sách khóa học (sau khi ní đã JOIN hoặc SELECT ra CourseDisplayDto)
+        // 1. Lấy danh sách khóa học (Double Join để lấy cả CategoryName lẫn StatusName)
         viewModel.Courses = (from c in db.Courses
                              join cat in db.Categories on c.CategoryID equals cat.CategoryID
+                             join st in db.CourseStatus on c.StatusID equals st.StatusID // 👈 JOIN THÊM BẢNG STATUS NÀY NÍ
                              select new CourseDisplayDto
                              {
                                  CourseID = c.CourseID,
                                  CourseName = c.CourseName,
                                  Price = c.Price ?? 0,
                                  CategoryName = cat.CategoryName,
+                                 CategoryID = c.CategoryID,
                                  InstructorID = c.InstructorID,
                                  StatusID = c.StatusID,
+                                 StatusName = st.StatusName, // 👈 GÁN THẰNG NÀY ĐỂ VIEW HỨNG NHA!
                                  Duration = c.Duration
                              }).ToList();
 
@@ -61,7 +64,7 @@ public class AdminController : Controller
         viewModel.Categories = db.Categories.ToList();
         viewModel.Instructors = db.Instructors.ToList();
 
-        // 3. ĐỪNG QUÊN NẠP THẰNG NÀY ĐỂ ĐỔ VÀO DROPDOWN TRÊN MODAL:
+        // 3. Nạp dữ liệu đổ vào Dropdown trên Modal:
         viewModel.CourseStatuses = db.CourseStatus.ToList();
 
         return View(viewModel);
@@ -268,42 +271,52 @@ public class AdminController : Controller
         }
         return View(model);
     }
-
     // POST: Admin/CreateCourse
     [HttpPost]
     [ValidateAntiForgeryToken]
-    public ActionResult CreateCourse(Course model)
+    public ActionResult CreateCourse(Course model, HttpPostedFileBase ImageFile)
     {
         try
         {
+            // Gỡ lỗi ModelState nếu dính trường hợp property Image bị yêu cầu bắt buộc
+            if (ModelState.ContainsKey("Image")) ModelState["Image"].Errors.Clear();
+
             if (ModelState.IsValid)
             {
-                // Khởi tạo đối tượng Course thuần LINQ to SQL
                 Course newCourse = new Course
                 {
                     CourseName = model.CourseName.Trim(),
                     Description = model.Description?.Trim(),
                     Price = model.Price,
                     Duration = model.Duration?.Trim(),
-                    CreatedDate = System.DateTime.Now, // Set thời gian tạo thực tế
+                    CreatedDate = System.DateTime.Now,
                     InstructorID = model.InstructorID,
                     CategoryID = model.CategoryID,
                     StatusID = model.StatusID
                 };
 
-                // Thần chú LINQ thuần: InsertOnSubmit + SubmitChanges
+                // CHỖ NÀY NÈ: Xử lý lưu ảnh khi TẠO MỚI khóa học
+                if (ImageFile != null && ImageFile.ContentLength > 0)
+                {
+                    string extension = Path.GetExtension(ImageFile.FileName);
+                    string imageName = "course_" + Guid.NewGuid().ToString().Substring(0, 8) + extension;
+                    string path = Path.Combine(Server.MapPath("~/Content/images/courses/"), imageName);
+
+                    ImageFile.SaveAs(path);
+                    newCourse.Image = imageName; // Gán tên file vào DB
+                }
+
                 db.Courses.InsertOnSubmit(newCourse);
                 db.SubmitChanges();
 
                 return RedirectToAction("Courses");
             }
         }
-        catch
+        catch (Exception ex)
         {
-            // Nếu có lỗi hệ thống, ní có thể gán ViewBag.Error để báo lỗi
+            System.Diagnostics.Debug.WriteLine("Lỗi Create Course: " + ex.Message);
         }
 
-        // Nếu lỗi dữ liệu, quay về trang danh sách
         return RedirectToAction("Courses");
     }
 
@@ -313,9 +326,11 @@ public class AdminController : Controller
     {
         try
         {
+            // Ép buộc xóa check validate của cột Image nếu form truyền về bị null trúng nó
+            if (ModelState.ContainsKey("Image")) ModelState["Image"].Errors.Clear();
+
             if (ModelState.IsValid)
             {
-                // Tìm khóa học gốc trong DB bằng LINQ thuần
                 var course = db.Courses.SingleOrDefault(c => c.CourseID == model.CourseID);
 
                 if (course != null)
@@ -332,29 +347,29 @@ public class AdminController : Controller
                     if (EditImageFile != null && EditImageFile.ContentLength > 0)
                     {
                         string extension = Path.GetExtension(EditImageFile.FileName);
-                        string imageName = "course_" + System.Guid.NewGuid().ToString().Substring(0, 8) + extension;
-                        string path = Path.Combine(Server.MapPath("~/Content/images/courses/"), imageName);
+                        string imageName = "course_" + Guid.NewGuid().ToString().Substring(0, 8) + extension;
+                        string path = Path.Combine(Server.MapPath("~/Content/images/"), imageName);
 
                         EditImageFile.SaveAs(path);
 
-                        // Gán tên ảnh mới vào DB
+                        // Cập nhật giá trị mới
                         course.Image = imageName;
                     }
                     else
                     {
-                        // Nếu không đổi ảnh, giữ nguyên tên ảnh cũ truyền từ hidden field qua
+                        // Giữ nguyên ảnh cũ nếu không change thumbnail
                         course.Image = OldImage;
                     }
 
-                    // Lưu thay đổi xuống Database
+                    // Chốt hạ đẩy dữ liệu xuống SQL Server
                     db.SubmitChanges();
                 }
                 return RedirectToAction("Courses");
             }
         }
-        catch
+        catch (Exception ex)
         {
-            // Xử lý báo lỗi nếu cần
+            System.Diagnostics.Debug.WriteLine("Lỗi Edit Course: " + ex.Message);
         }
 
         return RedirectToAction("Courses");

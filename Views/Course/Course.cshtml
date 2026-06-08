@@ -52,12 +52,46 @@
             {
                 <div class="col-4 card-box course-item-card" style="flex: 0 0 calc(25% - 15px); min-width: 250px; max-width: 280px; margin-bottom: 20px;">
                     @{
-                        string courseImageUrl = "~/Content/images/picture1.jpg";
-                        if (item.CategoryID == 1) { courseImageUrl = "~/Content/images/pic1.jpg"; }
-                        else if (item.CategoryID == 2) { courseImageUrl = "~/Content/images/pic2.jpg"; }
-                        else if (item.CategoryID == 3) { courseImageUrl = "~/Content/images/pic3.jpg"; }
-                        else if (item.CategoryID == 4) { courseImageUrl = "~/Content/images/pic4.jpg"; }
-                        else if (item.CategoryID == 5) { courseImageUrl = "~/Content/images/pic5.jpg"; }
+                        string courseImageUrl = "";
+
+                        // 1. Kiểm tra nếu cột Image trong DB không bị null hoặc rỗng
+                        if (item.Image != null && !string.IsNullOrEmpty(item.Image.ToString().Trim()))
+                        {
+                            string dbImageValue = item.Image.ToString().Trim();
+
+                            // TRƯỜNG HỢP A: Nếu trong DB đã chứa sẵn đường dẫn "Content/images" (Ảnh cũ)
+                            if (dbImageValue.ToLower().Contains("content/images"))
+                            {
+                                // Nếu nó bắt đầu bằng dấu gạch chéo "/" thì chỉ cần thêm dấu ngã "~" đằng trước
+                                if (dbImageValue.StartsWith("/"))
+                                {
+                                    courseImageUrl = "~" + dbImageValue;
+                                }
+                                else if (dbImageValue.StartsWith("~/"))
+                                {
+                                    courseImageUrl = dbImageValue;
+                                }
+                                else
+                                {
+                                    courseImageUrl = "~/" + dbImageValue;
+                                }
+                            }
+                            // TRƯỜNG HỢP B: Nếu trong DB chỉ lưu mỗi tên file kiểu "course_9822dc82.jpg" (Ảnh mới upload)
+                            else
+                            {
+                                courseImageUrl = "~/Content/images/" + dbImageValue;
+                            }
+                        }
+                        // 2. Nếu cột Image trống huơ trống hoác -> Dùng logic gán cứng theo Category làm cứu cánh
+                        else
+                        {
+                            if (item.CategoryID == 1) { courseImageUrl = "~/Content/images/pic1.jpg"; }
+                            else if (item.CategoryID == 2) { courseImageUrl = "~/Content/images/pic2.jpg"; }
+                            else if (item.CategoryID == 3) { courseImageUrl = "~/Content/images/pic3.jpg"; }
+                            else if (item.CategoryID == 4) { courseImageUrl = "~/Content/images/pic4.jpg"; }
+                            else if (item.CategoryID == 5) { courseImageUrl = "~/Content/images/pic5.jpg"; }
+                            else { courseImageUrl = "~/Content/images/picture1.jpg"; }
+                        }
                     }
                     <img src="@Url.Content(courseImageUrl)" alt="@item.CourseName">
 
