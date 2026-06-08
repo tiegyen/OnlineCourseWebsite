@@ -1,0 +1,182 @@
+﻿@model OnlineCourseWebsite.Models.InstructorCoursesViewModel
+@{
+    ViewBag.Title = "Manage My Courses";
+    Layout = "~/Views/Shared/_InsLayout.cshtml";
+}
+
+<div class="admin-header">
+    <div>
+        <h2>My Teaching Courses</h2>
+        <p class="text-link">Create, update, and manage your English training programs.</p>
+    </div>
+    <button class="btn btn-primary" onclick="openCreateModal()">
+        <i class="fa fa-plus"></i> Create New Course
+    </button>
+</div>
+
+<div class="data-table-wrapper">
+    <table class="data-table">
+        <thead>
+            <tr>
+                <th>Image</th>
+                <th>Course Title</th>
+                <th>Category</th>
+                <th>Price</th>
+                <th>Students Enrolled</th>
+                <th>Status</th>
+                <th>Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+            @if (Model.Courses != null && Model.Courses.Any())
+            {
+                foreach (var course in Model.Courses)
+                {
+                    <tr>
+                        <td>
+                            <img src="@(string.IsNullOrEmpty(course.ImageUrl) ? Url.Content("~/Content/images/picture1.jpg") : Url.Content(course.ImageUrl))"
+                                 alt="Course Thumbnail" width="60px" class="p-0">
+                        </td>
+                        <td>
+                            <strong>@course.CourseTitle</strong><br>
+                            <small class="text-link">Duration: @course.Duration</small>
+                        </td>
+                        <td>@course.CategoryName</td>
+                        <td>@course.Price.ToString("#,##0") VND</td>
+                        <td><strong>@course.StudentsEnrolled</strong> Students</td>
+                        <td><span class="status-badge active">@course.StatusName</span></td>
+                        <td>
+                            <button type="button" class="btn-action-icon" title="Edit Course Info"
+                                    onclick="openEditModal(this)"
+                                    data-id="@course.CourseID"
+                                    data-title="@course.CourseTitle"
+                                    data-price="@course.Price"
+                                    data-duration="@course.Duration"
+                                    data-desc="@course.CourseTitle">
+                                <i class="fa fa-edit"></i>
+                            </button>
+
+                            <a href="@Url.Action("Curriculum", "Instructor", new { id = course.CourseID })" class="btn-action-icon" title="Manage Lessons">
+                                <i class="fa fa-list-ol"></i>
+                            </a>
+                        </td>
+                    </tr>
+                }
+            }
+            else
+            {
+                <tr>
+                    <td colspan="7" style="text-align:center;" class="text-link">You haven't created any courses yet.</td>
+                </tr>
+            }
+        </tbody>
+    </table>
+</div>
+
+<div class="feedback-modal-overlay" id="courseModal">
+    <div class="feedback-modal-box course-modal-box">
+        <span class="close-modal-btn">&times;</span>
+
+        <h3 class="mb-20"><i class="fa fa-book"></i> Course Information</h3>
+
+        <form action="@Url.Action("SaveCourse", "Instructor")" method="post" enctype="multipart/form-data">
+            <input type="hidden" id="modalCourseID" name="CourseID" value="0" />
+
+            <div class="form-group">
+                <label>Course Title</label>
+                <input type="text" id="modalTitle" name="CourseName" class="form-control" placeholder="e.g., Business English Communication" required>
+            </div>
+
+            <div class="form-row">
+                <div class="form-group form-col-equal">
+                    <label>Category</label>
+                    <select id="modalCategory" name="CategoryID" class="form-control filter-select">
+                        @foreach (var cat in Model.Categories)
+                        {
+                            <option value="@cat.CategoryID">@cat.CategoryName</option>
+                        }
+                    </select>
+                </div>
+                <div class="form-group form-col-equal">
+                    <label>Status</label>
+                    <select id="modalStatus" name="StatusID" class="form-control filter-select">
+                        @foreach (var st in Model.Statuses)
+                        {
+                            <option value="@st.StatusID">@st.StatusName</option>
+                        }
+                    </select>
+                </div>
+            </div>
+
+            <div class="form-row">
+                <div class="form-group form-col-equal">
+                    <label>Price (VND)</label>
+                    <input type="number" id="modalPrice" name="Price" class="form-control" placeholder="e.g., 1500000" required>
+                </div>
+                <div class="form-group form-col-equal">
+                    <label>Duration (Display UI)</label>
+                    <input type="text" id="modalDuration" name="Duration" class="form-control" placeholder="e.g., 10 Weeks" required>
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label>Course Description</label>
+                <textarea id="modalDesc" name="Description" class="form-control feedback-textarea" rows="4" placeholder="Brief summary about the course targets and outcomes..."></textarea>
+            </div>
+
+            <div class="form-group">
+                <label>Course Thumbnail Image</label>
+                <input type="file" name="ImageFile" class="form-control">
+            </div>
+
+            <button type="submit" class="btn btn-primary w-100">Save Course Settings</button>
+        </form>
+    </div>
+</div>
+
+<script>
+    var modal = document.getElementById('courseModal');
+    var closeBtn = document.querySelector('.close-modal-btn');
+
+    // 1. Xử lý khi click vào nút EDIT (Đổ dữ liệu từ bảng lên Form)
+    function openEditModal(button) {
+        var id = button.getAttribute('data-id');
+        var title = button.getAttribute('data-title');
+        var price = button.getAttribute('data-price');
+        var duration = button.getAttribute('data-duration');
+        var desc = button.getAttribute('data-desc');
+
+        // Gán giá trị vào các ô Input trong Modal bằng ID của chúng
+        document.getElementById('modalCourseID').value = id;
+        document.getElementById('modalTitle').value = title;
+        document.getElementById('modalPrice').value = Math.round(price);
+        document.getElementById('modalDuration').value = duration;
+        document.getElementById('modalDesc').value = desc;
+
+        // Mở modal lên gáy
+        modal.classList.add('open');
+    }
+
+    // 2. Xử lý khi click vào nút CREATE NEW COURSE (Xóa trống Form)
+    function openCreateModal() {
+        document.getElementById('modalCourseID').value = "0"; // Trở về 0 để Controller biết là Thêm mới
+        document.getElementById('modalTitle').value = "";
+        document.getElementById('modalPrice').value = "";
+        document.getElementById('modalDuration').value = "";
+        document.getElementById('modalDesc').value = "";
+
+        modal.classList.add('open');
+    }
+
+    // 3. Xử lý đóng Modal khi bấm dấu [X]
+    closeBtn.onclick = function () {
+        modal.classList.remove('open');
+    }
+
+    // 4. Đóng modal nếu người dùng bấm trượt ra vùng trống bên ngoài
+    window.onclick = function (event) {
+        if (event.target == modal) {
+            modal.classList.remove('open');
+        }
+    }
+</script>

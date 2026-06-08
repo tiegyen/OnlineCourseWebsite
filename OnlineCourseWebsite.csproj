@@ -143,6 +143,7 @@
     </Compile>
     <Compile Include="Models\ViewModel\AdminPaymentDisplayDto.cs" />
     <Compile Include="Models\ViewModel\CoursesViewModel.cs" />
+    <Compile Include="Models\ViewModel\InstructorDashboardViewModel.cs" />
     <Compile Include="Models\ViewModel\PaymentRow.cs" />
     <Compile Include="Models\ViewModel\UserDto.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
@@ -278,10 +279,11 @@
     <Content Include="Views\Admin\Transactions.cshtml" />
     <Content Include="Views\Course\PaymentDetails.cshtml" />
     <Content Include="Views\Admin\CreateInstructor.cshtml" />
+    <Content Include="Views\Instructor\Dashboard.cshtml" />
+    <Content Include="Views\Instructor\MyCourses.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
-    <Folder Include="Views\Instructor\" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="Content\bootstrap.rtl.min.css.map" />

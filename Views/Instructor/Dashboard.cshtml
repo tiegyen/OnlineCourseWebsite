@@ -1,0 +1,132 @@
+﻿@model OnlineCourseWebsite.Models.InstructorDashboardViewModel
+@{
+    ViewBag.Title = "Instructor Dashboard & Stats";
+    Layout = "~/Views/Shared/_InsLayout.cshtml";
+}
+
+<div class="stats-grid">
+
+    <div class="stat-card">
+        <div class="stat-info">
+            <h3>@Model.TotalCourses</h3>
+            <p>Total Courses</p>
+        </div>
+        <div class="stat-icon">
+            <i class="fa fa-book"></i>
+        </div>
+    </div>
+
+    <div class="stat-card">
+        <div class="stat-info">
+            <h3>@Model.TotalEnrollments</h3>
+            <p>Total Enrollments</p>
+        </div>
+        <div class="stat-icon icon-blue">
+            <i class="fa fa-users"></i>
+        </div>
+    </div>
+
+    <div class="stat-card">
+        <div class="stat-info">
+            <h3>@Model.AverageRatingAll.ToString("0.0")</h3>
+            <p>Average Rating</p>
+        </div>
+        <div class="stat-icon icon-orange">
+            <i class="fa fa-star"></i>
+        </div>
+    </div>
+
+    <div class="stat-card">
+        <div class="stat-info">
+            <h3 style="font-size:18px; line-height:1.2;">
+                @Model.MostPopularCourse
+            </h3>
+            <p>Most Popular Course</p>
+        </div>
+        <div class="stat-icon icon-green">
+            <i class="fa fa-trophy"></i>
+        </div>
+    </div>
+
+</div>
+
+<div class="stats-detail-section">
+
+    <div class="section-subtitle-box">
+        <h3>
+            <i class="fa fa-bar-chart"></i>
+            Course Statistics Breakdown
+        </h3>
+        <span class="text-link" style="font-size:13px;">
+            Data updated: Live
+        </span>
+    </div>
+
+    <div class="data-table-wrapper">
+        <table class="data-table">
+            <thead>
+                <tr>
+                    <th>Course Name</th>
+                    <th>Status</th>
+                    <th>Total Enrollments</th>
+                    <th>Average Rating</th>
+                    <th>Learning Status Breakdown</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var item in Model.CourseStats)
+                {
+                    <tr>
+                        <td><strong>@item.CourseName</strong></td>
+                        <td><span class="status-badge active">@item.CourseStatus</span></td>
+                        <td><strong>@item.TotalSubscribers</strong> Students</td>
+                        <td>
+                            <i class="fa fa-star" style="color:#f1c40f;"></i>
+                            @item.AverageRating.ToString("0.0") / 5.0
+                        </td>
+                        <td>
+                            <small class="text-link">
+                                @item.StudyingCount Studying | @item.CompletedCount Completed
+                            </small>
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+
+</div>
+
+<div class="card-box mt-30">
+    <h3 class="profile-section-title"><i class="fa fa-history"></i> Recent Activities</h3>
+    <div class="material-list">
+        @if (Model.RecentActivities != null && Model.RecentActivities.Any())
+        {
+            foreach (var act in Model.RecentActivities)
+            {
+                <div class="material-item">
+                    <div class="material-info">
+                        @if (act.ActivityType == "Enroll")
+                        {
+                            <i class="fa fa-check-circle" style="color: #2ecc71; font-size: 16px;"></i>
+                            <span>Student <strong>@act.StudentName</strong> enrolled in <strong>@act.CourseName</strong></span>
+                        }
+                        else if (act.ActivityType == "Review")
+                        {
+                            <i class="fa fa-star" style="color: #f1c40f; font-size: 16px;"></i>
+                            <span>Student <strong>@act.StudentName</strong> left a <strong>@act.Rating-star</strong> review on <strong>@act.CourseName</strong></span>
+                        }
+                    </div>
+                    <small class="text-link">@act.ActionDate.ToString("dd/MM/yyyy HH:mm")</small>
+                </div>
+            }
+        }
+        else
+        {
+            <div class="material-item">
+                <span class="text-link">No recent activities recorded.</span>
+            </div>
+        }
+    </div>
+</div>
+</div>

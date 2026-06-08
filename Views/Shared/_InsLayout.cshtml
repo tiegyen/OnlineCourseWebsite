@@ -3,11 +3,10 @@
 <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>@ViewData["Title"] | English Mastery</title>
+    <title>@ViewBag.Title | English Mastery</title>
     <link href="~/css/style.css" rel="stylesheet" />
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css">
-    @await RenderSectionAsync("Styles", required: false)
 </head>
 <body>
 
@@ -17,12 +16,14 @@
                 <i class="fa fa-graduation-cap"></i> Trainer Portal
             </div>
             <ul class="sidebar-menu">
-                <li class="active"><a href="#"><i class="fa fa-dashboard"></i> Dashboard</a></li>
-                <li><a href="#"><i class="fa fa-book"></i> My Courses</a></li>
-                <li><a href="#"><i class="fa fa-tasks"></i> Curriculum</a></li>
-                <li><a href="#"><i class="fa fa-users"></i> Enrolled Students</a></li>
-                <li><a href="#"><i class="fa fa-star"></i> Reviews</a></li>
-                <li class="mt-50"><a href="#"><i class="fa fa-sign-out"></i> Logout</a></li>
+                <li class="@(ViewContext.RouteData.Values["action"].ToString() == "Dashboard" ? "active" : "")">
+                    <a href="@Url.Action("Dashboard", "Instructor")"><i class="fa fa-dashboard"></i> Dashboard</a>
+                </li>
+                <li><a href="@Url.Action("MyCourses", "Instructor")"><i class="fa fa-book"></i> My Courses</a></li>
+                <li><a href="@Url.Action("Curriculum", "Instructor")"><i class="fa fa-tasks"></i> Curriculum</a></li>
+                <li><a href="@Url.Action("Students", "Instructor")"><i class="fa fa-users"></i> Enrolled Students</a></li>
+                <li><a href="@Url.Action("Reviews", "Instructor")"><i class="fa fa-star"></i> Reviews</a></li>
+                <li class="mt-50"><a href="@Url.Action("Index", "Home")"><i class="fa fa-sign-out"></i> Logout</a></li>
             </ul>
         </div>
 
@@ -42,6 +43,5 @@
         </div>
     </div>
 
-    @await RenderSectionAsync("Scripts", required: false)
 </body>
 </html>

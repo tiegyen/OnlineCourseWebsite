@@ -10,12 +10,15 @@ namespace OnlineCourseWebsite.Controllers
     public class UserController : Controller
     {
         dbOnlineCourseDataContext db = new dbOnlineCourseDataContext();
-        // GET: User
+
+        // GET: User/Register
         [HttpGet]
         public ActionResult Register()
         {
             return View();
         }
+
+        // POST: User/Register
         [HttpPost]
         public ActionResult Register(FormCollection collection)
         {
@@ -29,7 +32,7 @@ namespace OnlineCourseWebsite.Controllers
 
             var checkEmail = db.User_Accounts.SingleOrDefault(u => u.Email == email);
 
-            if(checkEmail != null)
+            if (checkEmail != null)
             {
                 ViewBag.ErrorEmail = "This email is already registered!";
                 hasError = true;
@@ -41,7 +44,7 @@ namespace OnlineCourseWebsite.Controllers
                 hasError = true;
             }
 
-            if(hasError)
+            if (hasError)
             {
                 ViewBag.FullName = fullName;
                 ViewBag.Phone = phone;
@@ -54,8 +57,7 @@ namespace OnlineCourseWebsite.Controllers
                 User_Account newAccount = new User_Account();
                 newAccount.Email = email;
                 newAccount.Password = password;
-
-                newAccount.Role = "Student";
+                newAccount.Role = "Student"; // Mặc định đăng ký là Student
                 newAccount.Status = "Active";
                 newAccount.CreatedDate = DateTime.Now;
 
@@ -65,14 +67,15 @@ namespace OnlineCourseWebsite.Controllers
                 Student newStudent = new Student();
                 newStudent.FullName = fullName;
                 newStudent.Phone = phone;
-                newStudent.UserID = newAccount.UserID; //gán FK nối hai bảng
+                newStudent.UserID = newAccount.UserID; // Gán FK nối hai bảng
 
                 db.Students.InsertOnSubmit(newStudent);
                 db.SubmitChanges();
 
+                // Đăng ký xong đá sang trang Login của User (Không lo 404)
                 return RedirectToAction("Login", "User");
             }
-            catch (Exception ex) 
+            catch (Exception ex)
             {
                 ViewBag.ErrorSystem = "Something went wrong: " + ex.Message;
                 ViewBag.FullName = fullName;
@@ -80,14 +83,16 @@ namespace OnlineCourseWebsite.Controllers
                 ViewBag.Email = email;
                 return View();
             }
-
         }
+
+        // GET: User/Login
         [HttpGet]
         public ActionResult Login()
         {
             return View();
         }
 
+        // POST: User/Login
         [HttpPost]
         public ActionResult Login(FormCollection collection)
         {
@@ -105,12 +110,12 @@ namespace OnlineCourseWebsite.Controllers
                 return View();
             }
 
-            // 1. Kiểm tra tài khoản tồn tại
+            // 1. Kiểm tra tài khoản tồn tại trong hệ thống
             var account = db.User_Accounts.SingleOrDefault(u => u.Email == email && u.Password == password);
 
             if (account != null)
             {
-                // 2. Check trạng thái khóa
+                // 2. Kiểm tra trạng thái hoạt động
                 if (account.Status == "Inactive")
                 {
                     ViewBag.ErrorSystem = "Your account has been locked. Please contact Admin!";
@@ -118,14 +123,30 @@ namespace OnlineCourseWebsite.Controllers
                     return View();
                 }
 
-                // Lưu thông tin đăng nhập vào Session
+                // Lưu thông tin tài khoản chung vào Session
                 Session["UserAccount"] = account;
+                Session["UserId"] = account.UserID;   // Giữ ID tài khoản để dùng chung
+                Session["UserRole"] = account.Role;   // Giữ Role để phân quyền chặn truy cập bậy
 
-                // 3. PHÂN LUỒNG ĐĂNG NHẬP (Cái này là cái ní cần nè)
+                // 3. PHÂN LUỒNG ĐĂNG NHẬP THEO QUYỀN (ROLE)
                 if (account.Role == "Admin")
                 {
-                    // Nếu là Admin, đá sang Dashboard của Admin
                     return RedirectToAction("Dashboard", "Admin");
+                }
+                else if (account.Role == "Instructor")
+                {
+                    // Lấy thêm thông tin chi tiết giảng viên từ bảng Instructor (hoặc Trainer tùy DB ní đặt tên)
+                    // Ở đây Gen giả định bảng của ní là Instructors nhé, ní check kỹ lại thực tế tên bảng của ní nha
+                    var instructor = db.Instructors.SingleOrDefault(ins => ins.UserID == account.UserID);
+                    if (instructor != null)
+                    {
+                        // Lưu InstructorID thực tế vào Session để mớ câu LINQ mấy trang trước lượm xài
+                        Session["InstructorID"] = instructor.InstructorID;
+                        Session["InstructorProfile"] = instructor;
+                    }
+
+                    // Đăng nhập đúng quyền Giảng viên thì đá thẳng vào Dashboard của Instructor liền!
+                    return RedirectToAction("Dashboard", "Instructor");
                 }
                 else if (account.Role == "Student")
                 {
@@ -133,8 +154,8 @@ namespace OnlineCourseWebsite.Controllers
                     if (student != null)
                     {
                         Session["StudentProfile"] = student;
+                        Session["StudentID"] = student.StudentID;
                     }
-                    // Nếu là Student, về lại trang khóa học
                     return RedirectToAction("Course", "Course");
                 }
 
@@ -148,12 +169,13 @@ namespace OnlineCourseWebsite.Controllers
             }
         }
 
+        // GET: User/Logout
         public ActionResult Logout()
         {
-            Session["UserAccount"] = null;
-            Session["StudentProfile"] = null;
+            // Clear sạch bóng toàn bộ các Session khi đăng xuất
+            Session.Clear();
+            Session.Abandon();
             return RedirectToAction("Course", "Course");
         }
-
     }
 }
