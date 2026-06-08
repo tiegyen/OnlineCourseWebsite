@@ -217,13 +217,14 @@ public class AdminController : Controller
         return View(instructor);
     }
 
-    // 2. Post: Xử lý cập nhật thông tin Instructor
+    // POST: Xử lý cập nhật thông tin Instructor + Đổi Pass
     [HttpPost]
     [ValidateAntiForgeryToken]
-    public ActionResult EditInstructor(Instructor model)
+    public ActionResult EditInstructor(Instructor model, string NewPassword)
     {
         if (ModelState.IsValid)
         {
+            // 1. Cập nhật bảng thông tin cá nhân Instructor
             var instructor = db.Instructors.FirstOrDefault(i => i.InstructorID == model.InstructorID);
             if (instructor != null)
             {
@@ -232,13 +233,24 @@ public class AdminController : Controller
                 instructor.Address = model.Address;
                 instructor.Bio = model.Bio;
 
-                db.SubmitChanges();
+                // 2. Kiểm tra nếu Admin có điền vào ô Mật khẩu mới
+                if (!string.IsNullOrEmpty(NewPassword))
+                {
+                    var account = db.User_Accounts.FirstOrDefault(u => u.UserID == model.UserID);
+                    if (account != null)
+                    {
+                        // Gán thẳng mật khẩu mới (Nếu hệ thống của ní có hàm băm MD5/SHA256 thì bọc nó vào ghen)
+                        account.Password = NewPassword.Trim();
+                    }
+                }
+
+                db.SubmitChanges(); // Thực thi lưu dữ liệu xuống SQL Server
+                TempData["Success"] = "Instructor updated successfully!";
                 return RedirectToAction("Users");
             }
         }
         return View(model);
     }
-
 
     // ==================== QUẢN LÝ STUDENT ====================
 
@@ -251,13 +263,14 @@ public class AdminController : Controller
         return View(student);
     }
 
-    // 4. Post: Xử lý cập nhật thông tin Student
+    // POST: Xử lý cập nhật thông tin Student + Đổi Pass
     [HttpPost]
     [ValidateAntiForgeryToken]
-    public ActionResult EditStudent(Student model)
+    public ActionResult EditStudent(Student model, string NewPassword)
     {
         if (ModelState.IsValid)
         {
+            // 1. Cập nhật bảng thông tin cá nhân Student
             var student = db.Students.FirstOrDefault(s => s.StudentID == model.StudentID);
             if (student != null)
             {
@@ -265,12 +278,93 @@ public class AdminController : Controller
                 student.Phone = model.Phone;
                 student.Address = model.Address;
 
-                db.SubmitChanges();
+                // 2. Kiểm tra nếu Admin có điền vào ô Mật khẩu mới
+                if (!string.IsNullOrEmpty(NewPassword))
+                {
+                    var account = db.User_Accounts.FirstOrDefault(u => u.UserID == model.UserID);
+                    if (account != null)
+                    {
+                        account.Password = NewPassword.Trim();
+                    }
+                }
+
+                db.SubmitChanges(); // Thực thi lưu dữ liệu xuống SQL Server
+                TempData["Success"] = "Student updated successfully!";
                 return RedirectToAction("Users");
             }
         }
         return View(model);
     }
+
+    // ==================== TẠO MỚI INSTRUCTOR ====================
+
+    // 1. GET: Hiển thị form điền thông tin thêm Instructor
+    public ActionResult CreateInstructor()
+    {
+        return View();
+    }
+
+    // 2. POST: Đón dữ liệu form gửi về và insert vào Database
+    [HttpPost]
+    [ValidateAntiForgeryToken]
+    public ActionResult CreateInstructor(string Email, string Password, string FullName, string Phone, string Address, string Bio)
+    {
+        try
+        {
+            // Kiểm tra dữ liệu đầu vào cơ bản
+            if (string.IsNullOrEmpty(Email) || string.IsNullOrEmpty(Password) || string.IsNullOrEmpty(FullName))
+            {
+                ModelState.AddModelError("", "Email, Password and Full Name are required.");
+                return View();
+            }
+
+            // Check trùng Email trong hệ thống
+            bool isEmailExist = db.User_Accounts.Any(u => u.Email.ToLower() == Email.Trim().ToLower());
+            if (isEmailExist)
+            {
+                ModelState.AddModelError("", "This email address is already registered!");
+                return View();
+            }
+
+            // BƯỚC A: Thêm tài khoản vào User_Accounts trước
+            User_Account newAccount = new User_Account
+            {
+                Email = Email.Trim(),
+                Password = Password.Trim(), // Nếu ní có hàm băm mật khẩu (VD: MD5, SHA256) thì băm nó ở đây nha
+                Role = "Instructor",
+                Status = "Active"
+            };
+
+            db.User_Accounts.InsertOnSubmit(newAccount);
+            db.SubmitChanges(); // Chốt hạ đợt 1 để SQL cấp phát tự động mã UserID cho newAccount
+
+            // BƯỚC B: Dùng mã UserID vừa sinh ra để liên kết tạo Instructor
+            Instructor newInstructor = new Instructor
+            {
+                UserID = newAccount.UserID, // Khóa ngoại đồng bộ link sang tài khoản vừa tạo
+                FullName = FullName.Trim(),
+                Phone = Phone?.Trim(),
+                Address = Address?.Trim(),
+                Bio = Bio?.Trim()
+            };
+
+            db.Instructors.InsertOnSubmit(newInstructor);
+            db.SubmitChanges(); // Chốt hạ đợt 2 lưu thông tin cá nhân
+
+            TempData["Success"] = "Instructor account created successfully!";
+            return RedirectToAction("Users");
+        }
+        catch (Exception ex)
+        {
+            ModelState.AddModelError("", "Database error occurred: " + ex.Message);
+            return View();
+        }
+    }
+
+
+    
+
+    
     // POST: Admin/CreateCourse
     [HttpPost]
     [ValidateAntiForgeryToken]
@@ -278,43 +372,74 @@ public class AdminController : Controller
     {
         try
         {
-            // Gỡ lỗi ModelState nếu dính trường hợp property Image bị yêu cầu bắt buộc
-            if (ModelState.ContainsKey("Image")) ModelState["Image"].Errors.Clear();
-
-            if (ModelState.IsValid)
+            // 1. Kiểm tra dữ liệu đầu vào cơ bản
+            if (model == null || string.IsNullOrEmpty(model.CourseName))
             {
-                Course newCourse = new Course
-                {
-                    CourseName = model.CourseName.Trim(),
-                    Description = model.Description?.Trim(),
-                    Price = model.Price,
-                    Duration = model.Duration?.Trim(),
-                    CreatedDate = System.DateTime.Now,
-                    InstructorID = model.InstructorID,
-                    CategoryID = model.CategoryID,
-                    StatusID = model.StatusID
-                };
-
-                // CHỖ NÀY NÈ: Xử lý lưu ảnh khi TẠO MỚI khóa học
-                if (ImageFile != null && ImageFile.ContentLength > 0)
-                {
-                    string extension = Path.GetExtension(ImageFile.FileName);
-                    string imageName = "course_" + Guid.NewGuid().ToString().Substring(0, 8) + extension;
-                    string path = Path.Combine(Server.MapPath("~/Content/images/courses/"), imageName);
-
-                    ImageFile.SaveAs(path);
-                    newCourse.Image = imageName; // Gán tên file vào DB
-                }
-
-                db.Courses.InsertOnSubmit(newCourse);
-                db.SubmitChanges();
-
+                TempData["Error"] = "Tên khóa học không được để trống!";
                 return RedirectToAction("Courses");
             }
+
+            // 2. Tạo đối tượng mới để map chuẩn
+            Course newCourse = new Course
+            {
+                CourseName = model.CourseName.Trim(),
+                Description = model.Description?.Trim(),
+                Price = model.Price,
+                Duration = model.Duration?.Trim(),
+                CreatedDate = System.DateTime.Now,
+                InstructorID = model.InstructorID,
+                CategoryID = model.CategoryID,
+                StatusID = model.StatusID
+            };
+
+            // 3. Xử lý lưu ảnh (Đã đồng bộ về Content/images/)
+            if (ImageFile != null && ImageFile.ContentLength > 0)
+            {
+                string extension = Path.GetExtension(ImageFile.FileName);
+                string imageName = "course_" + Guid.NewGuid().ToString().Substring(0, 8) + extension;
+
+                // Lấy đường dẫn thư mục cha
+                string folderPath = Server.MapPath("~/Content/images/");
+
+                // Khống chế lỗi: Nếu chưa có thư mục "images" thì tự tạo luôn cho đỡ lỗi
+                if (!Directory.Exists(folderPath))
+                {
+                    Directory.CreateDirectory(folderPath);
+                }
+
+                string path = Path.Combine(folderPath, imageName);
+                ImageFile.SaveAs(path);
+                newCourse.Image = imageName;
+            }
+            else
+            {
+                newCourse.Image = "default.png"; // Hoặc để null tùy DB của ní
+            }
+
+            // 4. Tiến hành nạp và Submit
+            db.Courses.InsertOnSubmit(newCourse);
+            db.SubmitChanges();
+
+            TempData["Success"] = "Thêm khóa học thành công rồi ní ơi!";
+            return RedirectToAction("Courses");
+        }
+        catch (System.Data.Linq.ForeignKeyReferenceAlreadyHasValueException ex)
+        {
+            System.Diagnostics.Debug.WriteLine("❌ LỖI KHÓA NGOẠI: " + ex.Message);
+            TempData["Error"] = "Lỗi liên kết dữ liệu (Foreign Key).";
         }
         catch (Exception ex)
         {
-            System.Diagnostics.Debug.WriteLine("Lỗi Create Course: " + ex.Message);
+            // Vạch trần tất cả các lỗi ngầm ở đây 👇
+            System.Diagnostics.Debug.WriteLine("❌ LỖI CREATE COURSE CHI TIẾT: " + ex.ToString());
+
+            // Nếu có lỗi inner (lỗi sâu bên trong SQL gửi về)
+            if (ex.InnerException != null)
+            {
+                System.Diagnostics.Debug.WriteLine("❌ LỖI GỐC TỪ SQL: " + ex.InnerException.Message);
+            }
+
+            TempData["Error"] = "Không lưu được vào database! Lỗi: " + ex.Message;
         }
 
         return RedirectToAction("Courses");
@@ -374,6 +499,40 @@ public class AdminController : Controller
 
         return RedirectToAction("Courses");
     }
+
+    // POST: Admin/DeleteCourse
+    [HttpPost]
+    public ActionResult DeleteCourse(int id)
+    {
+        try
+        {
+            // Tìm khoá học cần xoá
+            var course = db.Courses.SingleOrDefault(c => c.CourseID == id);
+            if (course == null)
+            {
+                return Json(new { success = false, message = "Course not found." });
+            }
+
+            // KIỂM TRA RÀNG BUỘC: Nếu khóa học đã có người đăng ký học (Enrollment)
+            bool hasEnrollment = db.Enrollments.Any(e => e.CourseID == id);
+            if (hasEnrollment)
+            {
+                // Giải pháp an toàn: Không cho xoá, bắt đổi Status sang "Inactive" hoặc báo lỗi
+                return Json(new { success = false, message = "Cannot delete! This course already has students enrolled. Try changing its status to Inactive instead." });
+            }
+
+            // Nếu sạch sẽ không vướng khoá ngoại, tiến hành xoá
+            db.Courses.DeleteOnSubmit(course);
+            db.SubmitChanges();
+
+            return Json(new { success = true, message = "Course deleted successfully." });
+        }
+        catch (Exception ex)
+        {
+            return Json(new { success = false, message = "Error: " + ex.Message });
+        }
+    }
+
 
     public ActionResult Transactions()
     {

@@ -38,6 +38,13 @@
                 @Html.TextAreaFor(m => m.Bio, new { @class = "form-control", rows = "5", placeholder = "Experience, certificates..." })
             </div>
 
+            <div style="border-top: 1px dashed #e2e8f0; margin-top: 25px; padding-top: 20px;">
+                <div class="quick-form-group mb-20">
+                    <label style="color: #475569; font-weight: bold;"><i class="fa fa-key"></i> New Password (Leave blank to keep current password)</label>
+                    <input type="password" name="NewPassword" class="form-control" placeholder="Enter new password if you want to reset it" />
+                </div>
+            </div>
+
             <div class="mt-30" style="text-align: center;">
                 <button type="submit" class="btn-admin-submit" style="width: auto; padding: 10px 25px;">Save Changes</button>
                 <div class="mt-15">

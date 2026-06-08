@@ -25,7 +25,9 @@
 
             <div class="tab-content" id="content-instructors">
                 <div class="tab-header-actions">
-                    <button class="btn" onclick="alert('Open Add Instructor Modal Popup!')"><i class="fa fa-plus"></i> Add New Instructor</button>
+                    <a href="@Url.Action("CreateInstructor", "Admin")" class="btn" style="text-decoration: none; display: inline-flex; align-items: center; justify-content: center; gap: 8px; color: #000 !important;">
+                        <i class="fa fa-plus"></i> Create New Instructor
+                    </a>
                 </div>
                 <div class="data-table-wrapper">
                     <table class="data-table">

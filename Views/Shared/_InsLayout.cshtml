@@ -3,47 +3,45 @@
 <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>@ViewBag.Title | English Mastery Portal</title>
-
-    <link href="~/Content/css/style.css" rel="stylesheet" />
+    <title>@ViewData["Title"] | English Mastery</title>
+    <link href="~/css/style.css" rel="stylesheet" />
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css">
+    @await RenderSectionAsync("Styles", required: false)
 </head>
 <body>
 
-    <div class="header" style="padding-bottom: 0;">
-        <div class="container">
-            <div class="navbar" style="display: flex; justify-content: space-between; align-items: center; padding: 15px 0;">
-                <div class="logo">
-                    <img src="~/Content/images/logo-one.png" width="125px" alt="Logo" />
+    <div class="admin-wrapper">
+        <div class="admin-sidebar">
+            <div class="sidebar-brand">
+                <i class="fa fa-graduation-cap"></i> Trainer Portal
+            </div>
+            <ul class="sidebar-menu">
+                <li class="active"><a href="#"><i class="fa fa-dashboard"></i> Dashboard</a></li>
+                <li><a href="#"><i class="fa fa-book"></i> My Courses</a></li>
+                <li><a href="#"><i class="fa fa-tasks"></i> Curriculum</a></li>
+                <li><a href="#"><i class="fa fa-users"></i> Enrolled Students</a></li>
+                <li><a href="#"><i class="fa fa-star"></i> Reviews</a></li>
+                <li class="mt-50"><a href="#"><i class="fa fa-sign-out"></i> Logout</a></li>
+            </ul>
+        </div>
+
+        <div class="admin-content">
+            <div class="admin-header">
+                <div>
+                    <h2>Instructor Command Center</h2>
+                    <p class="text-link">Monitor your overall statistics and detailed course metrics.</p>
                 </div>
-                <nav>
-                    <ul id="MenuItems" style="display: flex; gap: 30px; margin: 0; padding: 0;">
-                        <li><a href="@Url.Action("Index", "Home")">Home</a></li>
-                        <li><a href="@Url.Action("Index", "Course")">Courses</a></li>
-                        <li><a href="@Url.Action("Register", "Account")">Register</a></li>
-                        <li><a href="@Url.Action("Login", "Account")">Login</a></li>
-                    </ul>
-                </nav>
+                <div class="user-info">
+                    <span class="student-welcome"><i class="fa fa-user-circle"></i> Jane Doe (Instructor Mode)</span>
+                </div>
             </div>
+
+            @RenderBody()
+
         </div>
     </div>
 
-    <div class="main-content">
-        @RenderBody()
-    </div>
-
-    <div class="footer mt-50">
-        <div class="container">
-            <div class="row">
-                <div class="footer-col-1"><h3>Resources</h3><p>Study anytime, anywhere.</p></div>
-                <div class="footer-col-2"><img src="~/Content/images/logo-one.png" alt="Logo"><p>Professional English Training.</p></div>
-                <div class="footer-col-3"><h3>Quick Links</h3><ul><li><a href="#">Certifications</a></li><li><a href="#">Support</a></li></ul></div>
-            </div>
-            <hr />
-            <p class="copyright">Copyright 2026 - Team 03 - English Mastery Portal</p>
-        </div>
-    </div>
-
+    @await RenderSectionAsync("Scripts", required: false)
 </body>
 </html>

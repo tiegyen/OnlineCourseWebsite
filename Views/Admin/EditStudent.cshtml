@@ -5,7 +5,6 @@
 
 <div class="admin-content">
     <div class="admin-header" style="display: flex; flex-direction: column; align-items: center; text-align: center; margin-bottom: 20px;">
-
         <div>
             <h2>Edit Student Information</h2>
             <p class="text-link">Modify profile details for student: <strong>@Model.FullName</strong></p>
@@ -32,6 +31,13 @@
             <div class="quick-form-group mb-20">
                 <label>Address</label>
                 @Html.TextBoxFor(m => m.Address, new { @class = "form-control" })
+            </div>
+
+            <div style="border-top: 1px dashed #e2e8f0; margin-top: 25px; padding-top: 20px;">
+                <div class="quick-form-group mb-20">
+                    <label style="color: #475569; font-weight: bold;"><i class="fa fa-key"></i> New Password (Leave blank to keep current password)</label>
+                    <input type="password" name="NewPassword" class="form-control" placeholder="Enter new password if you want to reset it" />
+                </div>
             </div>
 
             <div class="mt-30" style="text-align: center;">
