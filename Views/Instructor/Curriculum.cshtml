@@ -14,28 +14,51 @@
         <button class="btn-add" onclick="openAddLessonModal()">+ Add New Lesson</button>
     </div>
 
-    @foreach (var secItem in lessons.GroupBy(l => l.SectionName))
+    @if (lessons != null && lessons.Any())
     {
-        <div class="section-block">
-            <div class="section-title">@secItem.Key</div>
-            <ul class="lesson-list">
-                @foreach (var lesson in secItem.OrderBy(l => l.LessonOrder))
-                {
-                    <li class="lesson-row">
-                        <span class="lesson-name">@lesson.LessonTitle</span>
-                        <div class="lesson-actions">
-                            <button class="btn-icon edit" onclick="openEditLessonModal('@lesson.LessonID', '@secItem.Key', '@lesson.LessonTitle', '@lesson.VideoURL')">
-                                <i class="fa fa-edit"></i>
-                            </button>
-                            <a href="@Url.Action("DeleteLesson", "Instructor", new { id = lesson.LessonID, courseId = Model.CourseID })"
-                               class="btn-icon delete" onclick="return confirm('Xóa bài này?');">
-                                <i class="fa fa-trash"></i>
-                            </a>
-                        </div>
-                    </li>
-                }
-            </ul>
-        </div>
+        foreach (var secItem in lessons.GroupBy(l => l.SectionName))
+        {
+            <div class="section-block">
+                <div class="section-title">@secItem.Key</div>
+                <ul class="lesson-list">
+                    @foreach (var lesson in secItem.OrderBy(l => l.LessonOrder))
+                    {
+                        <li class="lesson-row" style="display: flex; flex-direction: column; align-items: flex-start; gap: 5px; padding: 12px; border-bottom: 1px solid #eee;">
+                            <div style="display: flex; justify-content: space-between; width: 100%; align-items: center;">
+                                <span class="lesson-name" style="font-weight: 500;">@lesson.LessonTitle</span>
+                                <div class="lesson-actions">
+                                    <button class="btn-icon edit" onclick="openEditLessonModal('@lesson.LessonID', '@secItem.Key', '@HttpUtility.JavaScriptStringEncode(lesson.LessonTitle)', '@lesson.VideoURL')">
+                                        <i class="fa fa-edit"></i>
+                                    </button>
+                                    <a href="@Url.Action("DeleteLesson", "Instructor", new { id = lesson.LessonID, courseId = Model.CourseID })"
+                                       class="btn-icon delete" onclick="return confirm('Xóa bài này sẽ xóa toàn bộ tài liệu đính kèm?');">
+                                        <i class="fa fa-trash"></i>
+                                    </a>
+                                </div>
+                            </div>
+
+                            @if (lesson.CourseMaterials != null && lesson.CourseMaterials.Any())
+                            {
+                                <div class="lesson-materials-preview" style="margin-left: 15px; font-size: 12px; color: #666; display: flex; flex-wrap: wrap; gap: 10px;">
+                                    <span style="font-weight: 600;"><i class="fa fa-paperclip"></i> Materials:</span>
+                                    @foreach (var mat in lesson.CourseMaterials)
+                                    {
+                                        <span class="mat-item">
+                                            <i class="fa @(mat.FileName.EndsWith(".pdf", StringComparison.OrdinalIgnoreCase) ? "fa-file-pdf-o text-danger" : "fa-file-word-o text-primary")"></i>
+                                            @mat.FileName
+                                        </span>
+                                    }
+                                </div>
+                            }
+                        </li>
+                    }
+                </ul>
+            </div>
+        }
+    }
+    else
+    {
+        <div style="text-align:center; padding: 40px; color:#999; font-style:italic;">Chưa có bài học nào trong giáo trình này.</div>
     }
 </div>
 
@@ -49,6 +72,7 @@
         <form action="@Url.Action("SaveLesson", "Instructor")" method="post" enctype="multipart/form-data">
             <input type="hidden" name="CourseID" value="@Model.CourseID" />
             <input type="hidden" name="LessonID" id="inputLessonID" value="0" />
+
             <div class="input-group">
                 <label>Section Name</label>
                 <input type="text" name="SecName" id="inputSecName" required />
@@ -61,7 +85,14 @@
                 <label>Video URL</label>
                 <input type="text" name="VideoURL" id="inputVideoURL" onchange="updateVideo(this.value)" />
             </div>
-            <button type="submit" class="btn-save">Save Lesson</button>
+
+            <div class="input-group">
+                <label><i class="fa fa-file-text-o"></i> Upload Lesson Material (.pdf, .doc, .docx)</label>
+                <input type="file" name="UploadedMaterial" id="inputMaterial" accept=".pdf,.doc,.docx" class="form-control" style="padding: 5px;" />
+                <small style="color: #888; font-size: 11px; display:block; margin-top:3px;">Chọn tệp mới nếu muốn đính kèm hoặc thay thế tài liệu bài học.</small>
+            </div>
+
+            <button type="submit" class="btn-save" style="margin-top: 15px;">Save Lesson Data</button>
         </form>
     </div>
 </div>
@@ -70,29 +101,25 @@
     function updateVideo(url) {
         const videoFrame = document.getElementById('lessonVideo');
         if (!url) {
-            videoFrame.src = ""; // Clear video nếu không có url
+            videoFrame.src = "";
             return;
         }
         if (url.includes('youtube.com/watch?v=')) {
             videoFrame.src = "https://www.youtube.com/embed/" + url.split('v=')[1].split('&')[0];
+        } else if (url.includes('youtu.be/')) {
+            videoFrame.src = "https://www.youtube.com/embed/" + url.split('youtu.be/')[1].split('?')[0];
         } else {
             videoFrame.src = url;
         }
     }
 
     function openAddLessonModal() {
-        // Reset ID về 0
         document.getElementById('inputLessonID').value = 0;
-
-        // Clear các input
         document.getElementById('inputSecName').value = '';
         document.getElementById('inputLessonTitle').value = '';
         document.getElementById('inputVideoURL').value = '';
-
-        // Reset video frame
+        document.getElementById('inputMaterial').value = ''; // Reset ô chọn file
         document.getElementById('lessonVideo').src = "";
-
-        // Mở modal
         document.getElementById('lessonModal').classList.add('show');
     }
 
@@ -101,10 +128,9 @@
         document.getElementById('inputSecName').value = sec;
         document.getElementById('inputLessonTitle').value = title;
         document.getElementById('inputVideoURL').value = url;
+        document.getElementById('inputMaterial').value = ''; // Reset ô chọn file khi edit bài cũ
 
-        // Cập nhật video theo URL cũ
         updateVideo(url);
-
         document.getElementById('lessonModal').classList.add('show');
     }
 

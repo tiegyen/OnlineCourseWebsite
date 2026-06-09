@@ -16,6 +16,12 @@
                 <i class="fa fa-graduation-cap"></i> Trainer Portal
             </div>
             <ul class="sidebar-menu">
+                <li style="border-bottom: 1px solid #444; margin-bottom: 10px;">
+                    <a href="@Url.Action("Index", "Home")" target="_blank" style="color: #a4b0be;">
+                        <i class="fa fa-globe"></i> View Website (Main)
+                    </a>
+                </li>
+
                 <li class="@(ViewContext.RouteData.Values["action"].ToString() == "Dashboard" ? "active" : "")">
                     <a href="@Url.Action("Dashboard", "Instructor")"><i class="fa fa-dashboard"></i> Dashboard</a>
                 </li>
@@ -23,15 +29,17 @@
                 @*<li><a href="@Url.Action("Curriculum", "Instructor")"><i class="fa fa-tasks"></i> Curriculum</a></li>*@
                 <li><a href="@Url.Action("EnrolledStudents", "Instructor")"><i class="fa fa-users"></i> Enrolled Students</a></li>
                 <li><a href="@Url.Action("Reviews", "Instructor")"><i class="fa fa-star"></i> Reviews</a></li>
-                <li class="mt-50"><a href="@Url.Action("Index", "Home")"><i class="fa fa-sign-out"></i> View Page Home</a></li>
+
+                <li class="mt-50">
+                    <a href="@Url.Action("Logout", "User")" style="color: #ff523b;">
+                        <i class="fa fa-sign-out"></i> Logout
+                    </a>
+                </li>
             </ul>
         </div>
 
-
-
         @RenderBody()
         @RenderSection("scripts", required: false)
-    </div>
     </div>
 
 </body>

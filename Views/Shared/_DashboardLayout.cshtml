@@ -15,6 +15,12 @@
                 <i class="fa fa-sliders"></i> Admin Control
             </div>
             <ul class="sidebar-menu">
+                <li style="border-bottom: 1px solid #444; margin-bottom: 10px;">
+                    <a href="@Url.Action("Index", "Home")" target="_blank" style="color: #535c68;">
+                        <i class="fa fa-globe"></i> View Website (Main)
+                    </a>
+                </li>
+
                 <li class="@(ViewContext.RouteData.Values["Action"].ToString() == "Dashboard" ? "active" : "")">
                     <a href="@Url.Action("Dashboard", "Admin")"><i class="fa fa-dashboard"></i> Dashboard</a>
                 </li>

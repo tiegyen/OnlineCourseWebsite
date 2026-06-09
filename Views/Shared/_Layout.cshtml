@@ -20,11 +20,11 @@
                 <nav>
                     <ul id="MenuItems">
                         <li><a href="@Url.Action("Index", "Home")">Home</a></li>
+                        <li><a href="@Url.Action("Course", "Course")">Courses</a></li>
 
                         @if (Session["UserAccount"] == null)
                         {
-                            // 1. GIAO DIỆN KHI CHƯA ĐĂNG NHẬP (KHÁCH VÃI LAI)
-                            <li><a href="@Url.Action("Course", "Course")">Courses</a></li>
+                            // 1. GIAO DIỆN KHI CHƯA ĐĂNG NHẬP
                             <li><a href="@Url.Action("Register", "User")">Register</a></li>
                             <li><a href="@Url.Action("Login", "User")">Login</a></li>
                         }
@@ -48,20 +48,29 @@
                                     </li>
                                 }
 
-                                // 3. PHÂN HỆ: INSTRUCTOR (THÊM PHẦN NÀY VÀO NÈ NÍ)
+                                // 3. PHÂN HỆ: INSTRUCTOR (Khi lượn lờ ra trang ngoài)
                                 else if (account.Role == "Instructor")
                                 {
-                                    <li><a href="@Url.Action("Dashboard", "Instructor")" style="color: #4cd137; font-weight: 600;"><i class="fa fa-dashboard"></i> Instructor Dashboard</a></li>
-                                    <li><a href="@Url.Action("MyCourses", "Instructor")">Manage Courses</a></li>
+                                    // Cho phép họ bấm nút này để quay vào trong vùng quản lý của họ bất cứ lúc nào
+                                    <li>
+                                        <a href="@Url.Action("Dashboard", "Instructor")" style="background: #4cd137; color: #fff; padding: 5px 12px; border-radius: 4px; font-weight: 600;">
+                                            <i class="fa fa-arrow-left"></i> Return Instructor Mode
+                                        </a>
+                                    </li>
                                 }
 
-                                // 4. PHÂN HỆ: ADMIN
+                                // 4. PHÂN HỆ: ADMIN (Khi lượn lờ ra trang ngoài)
                                 else if (account.Role == "Admin")
                                 {
-                                    <li><a href="@Url.Action("Dashboard", "Admin")" style="color: #eccc68; font-weight: 600;"><i class="fa fa-user-shield"></i> Admin Panel</a></li>
+                                    // Cho phép Admin quay lại Admin Panel thần thánh
+                                    <li>
+                                        <a href="@Url.Action("Dashboard", "Admin")" style="background: #eccc68; color: #000; padding: 5px 12px; border-radius: 4px; font-weight: 600;">
+                                            <i class="fa fa-user-shield"></i> Return Admin Mode
+                                        </a>
+                                    </li>
                                 }
 
-                                // NÚT LOGOUT CHUNG CHO TOÀN BỘ CÁC TÀI KHOẢN ĐÃ ĐĂNG NHẬP
+                                // NÚT LOGOUT CHUNG
                                 <li><a href="@Url.Action("Logout", "User")" style="color: #ff523b; font-size: 13px; font-weight: 500;"><i class="fa fa-sign-out"></i> Logout</a></li>
                             }
                         }
