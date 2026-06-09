@@ -564,17 +564,18 @@ public class AdminController : Controller
 
         DateTime vnNow = GetVnNow();
 
+        // Kiểm tra thời gian hiệu lực 15 phút dựa trên thời điểm cập nhật trạng thái gần nhất
         if (payment.PaymentDate.HasValue && (vnNow - payment.PaymentDate.Value).TotalMinutes > 15)
         {
             return Json(new { success = false, message = "Undo window (15 minutes) has expired for this transaction." });
         }
 
-        // Đưa trạng thái về lại Pending ngon lành cành đào vì liên kết Enrollment không bị đứt
+        // Đưa trạng thái về lại Pending ngon lành cành đào cho cả trường hợp bấm nhầm Approve hoặc nhầm Cancel
         payment.PaymentStatus = "Pending";
-        payment.PaymentDate = vnNow;
+        payment.PaymentDate = vnNow; // Cập nhật lại thời gian về hiện tại để Admin xử lý lại từ đầu
         db.SubmitChanges();
 
-        return Json(new { success = true, message = "Transaction status has been restored to Pending." });
+        return Json(new { success = true, message = "Transaction status has been successfully restored to Pending." });
     }
 
     // Action xuất file thống kê CSV (UTF-8 mã hóa để mở Excel không lỗi font)

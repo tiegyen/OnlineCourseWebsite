@@ -71,15 +71,15 @@
                             {
                                 double passedMinutes = (vnNow - vnPaymentDate).TotalMinutes;
 
-                                // 🌟 SỬA TẠI ĐÂY: Chỉ cho phép Undo đơn hàng "Paid" (Duyệt lộn), KHÔNG cho Undo đơn "Cancelled" (đã giải phóng key)
-                                if (item.PaymentStatus == "Paid" && passedMinutes <= 15 && passedMinutes >= 0)
+                                // 🔥 ĐÃ SỬA: Cho phép cả trạng thái "Paid" VÀ "Cancelled" được quyền xuất hiện nút Undo trong vòng 15 phút
+                                if ((item.PaymentStatus == "Paid" || item.PaymentStatus == "Cancelled") && passedMinutes <= 15 && passedMinutes >= 0)
                                 {
                                     remainingSeconds = (15 - passedMinutes) * 60;
                                     if (remainingSeconds < 0) { remainingSeconds = 0; }
 
                                     <div class="undo-zone" data-remaining="@Math.Floor(remainingSeconds)">
                                         <button class="btn-payment-action undo-btn" style="padding: 4px 10px; background: #f1c40f; color:#333; border:none; border-radius:4px; cursor:pointer; font-weight:600; margin-right: 5px;">
-                                            <i class="fa fa-undo"></i> Undo
+                                            <i class="fa fa-undo"></i> Undo @(item.PaymentStatus == "Paid" ? "Approve" : "Cancel")
                                         </button>
                                         <small class="countdown-timer" style="color: #e67e22; font-weight: 600; display:inline-block; min-width:45px;"></small>
                                     </div>
