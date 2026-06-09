@@ -42,8 +42,10 @@ namespace OnlineCourseWebsite.Controllers
             return View(myEnrolledCourses);
         }
 
-        // GET: Student/Classroom/5
-        public ActionResult Classroom(int? id)
+        // GET: Student/Classroom/5?lessonId=10 (Thêm tham số lessonId để chuyển bài)
+        [HttpGet]
+        [Route("Student/Classroom/{id}")]
+        public ActionResult Classroom(int? id, int? lessonId)
         {
             if (id == null)
             {
@@ -53,10 +55,8 @@ namespace OnlineCourseWebsite.Controllers
             var student = Session["StudentProfile"] as Student;
             if (student == null) return RedirectToAction("Login", "User");
 
-            // Đổi tất cả những chỗ check id thành id.Value vì lúc này nó là Nullable ghen ní
             var checkEnroll = db.Enrollments.FirstOrDefault(e => e.StudentID == student.StudentID && e.CourseID == id.Value);
 
-            // 🌟 THẮT CHẶT AN NINH: Nếu không có đăng ký HOẶC hóa đơn chưa "Paid" thì sút bay về trang MyCourses liền!
             if (checkEnroll == null || !db.Payments.Any(p => p.EnrollmentID == checkEnroll.EnrollmentID && p.PaymentStatus == "Paid"))
             {
                 return RedirectToAction("MyCourses");
@@ -74,13 +74,23 @@ namespace OnlineCourseWebsite.Controllers
             Lesson activeLesson = null;
             if (lessons.Any())
             {
-                activeLesson = lessons.FirstOrDefault();
+                // 🔥 LOGIC MỚI: Nếu người dùng chọn một bài học cụ thể, lấy đúng bài đó. Nếu không, mặc định lấy bài đầu tiên.
+                if (lessonId.HasValue)
+                {
+                    activeLesson = lessons.FirstOrDefault(l => l.LessonID == lessonId.Value);
+                }
 
-                // 🌟 BỊP THỦ CÔNG TẠI ĐÂY: Tự vào bảng CourseMaterial bốc tài liệu của riêng bài học này lên
+                // Trường hợp phòng hờ truyền lộn lessonId không nằm trong khóa học này
+                if (activeLesson == null)
+                {
+                    activeLesson = lessons.FirstOrDefault();
+                }
+
+                // Tải tài liệu của đúng bài học đang active
                 var materials = db.CourseMaterials
                                   .Where(m => m.LessonID == activeLesson.LessonID)
                                   .ToList();
-                ViewBag.ActiveMaterials = materials; // Quăng đống tài liệu này vào một ViewBag riêng
+                ViewBag.ActiveMaterials = materials;
             }
 
             ViewBag.ActiveLesson = activeLesson;

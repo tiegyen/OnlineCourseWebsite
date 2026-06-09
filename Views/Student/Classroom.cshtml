@@ -39,10 +39,13 @@
                     int count = 1;
                     foreach (var les in lessons)
                     {
-                        // Kiểm tra xem bài này có phải bài đang được chọn học không
+                        // Kiểm tra xem bài này có phải bài đang được chọn học hay không để đổi màu nền
                         bool isActive = (activeLesson != null && les.LessonID == activeLesson.LessonID);
 
-                        <div class="lesson-item @(isActive ? "active" : "")" style="display: flex; justify-content: space-between; align-items: center; padding: 12px; border-radius: 6px; border: 1px solid @(isActive ? "#764ba2" : "#eee"); background: @(isActive ? "#f8f6ff" : "#fff"); cursor: pointer;">
+                        <div class="lesson-item @(isActive ? "active" : "")"
+                             onclick="window.location.href='@Url.Action("Classroom", "Student", new { id = Model.CourseID })?lessonId=@les.LessonID'"
+                             style="display: flex; justify-content: space-between; align-items: center; padding: 12px; border-radius: 6px; border: 1px solid @(isActive ? "#764ba2" : "#eee"); background: @(isActive ? "#f8f6ff" : "#fff"); cursor: pointer; transition: all 0.2s ease;">
+
                             <h5 style="margin: 0; font-size: 14px; font-weight: @(isActive ? "600" : "400"); color: #333;">
                                 Lesson @count: @les.LessonTitle
                             </h5>
@@ -61,8 +64,22 @@
         <div class="workspace-content" style="flex: 2; min-width: 320px;">
             @if (activeLesson != null)
             {
+                <h3 style="margin-top: 0; margin-bottom: 15px; color: #2c3e50; font-weight: 600;">Bài đang học: @activeLesson.LessonTitle</h3>
+
                 <div class="video-wrapper" style="position: relative; padding-bottom: 56.25%; height: 0; overflow: hidden; border-radius: 8px; box-shadow: 0 4px 15px rgba(0,0,0,0.1); background: #000;">
-                    <iframe src="@activeLesson.VideoURL" allowfullscreen style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; border: 0;"></iframe>
+                    @{
+                        // Logic tự động chuyển đổi link Youtube thường thành link Embed
+                        string embedUrl = activeLesson.VideoURL;
+                        if (!string.IsNullOrEmpty(embedUrl) && embedUrl.Contains("watch?v="))
+                        {
+                            embedUrl = embedUrl.Replace("watch?v=", "embed/");
+                        }
+                    }
+
+                    <iframe src="@embedUrl"
+                            allowfullscreen
+                            style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; border: 0;">
+                    </iframe>
                 </div>
 
                 <div class="material-section" style="margin-top: 30px; background: #fff; padding: 20px; border-radius: 8px; box-shadow: 0 2px 10px rgba(0,0,0,0.05);">
