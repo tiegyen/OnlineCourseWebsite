@@ -84,40 +84,76 @@
                 <strong>Duration:</strong> @Model.Duration
             </p>
 
-            @* 🌟 KHỐI XỬ LÝ BIẾN ĐỔI NÚT BẤM THÔNG MINH ĐÃ ĐƯỢC SỬA LINK CHUẨN LUỒNG *@
-            @* 🌟 KHỐI NÚT BẤM ĐÃ ĐƯỢC THẮT CHẶT AN NINH: PHẢI THANH TOÁN MỚI ĐƯỢC VÀO CLASSROOM *@
-        <div class="details-action-group" style="margin-top: 25px; display: flex; flex-direction: column; gap: 12px;">
-            @if (ViewBag.IsEnrolled != null && (bool)ViewBag.IsEnrolled == true)
-            {
-                if (ViewBag.IsPaid != null && (bool)ViewBag.IsPaid == true)
+            @{
+                string currentStatus = (Model.CourseStatus != null && Model.CourseStatus.StatusName != null)
+                                       ? Model.CourseStatus.StatusName.Trim().ToLower()
+                                       : "open";
+            }
+
+            <div class="details-action-group" style="margin-top: 25px; display: flex; flex-direction: column; gap: 12px;">
+
+                @* --- TRƯỜNG HỢP 1: HỌC VIÊN ĐÃ ĐĂNG KÝ (ENROLLED) --- *@
+                @if (ViewBag.IsEnrolled != null && (bool)ViewBag.IsEnrolled == true)
                 {
-                    <a href="@Url.Action("Classroom", "Student", new { id = Model.CourseID })" class="btn btn-primary w-100" style="display: flex; align-items: center; justify-content: center; gap: 8px;">
-                        <i class="fa fa-graduation-cap"></i> <span>Go to Classroom</span>
-                    </a>
+                    if (ViewBag.IsPaid != null && (bool)ViewBag.IsPaid == true)
+                    {
+                        <a href="@Url.Action("Classroom", "Student", new { id = Model.CourseID })" class="btn btn-primary w-100" style="display: flex; align-items: center; justify-content: center; gap: 8px;">
+                            <i class="fa fa-graduation-cap"></i> <span>Go to Classroom</span>
+                        </a>
+                    }
+                    else
+                    {
+                        if (currentStatus == "open")
+                        {
+                            @* 🌟 KHẮC PHỤC CHỖ NÀY NÍ ƠI: Nếu đơn hàng bị Cancelled (khiến cho ViewBag.PaymentID bị null),
+                                tụi mình kiểm tra nếu không có PaymentID thì cho nó hiển thị nút Re-enroll dẫn tới trang EnrollPage luôn! *@
+                            if (ViewBag.PaymentID != null && (int)ViewBag.PaymentID > 0)
+                            {
+                                <a href="@Url.Action("PaymentDetails", "Course", new { paymentId = ViewBag.PaymentID })" class="btn btn-warning w-100" style="display: flex; align-items: center; justify-content: center; gap: 8px;">
+                                    <i class="fa fa-credit-card"></i> <span>Pay Now</span>
+                                </a>
+                            }
+                            else
+                            {
+                                <a href="@Url.Action("Enroll", "Course", new { id = Model.CourseID })" class="btn btn-primary w-100" style="background: #ff4757; border: none; display: flex; align-items: center; justify-content: center; gap: 8px;">
+                                    <i class="fa fa-refresh"></i> <span>Re-enroll Now</span>
+                                </a>
+                            }
+                        }
+                        else
+                        {
+                            <button class="btn w-100" style="background: #dfe4ea; color: #a4b0be; border: none; cursor: not-allowed; display: flex; align-items: center; justify-content: center; gap: 8px;" disabled>
+                                <i class="fa fa-lock"></i> <span>Registration Suspended (@(Model.CourseStatus != null ? Model.CourseStatus.StatusName : ""))</span>
+                            </button>
+                        }
+                    }
                 }
+                @* --- TRƯỜNG HỢP 2: CHƯA ĐĂNG KÝ HOẶC LÀ GUEST --- *@
                 else
                 {
-                    <a href="@Url.Action("PaymentDetails", "Course", new { paymentId = ViewBag.PaymentID })" class="btn btn-warning w-100" style="display: flex; align-items: center; justify-content: center; gap: 8px;">
-                        <i class="fa fa-credit-card"></i> <span>Pay Now</span>
-                    </a>
+                    if (currentStatus == "open")
+                    {
+                        if (Session["StudentProfile"] == null)
+                        {
+                            <a href="@Url.Action("Login", "User")" class="btn btn-primary w-100" style="display: flex; align-items: center; justify-content: center; gap: 8px;">
+                                <i class="fa fa-sign-in"></i> <span>Login to Enroll</span>
+                            </a>
+                        }
+                        else
+                        {
+                            <a href="@Url.Action("Enroll", "Course", new { id = Model.CourseID })" class="btn btn-primary w-100" style="background: #ff4757; border: none; display: flex; align-items: center; justify-content: center; gap: 8px;">
+                                <i class="fa fa-shopping-cart"></i> <span>Enroll Now</span>
+                            </a>
+                        }
+                    }
+                    else
+                    {
+                        <button class="btn w-100" style="background: #dfe4ea; color: #a4b0be; border: none; cursor: not-allowed; display: flex; align-items: center; justify-content: center; gap: 8px;" disabled>
+                            <i class="fa fa-ban"></i> <span>Course @(Model.CourseStatus != null ? Model.CourseStatus.StatusName : "")</span>
+                        </button>
+                    }
                 }
-            }
-            else
-            {
-                if (Session["StudentProfile"] == null)
-                {
-                    <a href="@Url.Action("Login", "User")" class="btn btn-primary w-100" style="display: flex; align-items: center; justify-content: center; gap: 8px;">
-                        <i class="fa fa-sign-in"></i> <span>Login to Enroll</span>
-                    </a>
-                }
-                else
-                {
-                    <a href="@Url.Action("Enroll", "Course", new { id = Model.CourseID })" class="btn btn-primary w-100" style="background: #ff4757; border: none; display: flex; align-items: center; justify-content: center; gap: 8px;">
-                        <i class="fa fa-shopping-cart"></i> <span>Enroll Now</span>
-                    </a>
-                }
-            }
-        </div>
+            </div>
 
             <a href="@Url.Action("Course", "Course")" class="text-center d-block mt-20 link-back-courses" style="color: #ff523b; font-weight: 500; text-decoration: none; margin-top: 20px;">Back to Courses</a>
         </div>
@@ -192,7 +228,6 @@
     </div>
 </div>
 
-@* 🌟 KHỐI POPUP MODAL ĐỂ HỌC VIÊN VIẾT PHẢN HỒI (ẨN MẶC ĐỊNH) *@
 <div class="feedback-modal-overlay" id="feedbackModal">
     <div class="feedback-modal-box">
         <span class="close-modal-btn" onclick="document.getElementById('feedbackModal').classList.remove('open')">&times;</span>

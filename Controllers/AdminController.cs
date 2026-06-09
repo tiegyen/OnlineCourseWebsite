@@ -533,10 +533,9 @@ public class AdminController : Controller
 
         if (data == null) return Json(new { success = false, message = "Not found!" });
 
-        DateTime vnNow = GetVnNow(); // Lấy giờ VN hiện tại
+        DateTime vnNow = GetVnNow();
         bool isPending = data.Payment.PaymentStatus == "Pending";
 
-        // Tính toán khoảng cách giờ hủy khóa học theo chuẩn giờ VN
         bool canRefund = (data.Payment.PaymentStatus == "Paid" &&
                          data.Payment.PaymentDate.HasValue &&
                          (vnNow - data.Payment.PaymentDate.Value).TotalHours <= 24 &&
@@ -545,8 +544,10 @@ public class AdminController : Controller
         if (!isPending && !canRefund)
             return Json(new { success = false, message = "Cannot cancel: Course is in progress or refund window closed." });
 
+        // 🌟 CHỈ CẬP NHẬT TRẠNG THÁI, KHÔNG XÓA ENROLLMENT
         data.Payment.PaymentStatus = "Cancelled";
-        data.Payment.PaymentDate = vnNow; // 🔥 ÉP LƯU THEO GIỜ VN (GMT+7)
+        data.Payment.PaymentDate = vnNow;
+
         db.SubmitChanges();
         return Json(new { success = true, message = "Cancelled successfully." });
     }
@@ -557,16 +558,16 @@ public class AdminController : Controller
         var payment = db.Payments.SingleOrDefault(p => p.PaymentID == paymentId);
         if (payment == null) return Json(new { success = false, message = "Transaction record not found." });
 
-        DateTime vnNow = GetVnNow(); // Lấy giờ VN hiện tại
+        DateTime vnNow = GetVnNow();
 
-        // Kiểm tra khung giờ vàng 15 phút theo chuẩn giờ VN đồng nhất
         if (payment.PaymentDate.HasValue && (vnNow - payment.PaymentDate.Value).TotalMinutes > 15)
         {
             return Json(new { success = false, message = "Undo window (15 minutes) has expired for this transaction." });
         }
 
+        // Đưa trạng thái về lại Pending ngon lành cành đào vì liên kết Enrollment không bị đứt
         payment.PaymentStatus = "Pending";
-        payment.PaymentDate = vnNow; // 🔥 RESET LẠI MỐC THEO GIỜ VN (GMT+7)
+        payment.PaymentDate = vnNow;
         db.SubmitChanges();
 
         return Json(new { success = true, message = "Transaction status has been restored to Pending." });

@@ -71,7 +71,8 @@
                             {
                                 double passedMinutes = (vnNow - vnPaymentDate).TotalMinutes;
 
-                                if (passedMinutes <= 15 && passedMinutes >= 0) // Trong khung giờ vàng 15 phút
+                                // 🌟 SỬA TẠI ĐÂY: Chỉ cho phép Undo đơn hàng "Paid" (Duyệt lộn), KHÔNG cho Undo đơn "Cancelled" (đã giải phóng key)
+                                if (item.PaymentStatus == "Paid" && passedMinutes <= 15 && passedMinutes >= 0)
                                 {
                                     remainingSeconds = (15 - passedMinutes) * 60;
                                     if (remainingSeconds < 0) { remainingSeconds = 0; }
@@ -91,10 +92,6 @@
                                 {
                                     <span class="tooltip-wrapper" title="Locked: Progress >= 5% or > 24h" style="color:#94a3b8; font-style:italic;">Fixed</span>
                                 }
-                            }
-                            else
-                            {
-                                <span class="tooltip-wrapper" title="Locked: Progress >= 5% or > 24h" style="color:#94a3b8; font-style:italic;">Fixed</span>
                             }
                         </td>
                     </tr>
