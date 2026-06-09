@@ -7,10 +7,18 @@
     <div class="card-box" style="padding: 40px; box-shadow: 0 4px 15px rgba(0,0,0,0.08); border-radius: 12px; background: #fff;">
         <h2 class="text-center" style="margin-bottom: 30px; color: #333; font-weight: 700;">Welcome Back</h2>
 
-        @if (ViewBag.ErrorSystem != null)
+        @if (TempData["SuccessMessage"] != null)
         {
-            <div style="background: #ffe0e6; color: #ff4d4d; padding: 10px; border-radius: 6px; margin-bottom: 20px; font-size: 14px; font-weight: 500; text-align: center;">
-                @ViewBag.ErrorSystem
+            <div style="background: #e6f7ff; color: #1890ff; border: 1px solid #91d5ff; padding: 15px; border-radius: 8px; margin-bottom: 20px; font-size: 14px; font-weight: 500; text-align: left; line-height: 1.5;">
+                <i class="fa fa-envelope-o" style="font-size: 16px; margin-right: 5px; font-weight: bold;"></i>
+                @TempData["SuccessMessage"]
+            </div>
+        }
+
+        @if (TempData["ErrorMessage"] != null)
+        {
+            <div style="background: #ffe0e6; color: #ff4d4d; border: 1px solid #ffa3b1; padding: 12px; border-radius: 6px; margin-bottom: 20px; font-size: 14px; font-weight: 500; text-align: center;">
+                @TempData["ErrorMessage"]
             </div>
         }
 
