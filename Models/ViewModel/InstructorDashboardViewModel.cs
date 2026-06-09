@@ -83,4 +83,22 @@ namespace OnlineCourseWebsite.Models
         public int Progress { get; set; }
     }
 
+    public class InstructorReviewItemViewModel
+    {
+        public int ReviewID { get; set; }
+        public int Rating { get; set; }
+        public string Comment { get; set; }
+        public DateTime ReviewDate { get; set; }
+        public string StudentName { get; set; }
+        public int CourseID { get; set; }
+        public string CourseName { get; set; }
+    }
+
+    public class InstructorReviewsViewModel
+    {
+        public decimal AverageRating { get; set; }
+        public int TotalReviews { get; set; }
+        public List<InstructorReviewItemViewModel> Reviews { get; set; }
+    }
+
 }

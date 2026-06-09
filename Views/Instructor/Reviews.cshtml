@@ -1,0 +1,102 @@
+﻿@model OnlineCourseWebsite.Models.InstructorReviewsViewModel
+@{
+    ViewBag.Title = "Course Reviews";
+    Layout = "~/Views/Shared/_InsLayout.cshtml"; // Đường dẫn file layout của ní
+}
+
+<div class="admin-content">
+
+    <div class="admin-header">
+        <div>
+            <h2>Student Reviews</h2>
+            <p class="text-link">
+                Feedback and ratings on your course quality.
+            </p>
+        </div>
+    </div>
+
+    <div class="stats-grid">
+
+        <div class="stat-card">
+            <div class="stat-info">
+                <h3>@Model.AverageRating</h3>
+                <p>Average Rating</p>
+            </div>
+            <div class="stat-icon icon-orange">
+                <i class="fa fa-star"></i>
+            </div>
+        </div>
+
+        <div class="stat-card">
+            <div class="stat-info">
+                <h3>@Model.TotalReviews</h3>
+                <p>Total Reviews</p>
+            </div>
+            <div class="stat-icon icon-blue">
+                <i class="fa fa-comments"></i>
+            </div>
+        </div>
+
+    </div>
+
+    <div class="card-box mt-30">
+
+        <h3 class="profile-section-title mb-20">
+            <i class="fa fa-commenting-o"></i>
+            Recent Feedback
+        </h3>
+
+        @if (Model.Reviews != null && Model.Reviews.Any())
+        {
+            foreach (var review in Model.Reviews)
+            {
+                <div class="review-card mb-20">
+
+                    <div class="review-header">
+                        <div>
+                            <span class="review-author">@review.StudentName</span>
+
+                            <div class="review-rating">
+                                @for (int i = 1; i <= 5; i++)
+                                {
+                                    if (i <= review.Rating)
+                                    {
+                                        <i class="fa fa-star"></i>
+                                    }
+                                    else
+                                    {
+                                        <i class="fa fa-star-o"></i>
+                                    }
+                                }
+                            </div>
+                        </div>
+
+                        <span class="review-date">
+                            @review.ReviewDate.ToString("MMMM dd, yyyy")
+                        </span>
+                    </div>
+
+                    <p class="review-comment">
+                        "@review.Comment"
+                    </p>
+
+                    <div style="margin-top:10px;">
+                        <a href="@Url.Action("Curriculum", "Instructor", new { id = review.CourseID })" class="btn-view-course">
+                            <i class="fa fa-external-link"></i>
+                            View: @review.CourseName
+                        </a>
+                    </div>
+
+                </div>
+            }
+        }
+        else
+        {
+            <div class="text-center p-30">
+                <p class="text-muted">You haven't received any reviews yet. 🗿☕</p>
+            </div>
+        }
+
+    </div>
+
+</div>

@@ -355,5 +355,45 @@ namespace OnlineCourseWebsite.Controllers
             return View(students);
         }
 
+        // GET: Instructor/Reviews
+        [HttpGet]
+        public ActionResult Reviews()
+        {
+            // Giả định InstructorID = 1 (Thay bằng Session hoặc User ID thực tế sau này)
+            int mockInstructorId = 1;
+
+            // 1. Dùng LINQ bốc toàn bộ danh sách các review thuộc các khóa học của Instructor này
+            var reviewQuery = db.Reviews
+                                .Where(r => r.Course.InstructorID == mockInstructorId)
+                                .Select(r => new InstructorReviewItemViewModel
+                                {
+                                    ReviewID = r.ReviewID,
+                                    Rating = r.Rating,
+                                    Comment = r.Comment,
+                                    ReviewDate = r.ReviewDate ?? DateTime.Now,
+                                    StudentName = r.Student.FullName,
+                                    CourseID = r.CourseID,
+                                    CourseName = r.Course.CourseName
+                                })
+                                .OrderByDescending(r => r.ReviewDate) // Review mới nhất lên đầu
+                                .ToList();
+
+            // 2. Tính toán các chỉ số Thống kê (Bảo vệ code bằng toán tử kiểm tra danh sách trống)
+            int totalReviews = reviewQuery.Count;
+            decimal averageRating = totalReviews > 0
+                ? Math.Round((decimal)reviewQuery.Average(r => r.Rating), 1)
+                : 0.0m;
+
+            // 3. Đóng gói vào Tổng ViewModel để ném ra ngoài View
+            var viewModel = new InstructorReviewsViewModel
+            {
+                AverageRating = averageRating,
+                TotalReviews = totalReviews,
+                Reviews = reviewQuery
+            };
+
+            return View(viewModel);
+        }
+
     }
 }
