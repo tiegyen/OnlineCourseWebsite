@@ -13,40 +13,43 @@ public class AdminController : Controller
     dbOnlineCourseDataContext db = new dbOnlineCourseDataContext();
     private string connectionString = ConfigurationManager.ConnectionStrings["DefaultConnection"].ConnectionString;
 
+    // Khai báo biến múi giờ Việt Nam dùng chung cho toàn Controller
+    private readonly TimeZoneInfo vnTimeZone = TimeZoneInfo.FindSystemTimeZoneById("SE Asia Standard Time");
+
+    // Hàm tiện ích lấy nhanh giờ Việt Nam hiện tại hiện thời
+    private DateTime GetVnNow()
+    {
+        return TimeZoneInfo.ConvertTimeFromUtc(DateTime.UtcNow, vnTimeZone);
+    }
+
     // Trang chủ Admin (Dashboard)
     public ActionResult Dashboard()
     {
-        // --- GIỮ NGUYÊN MẤY DÒNG ĐẾM CŨ ---
         ViewBag.TotalCourses = db.Courses.Count();
         ViewBag.TotalStudents = db.Students.Count();
         ViewBag.TotalInstructors = db.Instructors.Count();
         ViewBag.TotalEnrollments = db.Enrollments.Count();
         ViewBag.TotalRevenue = db.Payments.Where(p => p.PaymentStatus == "Paid").Sum(p => (decimal?)p.Amount).GetValueOrDefault(0);
 
-        // --- XỬ LÝ REVIEW THẬT CHỖ NÀY NÈ NÍ ---
-        // 1. Tính Rating trung bình của toàn hệ thống (nếu chưa có review nào thì mặc định là 5.0)
         var allReviews = db.Reviews.ToList();
         double avgRating = allReviews.Any() ? allReviews.Average(r => r.Rating) : 5.0;
-        ViewBag.AvgRating = avgRating.ToString("F1"); // Ép về 1 chữ số thập phân (Ví dụ: 4.6)
+        ViewBag.AvgRating = avgRating.ToString("F1");
 
-        // 2. Lấy danh sách Reviews mới nhất để hiển thị ra Dashboard
-        // Vì ném thẳng qua View, ní cứ `.OrderByDescending` theo ngày cho chuẩn bài
         var reviewList = db.Reviews
                            .OrderByDescending(r => r.ReviewDate)
-                           .Take(5) // Lấy 5 cái mới nhất thôi cho đỡ chật Dashboard ghen ní
+                           .Take(5)
                            .ToList();
 
-        return View(reviewList); // Truyền nguyên cái List Review này làm Model chính của trang
+        return View(reviewList);
     }
 
     public ActionResult Courses()
     {
         var viewModel = new CoursesViewModel();
 
-        // 1. Lấy danh sách khóa học (Double Join để lấy cả CategoryName lẫn StatusName)
         viewModel.Courses = (from c in db.Courses
                              join cat in db.Categories on c.CategoryID equals cat.CategoryID
-                             join st in db.CourseStatus on c.StatusID equals st.StatusID // 👈 JOIN THÊM BẢNG STATUS NÀY NÍ
+                             join st in db.CourseStatus on c.StatusID equals st.StatusID
                              select new CourseDisplayDto
                              {
                                  CourseID = c.CourseID,
@@ -56,21 +59,17 @@ public class AdminController : Controller
                                  CategoryID = c.CategoryID,
                                  InstructorID = c.InstructorID,
                                  StatusID = c.StatusID,
-                                 StatusName = st.StatusName, // 👈 GÁN THẰNG NÀY ĐỂ VIEW HỨNG NHA!
+                                 StatusName = st.StatusName,
                                  Duration = c.Duration
                              }).ToList();
 
-        // 2. Lấy danh sách Categories và Instructors
         viewModel.Categories = db.Categories.ToList();
         viewModel.Instructors = db.Instructors.ToList();
-
-        // 3. Nạp dữ liệu đổ vào Dropdown trên Modal:
         viewModel.CourseStatuses = db.CourseStatus.ToList();
 
         return View(viewModel);
     }
 
-    // POST: Admin/CreateCategory
     [HttpPost]
     [ValidateAntiForgeryToken]
     public ActionResult CreateCategory(string categoryName)
@@ -80,20 +79,14 @@ public class AdminController : Controller
             bool isExist = db.Categories.Any(c => c.CategoryName.ToLower() == categoryName.Trim().ToLower());
             if (!isExist)
             {
-                // Khởi tạo đối tượng từ class LINQ to SQL
                 Category cat = new Category { CategoryName = categoryName.Trim() };
-
-                // THUẦN LINQ TO SQL: Dùng InsertOnSubmit thay cho Add
                 db.Categories.InsertOnSubmit(cat);
-
-                // THUẦN LINQ TO SQL: SubmitChanges thần thánh
                 db.SubmitChanges();
             }
         }
         return RedirectToAction("Courses");
     }
 
-    // 🆕 AJAX POST: Chỉnh sửa tên Category nhanh bằng LINQ to SQL
     [HttpPost]
     public ActionResult EditCategory(int id, string categoryName)
     {
@@ -102,15 +95,12 @@ public class AdminController : Controller
             return Json(new { success = false, message = "Category name cannot be empty." });
         }
 
-        // 1. Kiểm tra xem danh mục có tồn tại hay không
-        // THUẦN LINQ TO SQL: Dùng SingleOrDefault
         var cat = db.Categories.SingleOrDefault(c => c.CategoryID == id);
         if (cat == null)
         {
             return Json(new { success = false, message = "Category not found." });
         }
 
-        // 2. Kiểm tra xem tên mới có bị trùng lặp với danh mục khác không
         bool isExist = db.Categories.Any(c => c.CategoryID != id && c.CategoryName.ToLower() == categoryName.Trim().ToLower());
         if (isExist)
         {
@@ -119,12 +109,8 @@ public class AdminController : Controller
 
         try
         {
-            // 3. Thực hiện cập nhật dữ liệu
             cat.CategoryName = categoryName.Trim();
-
-            // THUẦN LINQ TO SQL: Submit thay đổi thần thánh xuống SQL Server
             db.SubmitChanges();
-
             return Json(new { success = true });
         }
         catch (Exception ex)
@@ -133,11 +119,9 @@ public class AdminController : Controller
         }
     }
 
-    // POST: Admin/DeleteCategory
     [HttpPost]
     public ActionResult DeleteCategory(int id)
     {
-        // THUẦN LINQ TO SQL: Không dùng Find(), dùng SingleOrDefault
         var cat = db.Categories.SingleOrDefault(c => c.CategoryID == id);
         if (cat != null)
         {
@@ -147,7 +131,6 @@ public class AdminController : Controller
                 return Json(new { success = false, message = "Cannot delete! This category contains active courses." });
             }
 
-            // THUẦN LINQ TO SQL: Dùng DeleteOnSubmit
             db.Categories.DeleteOnSubmit(cat);
             db.SubmitChanges();
             return Json(new { success = true });
@@ -155,26 +138,21 @@ public class AdminController : Controller
         return Json(new { success = false, message = "Category not found." });
     }
 
-    // AJAX POST: Cập nhật nhanh Instructor khi Admin thay đổi dropdown
     [HttpPost]
     public ActionResult UpdateInstructorAssignment(int courseId, int instructorId)
     {
-        // THUẦN LINQ TO SQL: Dùng SingleOrDefault để bốc row ra update
         var course = db.Courses.SingleOrDefault(c => c.CourseID == courseId);
         if (course != null)
         {
             course.InstructorID = instructorId;
-            db.SubmitChanges(); // Cập nhật trực tiếp
+            db.SubmitChanges();
             return Json(new { success = true });
         }
         return Json(new { success = false });
     }
 
-
-    // Trang duyệt thanh toán (Cái này quan trọng nè!)
     public ActionResult ManagePayments()
     {
-        // Lấy danh sách hóa đơn đang "Awaiting" hoặc "Pending"
         var payments = db.Payments
                          .Where(p => p.PaymentStatus == "Awaiting" || p.PaymentStatus == "Pending")
                          .OrderByDescending(p => p.PaymentDate)
@@ -186,7 +164,6 @@ public class AdminController : Controller
     {
         var model = new UsersViewModel();
 
-        // LINQ lấy danh sách Instructors
         model.Instructors = (from inst in db.Instructors
                              join acc in db.User_Accounts on inst.UserID equals acc.UserID
                              select new UserDto
@@ -199,7 +176,6 @@ public class AdminController : Controller
                                  Status = acc.Status
                              }).ToList();
 
-        // LINQ lấy danh sách Students
         model.Students = (from std in db.Students
                           join acc in db.User_Accounts on std.UserID equals acc.UserID
                           select new UserDto
@@ -214,7 +190,6 @@ public class AdminController : Controller
         return View(model);
     }
 
-    // 2. AJAX API: Đổi trạng thái từ Active <-> Inactive
     [HttpPost]
     public JsonResult ToggleUserStatus(int userId)
     {
@@ -226,17 +201,8 @@ public class AdminController : Controller
                 return Json(new { success = false, message = "User account not found." });
             }
 
-            // Chuyển đổi qua lại giữa Active và Inactive
-            if (account.Status == "Active")
-            {
-                account.Status = "Inactive";
-            }
-            else
-            {
-                account.Status = "Active";
-            }
-
-            db.SubmitChanges(); // Lưu vào SQL Server
+            account.Status = (account.Status == "Active") ? "Inactive" : "Active";
+            db.SubmitChanges();
 
             return Json(new { success = true, newStatus = account.Status });
         }
@@ -246,9 +212,6 @@ public class AdminController : Controller
         }
     }
 
-        // ==================== QUẢN LÝ INSTRUCTOR ====================
-
-        // 1. Get: Hiển thị form chỉnh sửa Instructor
     public ActionResult EditInstructor(int id)
     {
         var instructor = db.Instructors.FirstOrDefault(i => i.InstructorID == id);
@@ -257,14 +220,12 @@ public class AdminController : Controller
         return View(instructor);
     }
 
-    // POST: Xử lý cập nhật thông tin Instructor + Đổi Pass
     [HttpPost]
     [ValidateAntiForgeryToken]
     public ActionResult EditInstructor(Instructor model, string NewPassword)
     {
         if (ModelState.IsValid)
         {
-            // 1. Cập nhật bảng thông tin cá nhân Instructor
             var instructor = db.Instructors.FirstOrDefault(i => i.InstructorID == model.InstructorID);
             if (instructor != null)
             {
@@ -273,18 +234,16 @@ public class AdminController : Controller
                 instructor.Address = model.Address;
                 instructor.Bio = model.Bio;
 
-                // 2. Kiểm tra nếu Admin có điền vào ô Mật khẩu mới
                 if (!string.IsNullOrEmpty(NewPassword))
                 {
                     var account = db.User_Accounts.FirstOrDefault(u => u.UserID == model.UserID);
                     if (account != null)
                     {
-                        // Gán thẳng mật khẩu mới (Nếu hệ thống của ní có hàm băm MD5/SHA256 thì bọc nó vào ghen)
                         account.Password = NewPassword.Trim();
                     }
                 }
 
-                db.SubmitChanges(); // Thực thi lưu dữ liệu xuống SQL Server
+                db.SubmitChanges();
                 TempData["Success"] = "Instructor updated successfully!";
                 return RedirectToAction("Users");
             }
@@ -292,9 +251,6 @@ public class AdminController : Controller
         return View(model);
     }
 
-    // ==================== QUẢN LÝ STUDENT ====================
-
-    // 3. Get: Hiển thị form chỉnh sửa Student
     public ActionResult EditStudent(int id)
     {
         var student = db.Students.FirstOrDefault(s => s.StudentID == id);
@@ -303,14 +259,12 @@ public class AdminController : Controller
         return View(student);
     }
 
-    // POST: Xử lý cập nhật thông tin Student + Đổi Pass
     [HttpPost]
     [ValidateAntiForgeryToken]
     public ActionResult EditStudent(Student model, string NewPassword)
     {
         if (ModelState.IsValid)
         {
-            // 1. Cập nhật bảng thông tin cá nhân Student
             var student = db.Students.FirstOrDefault(s => s.StudentID == model.StudentID);
             if (student != null)
             {
@@ -318,7 +272,6 @@ public class AdminController : Controller
                 student.Phone = model.Phone;
                 student.Address = model.Address;
 
-                // 2. Kiểm tra nếu Admin có điền vào ô Mật khẩu mới
                 if (!string.IsNullOrEmpty(NewPassword))
                 {
                     var account = db.User_Accounts.FirstOrDefault(u => u.UserID == model.UserID);
@@ -328,7 +281,7 @@ public class AdminController : Controller
                     }
                 }
 
-                db.SubmitChanges(); // Thực thi lưu dữ liệu xuống SQL Server
+                db.SubmitChanges();
                 TempData["Success"] = "Student updated successfully!";
                 return RedirectToAction("Users");
             }
@@ -336,29 +289,23 @@ public class AdminController : Controller
         return View(model);
     }
 
-    // ==================== TẠO MỚI INSTRUCTOR ====================
-
-    // 1. GET: Hiển thị form điền thông tin thêm Instructor
     public ActionResult CreateInstructor()
     {
         return View();
     }
 
-    // 2. POST: Đón dữ liệu form gửi về và insert vào Database
     [HttpPost]
     [ValidateAntiForgeryToken]
     public ActionResult CreateInstructor(string Email, string Password, string FullName, string Phone, string Address, string Bio)
     {
         try
         {
-            // Kiểm tra dữ liệu đầu vào cơ bản
             if (string.IsNullOrEmpty(Email) || string.IsNullOrEmpty(Password) || string.IsNullOrEmpty(FullName))
             {
                 ModelState.AddModelError("", "Email, Password and Full Name are required.");
                 return View();
             }
 
-            // Check trùng Email trong hệ thống
             bool isEmailExist = db.User_Accounts.Any(u => u.Email.ToLower() == Email.Trim().ToLower());
             if (isEmailExist)
             {
@@ -366,22 +313,20 @@ public class AdminController : Controller
                 return View();
             }
 
-            // BƯỚC A: Thêm tài khoản vào User_Accounts trước
             User_Account newAccount = new User_Account
             {
                 Email = Email.Trim(),
-                Password = Password.Trim(), // Nếu ní có hàm băm mật khẩu (VD: MD5, SHA256) thì băm nó ở đây nha
+                Password = Password.Trim(),
                 Role = "Instructor",
                 Status = "Active"
             };
 
             db.User_Accounts.InsertOnSubmit(newAccount);
-            db.SubmitChanges(); // Chốt hạ đợt 1 để SQL cấp phát tự động mã UserID cho newAccount
+            db.SubmitChanges();
 
-            // BƯỚC B: Dùng mã UserID vừa sinh ra để liên kết tạo Instructor
             Instructor newInstructor = new Instructor
             {
-                UserID = newAccount.UserID, // Khóa ngoại đồng bộ link sang tài khoản vừa tạo
+                UserID = newAccount.UserID,
                 FullName = FullName.Trim(),
                 Phone = Phone?.Trim(),
                 Address = Address?.Trim(),
@@ -389,7 +334,7 @@ public class AdminController : Controller
             };
 
             db.Instructors.InsertOnSubmit(newInstructor);
-            db.SubmitChanges(); // Chốt hạ đợt 2 lưu thông tin cá nhân
+            db.SubmitChanges();
 
             TempData["Success"] = "Instructor account created successfully!";
             return RedirectToAction("Users");
@@ -401,47 +346,36 @@ public class AdminController : Controller
         }
     }
 
-
-    
-
-    
-    // POST: Admin/CreateCourse
     [HttpPost]
     [ValidateAntiForgeryToken]
     public ActionResult CreateCourse(Course model, HttpPostedFileBase ImageFile)
     {
         try
         {
-            // 1. Kiểm tra dữ liệu đầu vào cơ bản
             if (model == null || string.IsNullOrEmpty(model.CourseName))
             {
                 TempData["Error"] = "Tên khóa học không được để trống!";
                 return RedirectToAction("Courses");
             }
 
-            // 2. Tạo đối tượng mới để map chuẩn
             Course newCourse = new Course
             {
                 CourseName = model.CourseName.Trim(),
                 Description = model.Description?.Trim(),
                 Price = model.Price,
                 Duration = model.Duration?.Trim(),
-                CreatedDate = System.DateTime.Now,
+                CreatedDate = GetVnNow(), // Ép sang giờ VN khi tạo khóa học mới
                 InstructorID = model.InstructorID,
                 CategoryID = model.CategoryID,
                 StatusID = model.StatusID
             };
 
-            // 3. Xử lý lưu ảnh (Đã đồng bộ về Content/images/)
             if (ImageFile != null && ImageFile.ContentLength > 0)
             {
                 string extension = Path.GetExtension(ImageFile.FileName);
                 string imageName = "course_" + Guid.NewGuid().ToString().Substring(0, 8) + extension;
-
-                // Lấy đường dẫn thư mục cha
                 string folderPath = Server.MapPath("~/Content/images/");
 
-                // Khống chế lỗi: Nếu chưa có thư mục "images" thì tự tạo luôn cho đỡ lỗi
                 if (!Directory.Exists(folderPath))
                 {
                     Directory.CreateDirectory(folderPath);
@@ -453,10 +387,9 @@ public class AdminController : Controller
             }
             else
             {
-                newCourse.Image = "default.png"; // Hoặc để null tùy DB của ní
+                newCourse.Image = "default.png";
             }
 
-            // 4. Tiến hành nạp và Submit
             db.Courses.InsertOnSubmit(newCourse);
             db.SubmitChanges();
 
@@ -470,15 +403,7 @@ public class AdminController : Controller
         }
         catch (Exception ex)
         {
-            // Vạch trần tất cả các lỗi ngầm ở đây 👇
             System.Diagnostics.Debug.WriteLine("❌ LỖI CREATE COURSE CHI TIẾT: " + ex.ToString());
-
-            // Nếu có lỗi inner (lỗi sâu bên trong SQL gửi về)
-            if (ex.InnerException != null)
-            {
-                System.Diagnostics.Debug.WriteLine("❌ LỖI GỐC TỪ SQL: " + ex.InnerException.Message);
-            }
-
             TempData["Error"] = "Không lưu được vào database! Lỗi: " + ex.Message;
         }
 
@@ -491,7 +416,6 @@ public class AdminController : Controller
     {
         try
         {
-            // Ép buộc xóa check validate của cột Image nếu form truyền về bị null trúng nó
             if (ModelState.ContainsKey("Image")) ModelState["Image"].Errors.Clear();
 
             if (ModelState.IsValid)
@@ -508,25 +432,19 @@ public class AdminController : Controller
                     course.InstructorID = model.InstructorID;
                     course.StatusID = model.StatusID;
 
-                    // Xử lý ảnh nếu Admin upload ảnh mới thay thế
                     if (EditImageFile != null && EditImageFile.ContentLength > 0)
                     {
                         string extension = Path.GetExtension(EditImageFile.FileName);
                         string imageName = "course_" + Guid.NewGuid().ToString().Substring(0, 8) + extension;
                         string path = Path.Combine(Server.MapPath("~/Content/images/"), imageName);
-
                         EditImageFile.SaveAs(path);
-
-                        // Cập nhật giá trị mới
                         course.Image = imageName;
                     }
                     else
                     {
-                        // Giữ nguyên ảnh cũ nếu không change thumbnail
                         course.Image = OldImage;
                     }
 
-                    // Chốt hạ đẩy dữ liệu xuống SQL Server
                     db.SubmitChanges();
                 }
                 return RedirectToAction("Courses");
@@ -540,28 +458,23 @@ public class AdminController : Controller
         return RedirectToAction("Courses");
     }
 
-    // POST: Admin/DeleteCourse
     [HttpPost]
     public ActionResult DeleteCourse(int id)
     {
         try
         {
-            // Tìm khoá học cần xoá
             var course = db.Courses.SingleOrDefault(c => c.CourseID == id);
             if (course == null)
             {
                 return Json(new { success = false, message = "Course not found." });
             }
 
-            // KIỂM TRA RÀNG BUỘC: Nếu khóa học đã có người đăng ký học (Enrollment)
             bool hasEnrollment = db.Enrollments.Any(e => e.CourseID == id);
             if (hasEnrollment)
             {
-                // Giải pháp an toàn: Không cho xoá, bắt đổi Status sang "Inactive" hoặc báo lỗi
                 return Json(new { success = false, message = "Cannot delete! This course already has students enrolled. Try changing its status to Inactive instead." });
             }
 
-            // Nếu sạch sẽ không vướng khoá ngoại, tiến hành xoá
             db.Courses.DeleteOnSubmit(course);
             db.SubmitChanges();
 
@@ -573,6 +486,7 @@ public class AdminController : Controller
         }
     }
 
+    // --- BẮT ĐẦU PHẦN ĐỒNG BỘ GIỜ VIỆT NAM CHO TRANSACTION LOGIC ---
 
     public ActionResult Transactions()
     {
@@ -590,7 +504,8 @@ public class AdminController : Controller
                                 Amount = p.Amount,
                                 PaymentMethod = p.PaymentMethod,
                                 PaymentStatus = p.PaymentStatus,
-                                PaymentDate = p.PaymentDate ?? DateTime.Now,
+                                // Đồng bộ gán giờ VN (Nếu null thì lấy luôn giờ VN hiện tại)
+                                PaymentDate = p.PaymentDate ?? GetVnNow(),
                                 Progress = (double)(e.Progress ?? 0)
                             }).ToList();
         return View(transactions);
@@ -599,13 +514,11 @@ public class AdminController : Controller
     [HttpPost]
     public JsonResult ApprovePayment(int paymentId)
     {
-        // Thêm dòng log này để biết nó có chạy vào hàm không
-        System.Diagnostics.Debug.WriteLine("Đã vào được hàm với ID: " + paymentId);
-
         var payment = db.Payments.SingleOrDefault(p => p.PaymentID == paymentId);
         if (payment == null) return Json(new { success = false, message = "Không tìm thấy!" });
 
         payment.PaymentStatus = "Paid";
+        payment.PaymentDate = GetVnNow(); // 🔥 ÉP LƯU THEO GIỜ VN (GMT+7)
         db.SubmitChanges();
         return Json(new { success = true, message = "Duyệt thành công!" });
     }
@@ -620,20 +533,42 @@ public class AdminController : Controller
 
         if (data == null) return Json(new { success = false, message = "Not found!" });
 
-        // Logic "thép": Chỉ cho huỷ nếu Pending HOẶC (Paid + <24h + <5% Progress)
+        DateTime vnNow = GetVnNow(); // Lấy giờ VN hiện tại
         bool isPending = data.Payment.PaymentStatus == "Pending";
+
+        // Tính toán khoảng cách giờ hủy khóa học theo chuẩn giờ VN
         bool canRefund = (data.Payment.PaymentStatus == "Paid" &&
-                         (DateTime.Now - data.Payment.PaymentDate.Value).TotalHours <= 24 &&
+                         data.Payment.PaymentDate.HasValue &&
+                         (vnNow - data.Payment.PaymentDate.Value).TotalHours <= 24 &&
                          data.Enrollment.Progress < 5);
 
         if (!isPending && !canRefund)
             return Json(new { success = false, message = "Cannot cancel: Course is in progress or refund window closed." });
 
         data.Payment.PaymentStatus = "Cancelled";
+        data.Payment.PaymentDate = vnNow; // 🔥 ÉP LƯU THEO GIỜ VN (GMT+7)
         db.SubmitChanges();
         return Json(new { success = true, message = "Cancelled successfully." });
     }
 
+    [HttpPost]
+    public JsonResult UndoPayment(int paymentId)
+    {
+        var payment = db.Payments.SingleOrDefault(p => p.PaymentID == paymentId);
+        if (payment == null) return Json(new { success = false, message = "Transaction record not found." });
+
+        DateTime vnNow = GetVnNow(); // Lấy giờ VN hiện tại
+
+        // Kiểm tra khung giờ vàng 15 phút theo chuẩn giờ VN đồng nhất
+        if (payment.PaymentDate.HasValue && (vnNow - payment.PaymentDate.Value).TotalMinutes > 15)
+        {
+            return Json(new { success = false, message = "Undo window (15 minutes) has expired for this transaction." });
+        }
+
+        payment.PaymentStatus = "Pending";
+        payment.PaymentDate = vnNow; // 🔥 RESET LẠI MỐC THEO GIỜ VN (GMT+7)
+        db.SubmitChanges();
+
+        return Json(new { success = true, message = "Transaction status has been restored to Pending." });
+    }
 }
-
-

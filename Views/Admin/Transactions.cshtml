@@ -5,6 +5,9 @@
     ViewBag.HeaderTitle = "Global System Overview";
     ViewBag.HeaderDesc = "Root administrator command center.";
     Layout = "~/Views/Shared/_DashboardLayout.cshtml";
+
+    // Khai báo múi giờ Việt Nam (GMT+7) để xài chung trong View
+    var vnTimeZone = TimeZoneInfo.FindSystemTimeZoneById("SE Asia Standard Time");
 }
 
 <div class="card-box mt-30">
@@ -20,13 +23,26 @@
                     <th>Student & Course</th>
                     <th>Method</th>
                     <th>Amount</th>
-                    <th>Payment Status</th>
+                    <th>Payment Status & Date</th>
                     <th>Actions</th>
                 </tr>
             </thead>
             <tbody>
                 @foreach (var item in Model)
                 {
+                    // 1. Ép thời gian hiện tại của Server về giờ VN
+                    DateTime vnNow = TimeZoneInfo.ConvertTimeFromUtc(DateTime.UtcNow, vnTimeZone);
+
+                    // 2. Ép thời gian PaymentDate trong DB về giờ VN (để phòng hờ DB tự chuyển sang UTC)
+                    DateTime vnPaymentDate = item.PaymentDate.Kind == DateTimeKind.Utc
+                        ? TimeZoneInfo.ConvertTimeFromUtc(item.PaymentDate, vnTimeZone)
+                        : item.PaymentDate;
+
+                    // 3. Tính toán số giây đếm ngược theo giờ VN chuẩn
+                    double initialPassedMinutes = (vnNow - vnPaymentDate).TotalMinutes;
+                    double remainingSeconds = (15 - initialPassedMinutes) * 60;
+                    if (remainingSeconds < 0) { remainingSeconds = 0; }
+
                     <tr data-id="@item.PaymentID">
                         <td>#ENR-@item.EnrollmentID.ToString("D3")</td>
                         <td>
@@ -39,31 +55,80 @@
                         <td>
                             <span class="payment-badge @item.PaymentStatus.ToLower()">
                                 @item.PaymentStatus
-                            </span>
+                            </span><br />
+                            <small style="color: #64748b; font-size: 11px;">
+                                <i class="fa fa-clock-o"></i> @vnPaymentDate.ToString("dd/MM/yyyy HH:mm")
+                            </small>
                         </td>
 
                         <td class="action-cell">
                             @if (item.PaymentStatus == "Pending")
                             {
-                                <button class="btn-payment-action confirm approve-btn">Approve</button>
-                                <button class="btn-payment-action cancel cancel-btn">Cancel</button>
+                                <button class="btn-payment-action confirm approve-btn" style="padding: 4px 10px; background: #2ecc71; color:#fff; border:none; border-radius:4px; cursor:pointer; font-weight:500; margin-right:5px;">Approve</button>
+                                <button class="btn-payment-action cancel cancel-btn" style="padding: 4px 10px; background: #e74c3c; color:#fff; border:none; border-radius:4px; cursor:pointer; font-weight:500;">Cancel</button>
                             }
-                            else if (item.PaymentStatus == "Paid" && (DateTime.Now - item.PaymentDate).TotalHours <= 24 && item.Progress < 5)
+                            else if (item.PaymentStatus == "Paid" || item.PaymentStatus == "Cancelled")
                             {
-                                <button class="btn-payment-action cancel cancel-btn">Cancel Course</button>
+                                double passedMinutes = (vnNow - vnPaymentDate).TotalMinutes;
+
+                                if (passedMinutes <= 15 && passedMinutes >= 0) // Trong khung giờ vàng 15 phút
+                                {
+                                    remainingSeconds = (15 - passedMinutes) * 60;
+                                    if (remainingSeconds < 0) { remainingSeconds = 0; }
+
+                                    <div class="undo-zone" data-remaining="@Math.Floor(remainingSeconds)">
+                                        <button class="btn-payment-action undo-btn" style="padding: 4px 10px; background: #f1c40f; color:#333; border:none; border-radius:4px; cursor:pointer; font-weight:600; margin-right: 5px;">
+                                            <i class="fa fa-undo"></i> Undo
+                                        </button>
+                                        <small class="countdown-timer" style="color: #e67e22; font-weight: 600; display:inline-block; min-width:45px;"></small>
+                                    </div>
+                                }
+                                else if (item.PaymentStatus == "Paid" && (vnNow - vnPaymentDate).TotalHours <= 24 && item.Progress < 5)
+                                {
+                                    <button class="btn-payment-action cancel cancel-btn" style="padding: 4px 10px; background: #e74c3c; color:#fff; border:none; border-radius:4px; cursor:pointer; font-weight:500;">Cancel Course</button>
+                                }
+                                else
+                                {
+                                    <span class="tooltip-wrapper" title="Locked: Progress >= 5% or > 24h" style="color:#94a3b8; font-style:italic;">Fixed</span>
+                                }
                             }
                             else
                             {
-                                <span class="tooltip-wrapper" title="Locked: Progress >= 5% or > 24h">Fixed</span>
+                                <span class="tooltip-wrapper" title="Locked: Progress >= 5% or > 24h" style="color:#94a3b8; font-style:italic;">Fixed</span>
                             }
                         </td>
                     </tr>
                 }
             </tbody>
         </table>
-        @section scripts {
-            <script>
+    </div>
+</div>
+
+@section scripts {
+    <script>
         $(document).ready(function () {
+            // --- 1. LOGIC CHẠY ĐỒNG HỒ ĐẾM NGƯỢC ĐỘNG ---
+            $(".undo-zone").each(function () {
+                var $zone = $(this);
+                var $timer = $zone.find(".countdown-timer");
+                var seconds = parseInt($zone.data("remaining")) || 0;
+
+                if (seconds > 0) {
+                    var countdownInterval = setInterval(function () {
+                        seconds--;
+                        if (seconds <= 0) {
+                            clearInterval(countdownInterval);
+                            $zone.parent(".action-cell").html('<span class="tooltip-wrapper" style="color:#94a3b8; font-style:italic;">Fixed</span>');
+                        } else {
+                            var mins = Math.floor(seconds / 60);
+                            var secs = seconds % 60;
+                            $timer.text((mins < 10 ? "0" : "") + mins + ":" + (secs < 10 ? "0" : "") + secs);
+                        }
+                    }, 1000);
+                }
+            });
+
+            // --- 2. SỰ KIỆN CLICK APPROVE / CANCEL ---
             $(document).on("click", ".approve-btn, .cancel-btn", function (e) {
                 e.preventDefault();
                 var $btn = $(this);
@@ -81,7 +146,6 @@
                         data: { paymentId: paymentId },
                         success: function (res) {
                             if (res.success) {
-                                alert(res.message);
                                 location.reload();
                             } else {
                                 alert(res.message);
@@ -93,9 +157,31 @@
                     });
                 }
             });
-        });
-            </script>
-        }
-    </div>
-</div>
 
+            // --- 3. SỰ KIỆN BẤM NÚT UNDO HOÀN TÁC ---
+            $(document).on("click", ".undo-btn", function (e) {
+                e.preventDefault();
+                var $btn = $(this);
+                var $row = $btn.closest("tr");
+                var paymentId = $row.data("id");
+
+                if (confirm("Do you want to UNDO this action and restore transaction to Pending?")) {
+                    $.ajax({
+                        url: '@Url.Action("UndoPayment", "Admin")',
+                        type: 'POST',
+                        data: { paymentId: paymentId },
+                        success: function (res) {
+                            alert(res.message);
+                            if (res.success) {
+                                location.reload();
+                            }
+                        },
+                        error: function () {
+                            alert("Không thể hoàn tác hành động này!");
+                        }
+                    });
+                }
+            });
+        });
+    </script>
+}

@@ -4,7 +4,58 @@
     Layout = "~/Views/Shared/_InsLayout.cshtml";
 }
 
+<!-- Thêm CSS định nghĩa màu sắc cho 4 trạng thái riêng biệt -->
+<style>
+    .status-badge {
+        display: inline-block;
+        padding: 4px 8px;
+        border-radius: 4px;
+        font-size: 12px;
+        font-weight: bold;
+        text-align: center;
+        text-transform: capitalize;
+    }
+    /* Màu xanh lá cho Open */
+    .status-open {
+        background-color: #d4edda;
+        color: #155724;
+        border: 1px solid #c3e6cb;
+    }
+    /* Màu xanh dương/tím cho Coming Soon */
+    .status-coming-soon {
+        background-color: #cce5ff;
+        color: #004085;
+        border: 1px solid #b8daff;
+    }
+    /* Màu vàng/cam cho Full */
+    .status-full {
+        background-color: #fff3cd;
+        color: #856404;
+        border: 1px solid #ffeeba;
+    }
+    /* Màu đỏ cho Closed */
+    .status-closed {
+        background-color: #f8d7da;
+        color: #721c24;
+        border: 1px solid #f5c6cb;
+    }
+</style>
+
 <div class="admin-content">
+
+    <!-- Hiển thị thông báo thành công hoặc lỗi nếu có -->
+    @if (TempData["Error"] != null)
+    {
+        <div class="alert alert-danger" style="color: #721c24; background-color: #f8d7da; border: 1px solid #f5c6cb; padding: 12px; margin-bottom: 20px; border-radius: 4px;">
+            <i class="fa fa-exclamation-circle"></i> @TempData["Error"]
+        </div>
+    }
+    @if (TempData["Success"] != null)
+    {
+        <div class="alert alert-success" style="color: #155724; background-color: #d4edda; border: 1px solid #c3e6cb; padding: 12px; margin-bottom: 20px; border-radius: 4px;">
+            <i class="fa fa-check-circle"></i> @TempData["Success"]
+        </div>
+    }
 
     <div class="admin-header">
         <div>
@@ -46,7 +97,31 @@
                             <td>@course.CategoryName</td>
                             <td>@course.Price.ToString("#,##0") VND</td>
                             <td><strong>@course.StudentsEnrolled</strong> Students</td>
-                            <td><span class="status-badge active">@course.StatusName</span></td>
+                            <td>
+                                @{
+                                    // Chuẩn hóa chuỗi trạng thái về chữ thường để so sánh chính xác hơn
+                                    string currentStatus = (course.StatusName ?? "").Trim().ToLower();
+                                    string statusClass = "status-open"; // Mặc định
+
+                                    switch (currentStatus)
+                                    {
+                                        case "open":
+                                            statusClass = "status-open";
+                                            break;
+                                        case "coming soon":
+                                        case "comingsoon":
+                                            statusClass = "status-coming-soon";
+                                            break;
+                                        case "full":
+                                            statusClass = "status-full";
+                                            break;
+                                        case "closed":
+                                            statusClass = "status-closed";
+                                            break;
+                                    }
+                                }
+                                <span class="status-badge @statusClass">@course.StatusName</span>
+                            </td>
                             <td>
                                 <button type="button" class="btn-action-icon" title="Edit Course Info"
                                         onclick="openEditModal(this)"
@@ -61,6 +136,13 @@
                                 <a href="@Url.Action("Curriculum", "Instructor", new { id = course.CourseID })" class="btn-action-icon" title="Manage Lessons">
                                     <i class="fa fa-list-ol"></i>
                                 </a>
+
+                                <!-- Nút Xóa Khóa Học - Đã fix sang HttpUtility để tránh lỗi UrlHelper -->
+                                <button type="button" class="btn-action-icon" title="Delete Course"
+                                        onclick="confirmDeleteCourse(@course.CourseID, '@HttpUtility.JavaScriptStringEncode(course.CourseTitle)')"
+                                        style="color: #dc3545; background: none; border: none; cursor: pointer;">
+                                    <i class="fa fa-trash"></i>
+                                </button>
                             </td>
                         </tr>
                     }
@@ -144,27 +226,22 @@
         function openEditModal(button) {
             var id = button.getAttribute('data-id');
             var title = button.getAttribute('data-title');
-            var price = button.getAttribute('data-price'); // Lấy chuỗi số gốc
+            var price = button.getAttribute('data-price');
             var duration = button.getAttribute('data-duration');
             var desc = button.getAttribute('data-desc');
 
-            // Gán giá trị vào các ô Input trong Modal
             document.getElementById('modalCourseID').value = id;
             document.getElementById('modalTitle').value = title;
-
-            // SỬA DÒNG NÀY: Chuyển đổi giá trị price về dạng float/int thuần túy để input số chịu nhận
             document.getElementById('modalPrice').value = parseFloat(price);
-
             document.getElementById('modalDuration').value = duration;
             document.getElementById('modalDesc').value = desc;
 
-            // Mở modal
             modal.classList.add('open');
         }
 
         // 2. Xử lý khi click vào nút CREATE NEW COURSE (Xóa trống Form)
         function openCreateModal() {
-            document.getElementById('modalCourseID').value = "0"; // Trở về 0 để Controller biết là Thêm mới
+            document.getElementById('modalCourseID').value = "0";
             document.getElementById('modalTitle').value = "";
             document.getElementById('modalPrice').value = "";
             document.getElementById('modalDuration').value = "";
@@ -184,4 +261,12 @@
                 modal.classList.remove('open');
             }
         }
+
+        // 5. Xử lý xác nhận xóa khóa học
+        function confirmDeleteCourse(courseId, courseTitle) {
+            if (confirm("Ní có chắc chắn muốn xóa khóa học '" + courseTitle + "' không?\nHành động này không thể hoàn tác!")) {
+                window.location.href = '@Url.Action("DeleteCourse", "Instructor")?id=' + courseId;
+            }
+        }
     </script>
+</div>

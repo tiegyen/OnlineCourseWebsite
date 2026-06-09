@@ -316,10 +316,10 @@ namespace OnlineCourseWebsite.Controllers
 
             return RedirectToAction("Curriculum", new { id = courseId });
         }
-
         // GET: Instructor/EnrolledStudents
-        public ActionResult EnrolledStudents()
+        public ActionResult EnrolledStudents(int? categoryId)
         {
+            // 1. Kiểm tra bảo mật
             if (Session["UserAccount"] == null || Session["UserRole"]?.ToString() != "Instructor")
             {
                 return RedirectToAction("Login", "User");
@@ -327,8 +327,34 @@ namespace OnlineCourseWebsite.Controllers
 
             int currentInstructorID = Convert.ToInt32(Session["InstructorID"]);
 
-            var students = db.Enrollments
-                .Where(e => e.Course.InstructorID == currentInstructorID)
+            // 2. Load danh sách các Category động lên thanh Filter (Chỉ lấy các category của những khóa học ông này dạy)
+            var categories = db.Courses
+    .Where(c => c.InstructorID == currentInstructorID)
+    .Select(c => c.Category) // Lấy thực thể Category từ DB
+    .Distinct()
+    .ToList() // Ép về List trên RAM trước
+    .Select(cat => new SelectListItem
+    {
+        Value = cat.CategoryID.ToString(),
+        Text = cat.CategoryName,
+        Selected = (categoryId.HasValue && cat.CategoryID == categoryId.Value)
+    })
+    .ToList();
+
+            ViewBag.Categories = categories;
+            ViewBag.SelectedCategory = categoryId; // Giữ lại ID đã chọn để UI hiển thị chính xác
+
+            // 3. Truy vấn dữ liệu học viên (Khởi tạo Query)
+            var enrollmentQuery = db.Enrollments.Where(e => e.Course.InstructorID == currentInstructorID);
+
+            // 🔥 LỌC THEO CATEGORY: Nếu ní chọn một danh mục cụ thể, LINQ sẽ đắp thêm điều kiện lọc
+            if (categoryId.HasValue && categoryId.Value > 0)
+            {
+                enrollmentQuery = enrollmentQuery.Where(e => e.Course.CategoryID == categoryId.Value);
+            }
+
+            // 4. Đổ dữ liệu về ViewModel
+            var students = enrollmentQuery
                 .Select(e => new EnrolledStudentViewModel
                 {
                     StudentName = e.Student.FullName,
@@ -386,5 +412,74 @@ namespace OnlineCourseWebsite.Controllers
 
             return View(viewModel);
         }
+
+        // GET: Instructor/DeleteCourse/id
+        [HttpGet]
+        [Route("Instructor/DeleteCourse/{id}")]
+        public ActionResult DeleteCourse(int id)
+        {
+            // 1. Kiểm tra quyền bảo mật
+            if (Session["UserAccount"] == null || Session["UserRole"]?.ToString() != "Instructor")
+            {
+                return RedirectToAction("Login", "User");
+            }
+
+            int currentInstructorID = Convert.ToInt32(Session["InstructorID"]);
+
+            // 2. Tìm khóa học thuộc về đúng giảng viên này
+            var course = db.Courses.SingleOrDefault(c => c.CourseID == id && c.InstructorID == currentInstructorID);
+
+            if (course != null)
+            {
+                try
+                {
+                    // a. Xóa bài học và học liệu trước nếu có
+                    var lessons = db.Lessons.Where(l => l.CourseID == id).ToList();
+                    foreach (var l in lessons)
+                    {
+                        var materials = db.CourseMaterials.Where(m => m.LessonID == l.LessonID).ToList();
+
+                        // Xóa file vật lý trên Server trước khi xóa bản ghi trong DB
+                        foreach (var mat in materials)
+                        {
+                            string physicalPath = Server.MapPath("~" + mat.FileURL);
+                            if (System.IO.File.Exists(physicalPath))
+                            {
+                                System.IO.File.Delete(physicalPath);
+                            }
+                        }
+                        db.CourseMaterials.DeleteAllOnSubmit(materials);
+                    }
+                    db.Lessons.DeleteAllOnSubmit(lessons);
+
+                    // b. Xóa các Reviews (Đánh giá) liên quan đến khóa học này
+                    var reviews = db.Reviews.Where(r => r.CourseID == id).ToList();
+                    db.Reviews.DeleteAllOnSubmit(reviews);
+
+                    // c. Xóa các Enrollments (Học viên đăng ký) liên quan đến khóa học này
+                    // LƯU Ý: Nếu có bảng Payments liên kết với Enrollment, ní cần xóa Payment trước luôn nhé!
+                    var enrollments = db.Enrollments.Where(e => e.CourseID == id).ToList();
+                    foreach (var e in enrollments)
+                    {
+                        var payments = db.Payments.Where(p => p.EnrollmentID == e.EnrollmentID).ToList();
+                        db.Payments.DeleteAllOnSubmit(payments);
+                    }
+                    db.Enrollments.DeleteAllOnSubmit(enrollments);
+
+                    // d. Cuối cùng xóa khóa học
+                    db.Courses.DeleteOnSubmit(course);
+                    db.SubmitChanges();
+
+                    TempData["Success"] = "Course deleted successfully!";
+                }
+                catch (Exception ex)
+                {
+                    TempData["Error"] = "Cannot delete course: " + ex.Message;
+                }
+            }
+
+            return RedirectToAction("MyCourses");
+        }
+
     }
 }

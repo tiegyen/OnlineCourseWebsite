@@ -27,11 +27,11 @@
             </ul>
         </div>
 
-        
 
-            @RenderBody()
 
-        </div>
+        @RenderBody()
+        @RenderSection("scripts", required: false)
+    </div>
     </div>
 
 </body>

@@ -2,7 +2,11 @@
 
 @{
     ViewBag.Title = "Enrolled Students";
-    Layout = "~/Views/Shared/_InsLayout.cshtml"; // Thay tên Layout của bạn vào đây
+    Layout = "~/Views/Shared/_InsLayout.cshtml";
+
+    // Hốt danh sách danh mục và ID đang được chọn từ ViewBag
+    var categories = ViewBag.Categories as List<OnlineCourseWebsite.Models.CategoryData> ?? new List<OnlineCourseWebsite.Models.CategoryData>();
+    int? selectedCategory = ViewBag.SelectedCategory as int?;
 }
 
 <div class="admin-content">
@@ -14,10 +18,10 @@
     </div>
 
     <div class="table-filter-zone">
-        <select class="form-control filter-select">
-            <option value="all">All My Courses</option>
-            @* Bạn có thể render động danh sách khóa học ở đây nếu muốn *@
-        </select>
+        @Html.DropDownList("categoryFilter",
+            (IEnumerable<SelectListItem>)ViewBag.Categories,
+            "All Categories",
+            new { @class = "form-control filter-select", style = "width: 250px;", id = "categoryFilter" })
     </div>
 
     <div class="data-table-wrapper">
@@ -32,31 +36,59 @@
                 </tr>
             </thead>
             <tbody>
-                @foreach (var item in Model)
+                @if (!Model.Any())
                 {
                     <tr>
-                        <td>
-                            <strong>@item.StudentName</strong><br>
-                            <small class="text-link">@item.Email</small>
-                        </td>
-                        <td>@item.CourseName</td>
-                        <td>@item.EnrollmentDate.ToString("MMMM dd, yyyy")</td>
-                        <td>
-                            <span class="payment-badge @(item.PaymentStatus == "Paid" ? "paid" : "pending")">
-                                @item.PaymentStatus
-                            </span>
-                        </td>
-                        <td>
-                            <div class="progress-container">
-                                <div class="progress-bar-bg">
-                                    <div class="progress-bar-fill" style="width: @(item.Progress)%;"></div>
-                                </div>
-                                <span class="progress-text">@item.Progress%</span>
-                            </div>
+                        <td colspan="5" style="text-align: center; padding: 20px; color: #888;">
+                            No students found in this category.
                         </td>
                     </tr>
+                }
+                else
+                {
+                    foreach (var item in Model)
+                    {
+            <tr>
+                <td>
+                    <strong>@item.StudentName</strong><br>
+                    <small class="text-link">@item.Email</small>
+                </td>
+                <td>@item.CourseName</td>
+                @*<td>@item.EnrollmentDate.ToString("MMMM dd, yyyy")</td>*@
+                <td>@item.EnrollmentDate.ToString("MMMM dd, yyyy", new System.Globalization.CultureInfo("en-US"))</td>
+                <td>
+                    <span class="payment-badge @(item.PaymentStatus == "Paid" ? "paid" : "pending")">
+                        @item.PaymentStatus
+                    </span>
+                </td>
+                <td>
+                    <div class="progress-container">
+                        <div class="progress-bar-bg">
+                            <div class="progress-bar-fill" style="width: @(item.Progress)%;"></div>
+                        </div>
+                        <span class="progress-text">@item.Progress%</span>
+                    </div>
+                </td>
+            </tr>
+                    }
                 }
             </tbody>
         </table>
     </div>
 </div>
+
+@section scripts {
+    <script>
+        document.getElementById("categoryFilter").addEventListener("change", function () {
+            var categoryId = this.value;
+
+            // Nếu người dùng chọn "All Categories", value sẽ rỗng -> Quay về trang gốc không lọc
+            if (categoryId === "") {
+                window.location.href = '@Url.Action("EnrolledStudents", "Instructor")';
+            } else {
+                window.location.href = '@Url.Action("EnrolledStudents", "Instructor")?categoryId=' + categoryId;
+            }
+        });
+    </script>
+}
+}
