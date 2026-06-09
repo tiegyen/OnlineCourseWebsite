@@ -16,16 +16,15 @@ namespace OnlineCourseWebsite.Controllers
         // GET: Instructor/Dashboard
         public ActionResult Dashboard()
         {
-            // 1. Kiểm tra bảo mật xem giảng viên đã Login chưa (Đã sửa lỗi hướng về Account)
+            // 1. Kiểm tra bảo mật xem giảng viên đã Login chưa
             if (Session["UserAccount"] == null || Session["UserRole"]?.ToString() != "Instructor")
             {
                 return RedirectToAction("Login", "User");
             }
 
-            // 2. Hốt đúng InstructorID thực tế từ Session để câu Query hoạt động chuẩn xác
             int currentInstructorID = Convert.ToInt32(Session["InstructorID"]);
 
-            // 3. Tận dụng LINQ lọc ĐÚNG các khóa học của ông này để tính toán số liệu
+            // 2. Tận dụng LINQ lọc ĐÚNG các khóa học của giảng viên để tính toán số liệu từng khóa
             var courseStatsList = db.Courses
                 .Where(c => c.InstructorID == currentInstructorID)
                 .Select(c => new InstructorCourseStat
@@ -39,10 +38,9 @@ namespace OnlineCourseWebsite.Controllers
                     CompletedCount = c.Enrollments.Count(e => e.LearningStatus == "Completed")
                 }).ToList();
 
-            // 4. Các chỉ số Counter trên Dashboard tự động ăn theo danh sách đã lọc ở trên
             var mostPopular = courseStatsList.OrderByDescending(c => c.TotalSubscribers).FirstOrDefault();
 
-            // Lọc hành động đăng ký khóa học của RIÊNG giảng viên này (Bắn đủ data lên UI)
+            // 3. Lọc hoạt động đăng ký mới
             var enrollActivities = db.Enrollments
                 .Where(e => e.Course.InstructorID == currentInstructorID)
                 .Select(e => new RecentActivityViewModel
@@ -54,7 +52,7 @@ namespace OnlineCourseWebsite.Controllers
                     ActionDate = e.EnrollmentDate ?? DateTime.Now
                 });
 
-            // Lọc đánh giá khóa học của RIÊNG giảng viên này (Bắn đủ data lên UI)
+            // 4. Lọc hoạt động đánh giá mới
             var reviewActivities = db.Reviews
                 .Where(r => r.Course.InstructorID == currentInstructorID)
                 .Select(r => new RecentActivityViewModel
@@ -69,14 +67,21 @@ namespace OnlineCourseWebsite.Controllers
             var recentActivitiesList = enrollActivities.Union(reviewActivities)
                 .OrderByDescending(a => a.ActionDate).Take(5).ToList();
 
+            // 🔥 TỐI ƯU: Chỉ truy vấn bảng Reviews đúng 1 lần duy nhất để lấy danh sách điểm số, giảm tải cho SQL Server
+            var instructorRatings = db.Reviews
+                                      .Where(r => r.Course.InstructorID == currentInstructorID)
+                                      .Select(r => r.Rating)
+                                      .ToList();
+
             // 5. Đóng gói gửi qua View
             var viewModel = new InstructorDashboardViewModel
             {
                 TotalCourses = courseStatsList.Count,
                 TotalEnrollments = courseStatsList.Sum(c => c.TotalSubscribers),
-                AverageRatingAll = courseStatsList.Any(c => c.AverageRating > 0)
-                                    ? courseStatsList.Where(c => c.AverageRating > 0).Average(c => c.AverageRating)
-                                    : 0,
+
+                // Tính toán trực tiếp trên List RAM vừa hốt về, không ép SQL chạy lại
+                AverageRatingAll = instructorRatings.Any() ? (decimal)instructorRatings.Average() : 0,
+
                 MostPopularCourse = mostPopular != null ? mostPopular.CourseName : "None",
                 CourseStats = courseStatsList,
                 RecentActivities = recentActivitiesList
@@ -88,18 +93,14 @@ namespace OnlineCourseWebsite.Controllers
         // GET: Instructor/MyCourses
         public ActionResult MyCourses()
         {
-            // 1. Kiểm tra xem giảng viên đã đăng nhập chưa
             if (Session["UserAccount"] == null || Session["UserRole"]?.ToString() != "Instructor")
             {
                 return RedirectToAction("Login", "User");
             }
 
-            // 2. Lấy InstructorID thực tế từ Session của người đang đăng nhập
             int currentInstructorID = Convert.ToInt32(Session["InstructorID"]);
-
             var viewModel = new InstructorCoursesViewModel();
 
-            // 3. LINQ tự động lọc dữ liệu danh sách khóa học
             viewModel.Courses = db.Courses
                 .Where(c => c.InstructorID == currentInstructorID)
                 .Select(c => new MyCourseItemViewModel
@@ -115,7 +116,6 @@ namespace OnlineCourseWebsite.Controllers
                 })
                 .ToList();
 
-            // 4. Load Categories và Statuses động để đưa vào Modal Thêm/Sửa
             viewModel.Categories = db.Categories
                 .Select(cat => new CategoryData
                 {
@@ -135,10 +135,9 @@ namespace OnlineCourseWebsite.Controllers
 
         // POST: Instructor/SaveCourse
         [HttpPost]
-        [ValidateInput(false)] // Cho phép nhập ký tự đặc biệt ở Description nếu cần
+        [ValidateInput(false)]
         public ActionResult SaveCourse(FormCollection collection, HttpPostedFileBase ImageFile)
         {
-            // 1. Chặn bảo mật trước, phòng hờ mất Session
             if (Session["UserAccount"] == null || Session["UserRole"]?.ToString() != "Instructor")
             {
                 return RedirectToAction("Login", "User");
@@ -146,49 +145,47 @@ namespace OnlineCourseWebsite.Controllers
 
             int currentInstructorID = Convert.ToInt32(Session["InstructorID"]);
 
-            // 2. Hốt dữ liệu từ Form Modal gửi lên
+            // Hốt dữ liệu an toàn
             int courseID = Convert.ToInt32(collection["CourseID"]);
             string courseName = collection["CourseName"];
             int categoryID = Convert.ToInt32(collection["CategoryID"]);
             int statusID = Convert.ToInt32(collection["StatusID"]);
-            decimal price = Convert.ToDecimal(collection["Price"]);
             string duration = collection["Duration"];
             string description = collection["Description"];
 
+            // 🔥 TỐI ƯU: Ép kiểu an toàn bằng TryParse tránh sập web khi nhập sai định dạng số tiền
+            decimal price = 0;
+            decimal.TryParse(collection["Price"], out price);
+
             try
             {
-                // Xử lý upload hình ảnh (nếu giảng viên có chọn file mới)
                 string imageUrl = null;
                 if (ImageFile != null && ImageFile.ContentLength > 0)
                 {
-                    string filename = System.IO.Path.GetFileName(ImageFile.FileName);
-                    string path = System.IO.Path.Combine(Server.MapPath("~/Content/images/"), filename);
+                    string filename = Path.GetFileName(ImageFile.FileName);
+                    string path = Path.Combine(Server.MapPath("~/Content/images/"), filename);
                     ImageFile.SaveAs(path);
-                    imageUrl = "~/Content/images/" + filename; // Lưu đường dẫn tương đối vào DB
+                    imageUrl = "~/Content/images/" + filename;
                 }
 
                 if (courseID == 0)
                 {
-                    // THỂ LOẠI 1: TẠO MỚI KHÓA HỌC (Id gửi lên bằng 0)
-                    // Lưu ý: Ní check lại chuẩn xác tên bảng và tên cột trong file .dbml của ní nha
-                    Course newCourse = new Course();
-                    newCourse.CourseName = courseName;
-                    newCourse.CategoryID = categoryID;
-                    newCourse.StatusID = statusID; // Hoặc CourseStatusID tùy thuộc tên cột FK của ní
-                    newCourse.Price = price;
-                    newCourse.Duration = duration;
-                    newCourse.Description = description;
-                    newCourse.InstructorID = currentInstructorID; // Gán ID giảng viên đang login
-                    if (!string.IsNullOrEmpty(imageUrl))
+                    Course newCourse = new Course
                     {
-                        newCourse.Image = imageUrl;
-                    }
+                        CourseName = courseName,
+                        CategoryID = categoryID,
+                        StatusID = statusID,
+                        Price = price,
+                        Duration = duration,
+                        Description = description,
+                        InstructorID = currentInstructorID
+                    };
+                    if (!string.IsNullOrEmpty(imageUrl)) newCourse.Image = imageUrl;
 
                     db.Courses.InsertOnSubmit(newCourse);
                 }
                 else
                 {
-                    // THỂ LOẠI 2: CẬP NHẬT KHÓA HỌC ĐÃ CÓ (Id gửi lên khác 0)
                     var editCourse = db.Courses.SingleOrDefault(c => c.CourseID == courseID && c.InstructorID == currentInstructorID);
                     if (editCourse != null)
                     {
@@ -198,38 +195,26 @@ namespace OnlineCourseWebsite.Controllers
                         editCourse.Price = price;
                         editCourse.Duration = duration;
                         editCourse.Description = description;
-                        if (!string.IsNullOrEmpty(imageUrl))
-                        {
-                            editCourse.Image = imageUrl;
-                        }
+                        if (!string.IsNullOrEmpty(imageUrl)) editCourse.Image = imageUrl;
                     }
                 }
 
-                // Lưu thay đổi xuống Database
                 db.SubmitChanges();
-
-                // Lưu thành công thì load lại đúng trang danh sách khóa học của họ
                 return RedirectToAction("MyCourses");
             }
             catch (Exception ex)
             {
-                // Nếu dính lỗi gì đó thì tạm thời ném qua ViewBag hoặc quay về trang cũ để check
                 TempData["Error"] = "Lỗi lưu dữ liệu: " + ex.Message;
                 return RedirectToAction("MyCourses");
             }
         }
 
+        // GET: Instructor/Curriculum/id
         [HttpGet]
-
-        public ActionResult Curriculum(int? id) // 🌟 Thêm dấu ? vào đây ní ơi
+        public ActionResult Curriculum(int? id)
         {
-            // Nếu không có id truyền vào, quay xe về trang danh sách khóa học liền
-            if (id == null)
-            {
-                return RedirectToAction("MyCourses");
-            }
+            if (id == null) return RedirectToAction("MyCourses");
 
-            // Dùng id.Value vì lúc này id đã là Nullable
             var course = db.Courses.SingleOrDefault(c => c.CourseID == id.Value);
             if (course == null) return HttpNotFound();
 
@@ -242,15 +227,14 @@ namespace OnlineCourseWebsite.Controllers
             return View(course);
         }
 
+        // POST: Instructor/SaveLesson
         [HttpPost]
         public ActionResult SaveLesson(int CourseID, int LessonID, string SecName, string LessonTitle, string VideoURL, HttpPostedFileBase UploadedMaterial)
         {
-            // 1. Tìm xem bài học đã tồn tại chưa bằng LINQ to SQL
             var lesson = db.Lessons.FirstOrDefault(l => l.LessonID == LessonID);
 
-            if (lesson == null) // Nếu KHÔNG tìm thấy -> Tạo bài học MỚI
+            if (lesson == null)
             {
-                // Tính toán LessonOrder tự động tăng dựa trên CourseID
                 int maxOrder = db.Lessons
                                  .Where(l => l.CourseID == CourseID)
                                  .Select(l => (int?)l.LessonOrder)
@@ -259,27 +243,24 @@ namespace OnlineCourseWebsite.Controllers
                 lesson = new Lesson
                 {
                     CourseID = CourseID,
-                    SectionName = SecName, // 🌟 Gán biến SecName hứng từ View vào thuộc tính SectionName của DB
+                    SectionName = SecName,
                     LessonTitle = LessonTitle,
                     VideoURL = VideoURL,
                     LessonOrder = maxOrder + 1,
-                    LessonContent = "" // Cho chuỗi rỗng tránh null nếu DB không cho phép null
+                    LessonContent = ""
                 };
 
-                // Cú pháp chuẩn LINQ to SQL
                 db.Lessons.InsertOnSubmit(lesson);
             }
-            else // Nếu TÌM THẤY -> Cập nhật data bài cũ
+            else
             {
-                lesson.SectionName = SecName; // 🌟 Cập nhật lại SectionName bằng biến SecName từ View gửi lên
+                lesson.SectionName = SecName;
                 lesson.LessonTitle = LessonTitle;
                 lesson.VideoURL = VideoURL;
             }
 
-            // Đẩy lệnh xuống SQL Server để lưu và phát sinh ra LessonID tự động tăng
             db.SubmitChanges();
 
-            // 2. Xử lý Upload file đính kèm (Nối vào bảng CourseMaterial)
             if (UploadedMaterial != null && UploadedMaterial.ContentLength > 0)
             {
                 string fileName = Path.GetFileName(UploadedMaterial.FileName);
@@ -293,32 +274,42 @@ namespace OnlineCourseWebsite.Controllers
                 string physicalPath = Path.Combine(folderPath, fileName);
                 UploadedMaterial.SaveAs(physicalPath);
 
-                // Tạo Object Material mới đắp vào DB theo đúng cấu trúc bảng của ní
                 var material = new CourseMaterial
                 {
                     FileName = fileName,
                     FileURL = "/Content/materials/" + fileName,
                     UploadDate = DateTime.Now,
-                    LessonID = lesson.LessonID // Ăn theo ID của bài học vừa lưu hoặc vừa tìm thấy ở trên
+                    LessonID = lesson.LessonID
                 };
 
                 db.CourseMaterials.InsertOnSubmit(material);
                 db.SubmitChanges();
             }
 
-            // Quay xe định tuyến về trang quản lý chương trình học của khóa học này
             return RedirectToAction("Curriculum", new { id = CourseID });
         }
 
+        // GET: Instructor/DeleteLesson
         [HttpGet]
         public ActionResult DeleteLesson(int id, int courseId)
         {
-            // Bốc chính xác bài học cần xóa
             var lesson = db.Lessons.FirstOrDefault(l => l.LessonID == id);
 
             if (lesson != null)
             {
-                // 🌟 CHỖ NÀY NÍ ƠI: Dùng DeleteOnSubmit thay vì Remove
+                // 🔥 TỐI ƯU: Tìm và xóa các file vật lý của bài học này trên ổ cứng Server trước khi xóa DB
+                var materials = db.CourseMaterials.Where(m => m.LessonID == id).ToList();
+                foreach (var mat in materials)
+                {
+                    string physicalPath = Server.MapPath("~" + mat.FileURL);
+                    if (System.IO.File.Exists(physicalPath))
+                    {
+                        System.IO.File.Delete(physicalPath); // Xóa file thực tế
+                    }
+                }
+
+                // Do cơ chế Cascade Delete hoặc phải xóa Material trước, ta xóa Submit luôn
+                db.CourseMaterials.DeleteAllOnSubmit(materials);
                 db.Lessons.DeleteOnSubmit(lesson);
                 db.SubmitChanges();
             }
@@ -329,7 +320,6 @@ namespace OnlineCourseWebsite.Controllers
         // GET: Instructor/EnrolledStudents
         public ActionResult EnrolledStudents()
         {
-            // 1. Kiểm tra bảo mật
             if (Session["UserAccount"] == null || Session["UserRole"]?.ToString() != "Instructor")
             {
                 return RedirectToAction("Login", "User");
@@ -337,13 +327,12 @@ namespace OnlineCourseWebsite.Controllers
 
             int currentInstructorID = Convert.ToInt32(Session["InstructorID"]);
 
-            // 2. Truy vấn dữ liệu: Chỉ lấy học viên đăng ký khóa học của giảng viên này
             var students = db.Enrollments
                 .Where(e => e.Course.InstructorID == currentInstructorID)
                 .Select(e => new EnrolledStudentViewModel
                 {
                     StudentName = e.Student.FullName,
-                    Email = e.Student.User_Account.Email, // Lưu ý: kiểm tra xem bảng User_Account có phải là User_Account không nhé
+                    Email = e.Student.User_Account.Email,
                     CourseName = e.Course.CourseName,
                     EnrollmentDate = e.EnrollmentDate ?? DateTime.Now,
                     PaymentStatus = e.Payments.FirstOrDefault() != null ? e.Payments.FirstOrDefault().PaymentStatus : "Pending",
@@ -359,12 +348,15 @@ namespace OnlineCourseWebsite.Controllers
         [HttpGet]
         public ActionResult Reviews()
         {
-            // Giả định InstructorID = 1 (Thay bằng Session hoặc User ID thực tế sau này)
-            int mockInstructorId = 1;
+            if (Session["UserAccount"] == null || Session["UserRole"]?.ToString() != "Instructor")
+            {
+                return RedirectToAction("Login", "User");
+            }
 
-            // 1. Dùng LINQ bốc toàn bộ danh sách các review thuộc các khóa học của Instructor này
+            int currentInstructorID = Convert.ToInt32(Session["InstructorID"]);
+
             var reviewQuery = db.Reviews
-                                .Where(r => r.Course.InstructorID == mockInstructorId)
+                                .Where(r => r.Course.InstructorID == currentInstructorID)
                                 .Select(r => new InstructorReviewItemViewModel
                                 {
                                     ReviewID = r.ReviewID,
@@ -375,16 +367,16 @@ namespace OnlineCourseWebsite.Controllers
                                     CourseID = r.CourseID,
                                     CourseName = r.Course.CourseName
                                 })
-                                .OrderByDescending(r => r.ReviewDate) // Review mới nhất lên đầu
+                                .OrderByDescending(r => r.ReviewDate)
                                 .ToList();
 
-            // 2. Tính toán các chỉ số Thống kê (Bảo vệ code bằng toán tử kiểm tra danh sách trống)
             int totalReviews = reviewQuery.Count;
+
+            // Ép kiểu trực tiếp gọn gàng từ dữ liệu danh sách đã tải
             decimal averageRating = totalReviews > 0
                 ? Math.Round((decimal)reviewQuery.Average(r => r.Rating), 1)
                 : 0.0m;
 
-            // 3. Đóng gói vào Tổng ViewModel để ném ra ngoài View
             var viewModel = new InstructorReviewsViewModel
             {
                 AverageRating = averageRating,
@@ -394,6 +386,5 @@ namespace OnlineCourseWebsite.Controllers
 
             return View(viewModel);
         }
-
     }
 }

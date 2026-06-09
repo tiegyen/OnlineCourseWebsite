@@ -93,6 +93,46 @@ public class AdminController : Controller
         return RedirectToAction("Courses");
     }
 
+    // 🆕 AJAX POST: Chỉnh sửa tên Category nhanh bằng LINQ to SQL
+    [HttpPost]
+    public ActionResult EditCategory(int id, string categoryName)
+    {
+        if (string.IsNullOrEmpty(categoryName))
+        {
+            return Json(new { success = false, message = "Category name cannot be empty." });
+        }
+
+        // 1. Kiểm tra xem danh mục có tồn tại hay không
+        // THUẦN LINQ TO SQL: Dùng SingleOrDefault
+        var cat = db.Categories.SingleOrDefault(c => c.CategoryID == id);
+        if (cat == null)
+        {
+            return Json(new { success = false, message = "Category not found." });
+        }
+
+        // 2. Kiểm tra xem tên mới có bị trùng lặp với danh mục khác không
+        bool isExist = db.Categories.Any(c => c.CategoryID != id && c.CategoryName.ToLower() == categoryName.Trim().ToLower());
+        if (isExist)
+        {
+            return Json(new { success = false, message = "This category name already exists." });
+        }
+
+        try
+        {
+            // 3. Thực hiện cập nhật dữ liệu
+            cat.CategoryName = categoryName.Trim();
+
+            // THUẦN LINQ TO SQL: Submit thay đổi thần thánh xuống SQL Server
+            db.SubmitChanges();
+
+            return Json(new { success = true });
+        }
+        catch (Exception ex)
+        {
+            return Json(new { success = false, message = "Error: " + ex.Message });
+        }
+    }
+
     // POST: Admin/DeleteCategory
     [HttpPost]
     public ActionResult DeleteCategory(int id)

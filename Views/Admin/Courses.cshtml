@@ -123,6 +123,15 @@
             transform: translateY(0);
         }
     }
+
+    /* Tiện ích sửa nhanh danh mục */
+    .cat-edit-input {
+        padding: 4px 8px;
+        border: 1px solid #3498db;
+        border-radius: 4px;
+        font-size: 13px;
+        width: 70%;
+    }
 </style>
 
 <div class="admin-content">
@@ -324,16 +333,26 @@
                         <thead>
                             <tr>
                                 <th>Name</th>
-                                <th>Actions</th>
+                                <th style="width: 80px; text-align: center;">Actions</th>
                             </tr>
                         </thead>
                         <tbody>
                             @foreach (var cat in Model.Categories)
                             {
                                 <tr id="row-category-@cat.CategoryID">
-                                    <td><strong>@cat.CategoryName</strong></td>
                                     <td>
-                                        <button class="btn-action-icon text-danger btn-delete-category" data-cat-id="@cat.CategoryID">
+                                        <span class="cat-text-label"><strong>@cat.CategoryName</strong></span>
+                                        <div class="cat-edit-container" style="display: none;">
+                                            <input type="text" class="cat-edit-input" value="@cat.CategoryName" />
+                                            <button class="btn-action-icon text-success btn-save-cat-inline" data-cat-id="@cat.CategoryID" title="Save"><i class="fa fa-check"></i></button>
+                                            <button class="btn-action-icon text-muted btn-cancel-cat-inline" title="Cancel"><i class="fa fa-times"></i></button>
+                                        </div>
+                                    </td>
+                                    <td style="text-align: center;">
+                                        <button class="btn-action-icon text-link btn-trigger-edit-cat" title="Edit Category">
+                                            <i class="fa fa-pencil-square-o fa-edit"></i>
+                                        </button>
+                                        <button class="btn-action-icon text-danger btn-delete-category" data-cat-id="@cat.CategoryID" title="Delete Category">
                                             <i class="fa fa-trash"></i>
                                         </button>
                                     </td>
@@ -434,12 +453,11 @@
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 <script>
     $(document).ready(function () {
-        // 1. Mở Modal Add
+        // 1. Mở Modal Add Course
         $('#btnOpenCourseModal').click(function () {
             $('#courseModal').css('display', 'flex');
         });
 
-        // Helper function để đóng và reset Modal Add sạch sẽ
         function closeAndResetAddModal() {
             $('#courseModal').hide();
             $('#fileAddImage').val('');
@@ -505,7 +523,74 @@
             }
         });
 
-        // 6. Mở modal Edit và đổ dữ liệu tự động
+        // 🆕 CHỨC NĂNG EDIT INLINE CHO BẢNG CATEGORY KẾ BÊN
+        // Bấm nút bút chì: Ẩn chữ đi, hiện ô input và cụm nút Save/Cancel
+        $('.btn-trigger-edit-cat').click(function () {
+            var row = $(this).closest('tr');
+            row.find('.cat-text-label').hide();
+            row.find('.cat-edit-container').show();
+            $(this).hide(); // Ẩn chính nút Edit đó đi tạm thời
+        });
+
+        // Bấm Cancel: Khôi phục lại trạng thái ban đầu
+        $('.btn-cancel-cat-inline').click(function () {
+            var row = $(this).closest('tr');
+            row.find('.cat-edit-container').hide();
+            row.find('.cat-text-label').show();
+            row.find('.btn-trigger-edit-cat').show();
+        });
+
+        // Bấm Save (Dấu check xanh): Gọi AJAX lên Controller để cập nhật Database lập tức
+       // Bấm Save (Dấu check xanh): Gọi AJAX lên Controller để cập nhật Database lập tức
+        $('.btn-save-cat-inline').click(function () {
+            var btn = $(this);
+            var catId = btn.data('cat-id');
+            var row = btn.closest('tr');
+            var newName = row.find('.cat-edit-input').val().trim();
+
+            if (newName === "") {
+                alert("Category name cannot be empty!");
+                return;
+            }
+
+            $.ajax({
+                url: '@Url.Action("EditCategory", "Admin")',
+                type: 'POST',
+                data: { id: catId, categoryName: newName },
+                success: function (response) {
+                    if (response.success) {
+                        // 1. Cập nhật text mới trên bảng danh mục (Bên phải)
+                        row.find('.cat-text-label strong').text(newName);
+
+                        // 2. Tự động đổi tên danh mục trên bảng Course chính (Bên trái)
+                        $('.btn-edit-course[data-category="' + catId + '"]').each(function() {
+                            var courseRow = $(this).closest('tr');
+                            courseRow.find('td:eq(1)').text(newName); // Cột thứ 2 hiển thị Category Name
+                        });
+
+                        // 3. Cập nhật chữ hiển thị trong Dropdown (Select) của Modal ADD Course
+                        // Tìm chính xác thẻ select nằm bên trong #courseModal
+                        $('#courseModal select[name="CategoryID"] option[value="' + catId + '"]').text(newName);
+
+                        // 4. Cập nhật luôn chữ hiển thị trong Dropdown của Modal EDIT Course cho đồng bộ
+                        $('#edit_CategoryID option[value="' + catId + '"]').text(newName);
+
+                        // Trả giao diện danh mục về chế độ xem tĩnh
+                        row.find('.cat-edit-container').hide();
+                        row.find('.cat-text-label').show();
+                        row.find('.btn-trigger-edit-cat').show();
+                    } else {
+                        alert(response.message);
+                    }
+                },
+                error: function () {
+                    alert("System error connection during category update.");
+                }
+            });
+        });
+
+
+        // 6. Mở modal Edit Course và đổ dữ liệu tự động
         $('.btn-edit-course').click(function () {
             var id = $(this).attr('data-id');
             var name = $(this).attr('data-name') || '';
@@ -517,7 +602,6 @@
             var image = $(this).data('image') || '';
             var desc = $(this).attr('data-description') || '';
 
-            // Đổ các trường dữ liệu vào form Edit
             $('#edit_CourseID').val(id);
             $('#edit_CourseName').val($('<div/>').html(name).text().trim());
             $('#edit_Price').val(parseFloat(price) || 0);
@@ -528,7 +612,6 @@
             $('#edit_Description').val($('<div/>').html(desc).text().trim());
             $('#edit_OldImage').val(image);
 
-            // Xử lý logic hiển thị ảnh Preview
             var finalImgPath = "";
             var cleanImage = image.trim();
 
@@ -547,19 +630,16 @@
                 else finalImgPath = '/Content/images/picture1.jpg';
             }
 
-            // Ép trình duyệt xóa cache ảnh cũ bằng dấu timestamp
             $('#edit_PreviewImage').attr('src', finalImgPath + '?t=' + new Date().getTime()).show();
-
-            // Hiển thị modal edit
             $('#editCourseModal').css('display', 'flex');
         });
 
-        // 7. Đóng modal Edit khi bấm Cancel hoặc dấu X
+        // 7. Đóng modal Edit Course
         $('#btnCloseEditModalX, #btnCloseEditModalBtn').click(function () {
             $('#editCourseModal').hide();
         });
 
-        // 8. Đổi ảnh preview lập tức khi chọn file mới trên máy tính
+        // 8. Đổi ảnh preview lập tức
         $('#fileEditImage').change(function (event) {
             var input = event.target;
             if (input.files && input.files[0]) {
