@@ -11,7 +11,14 @@
             <p class="text-link">Monitor your overall statistics and detailed course metrics.</p>
         </div>
         <div class="user-info">
-            <span class="student-welcome"><i class="fa fa-user-circle"></i> Jane Doe (Instructor Mode)</span>
+            <span class="student-welcome">
+                <i class="fa fa-user-circle"></i>
+                <a href="@Url.Action("Profile", "Instructor")" title="Click to edit profile" style="color: inherit; text-decoration: none; font-weight: bold; border-bottom: 1px dashed #fff;">
+                    @* Nếu Session lỡ chứa nguyên cái Object, mình hiện tạm chữ "My Profile", còn nếu là chuỗi tên thì hiện tên luôn *@
+                    @(Session["UserAccount"] != null && !Session["UserAccount"].ToString().Contains("Models.User_Account") ? Session["UserAccount"].ToString() : "My Profile")
+                </a>
+                (Instructor Mode)
+            </span>
         </div>
     </div>
 

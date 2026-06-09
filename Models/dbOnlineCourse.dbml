@@ -77,6 +77,7 @@
       <Column Name="Address" Type="System.String" DbType="NVarChar(200)" CanBeNull="true" />
       <Column Name="Bio" Type="System.String" DbType="NVarChar(MAX)" CanBeNull="true" />
       <Column Name="UserID" Type="System.Int32" DbType="Int NOT NULL" CanBeNull="false" />
+      <Column Name="Image" Type="System.String" DbType="NVarChar(250)" CanBeNull="true" />
       <Association Name="Instructor_Course" Member="Courses" ThisKey="InstructorID" OtherKey="InstructorID" Type="Course" />
       <Association Name="User_Account_Instructor" Member="User_Account" ThisKey="UserID" OtherKey="UserID" Type="User_Account" IsForeignKey="true" DeleteRule="CASCADE" DeleteOnNull="true" />
     </Type>

@@ -72,8 +72,8 @@ namespace OnlineCourseWebsite.Models
 		}
 
         public dbOnlineCourseDataContext() :
-base(global::System.Configuration.ConfigurationManager.ConnectionStrings[
-"OnlineCourseDBConnectionString"].ConnectionString, mappingSource)
+	base(global::System.Configuration.ConfigurationManager.ConnectionStrings[
+    "OnlineCourseDBConnectionString"].ConnectionString, mappingSource)
         {
             OnCreated();
         }
@@ -1669,6 +1669,8 @@ base(global::System.Configuration.ConfigurationManager.ConnectionStrings[
 		
 		private int _UserID;
 		
+		private string _Image;
+		
 		private EntitySet<Course> _Courses;
 		
 		private EntityRef<User_Account> _User_Account;
@@ -1689,6 +1691,8 @@ base(global::System.Configuration.ConfigurationManager.ConnectionStrings[
     partial void OnBioChanged();
     partial void OnUserIDChanging(int value);
     partial void OnUserIDChanged();
+    partial void OnImageChanging(string value);
+    partial void OnImageChanged();
     #endregion
 		
 		public Instructor()
@@ -1818,6 +1822,26 @@ base(global::System.Configuration.ConfigurationManager.ConnectionStrings[
 					this._UserID = value;
 					this.SendPropertyChanged("UserID");
 					this.OnUserIDChanged();
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_Image", DbType="NVarChar(250)")]
+		public string Image
+		{
+			get
+			{
+				return this._Image;
+			}
+			set
+			{
+				if ((this._Image != value))
+				{
+					this.OnImageChanging(value);
+					this.SendPropertyChanging();
+					this._Image = value;
+					this.SendPropertyChanged("Image");
+					this.OnImageChanged();
 				}
 			}
 		}

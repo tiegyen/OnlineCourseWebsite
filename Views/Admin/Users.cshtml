@@ -3,6 +3,27 @@
     Layout = "~/Views/Shared/_DashboardLayout.cshtml";
 }
 
+<style>
+    .user-info-flex {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+    }
+
+    .user-avatar {
+        width: 45px;
+        height: 45px;
+        border-radius: 50%;
+        object-fit: cover;
+        border: 2px solid #e2e8f0;
+    }
+
+    .user-text {
+        display: flex;
+        flex-direction: column;
+    }
+</style>
+
 <div class="admin-content">
     <div class="admin-header">
         <div>
@@ -33,7 +54,7 @@
                     <table class="data-table">
                         <thead>
                             <tr>
-                                <th>Name / Email</th>
+                                <th>Instructor</th>
                                 <th>Biography</th>
                                 <th>Status</th>
                                 <th>Actions</th>
@@ -45,7 +66,23 @@
                                 foreach (var inst in Model.Instructors)
                                 {
                                     <tr data-user-id="@inst.UserID">
-                                        <td><strong>@inst.FullName</strong><br><small class="text-link">@inst.Email</small></td>
+                                        <td>
+                                            <div class="user-info-flex">
+                                                @* SỬA TẠI ĐÂY: Kiểm tra nếu DB đã có sẵn đường dẫn /Content/ thì lấy luôn, ngược lại mới nối chuỗi *@
+                                                @if (!string.IsNullOrEmpty(inst.UserImage) && (inst.UserImage.StartsWith("~/") || inst.UserImage.StartsWith("/")))
+                                                {
+                                                    <img src="@Url.Content(inst.UserImage)" alt="Avatar" class="user-avatar" />
+                                                }
+                                                else
+                                                {
+                                                    <img src="@Url.Content("~/Content/images/" + (string.IsNullOrEmpty(inst.UserImage) ? "default-avatar.png" : inst.UserImage))" alt="Avatar" class="user-avatar" />
+                                                }
+                                                <div class="user-text">
+                                                    <strong>@inst.FullName</strong>
+                                                    <small class="text-link">@inst.Email</small>
+                                                </div>
+                                            </div>
+                                        </td>
                                         <td>@(string.IsNullOrEmpty(inst.Bio) ? "No biography provided." : inst.Bio)</td>
                                         <td>
                                             @if (inst.Status == "Active")
@@ -84,7 +121,7 @@
                     <table class="data-table">
                         <thead>
                             <tr>
-                                <th>Student Name</th>
+                                <th>Student</th>
                                 <th>Email</th>
                                 <th>Status</th>
                                 <th>Actions</th>
@@ -96,7 +133,22 @@
                                 foreach (var std in Model.Students)
                                 {
                                     <tr data-user-id="@std.UserID">
-                                        <td><strong>@std.FullName</strong></td>
+                                        <td>
+                                            <div class="user-info-flex">
+                                                @* SỬA TẠI ĐÂY: Đồng bộ logic kiểm tra đường dẫn cho bên Student luôn *@
+                                                @if (!string.IsNullOrEmpty(std.UserImage) && (std.UserImage.StartsWith("~/") || std.UserImage.StartsWith("/")))
+                                                {
+                                                    <img src="@Url.Content(std.UserImage)" alt="Avatar" class="user-avatar" />
+                                                }
+                                                else
+                                                {
+                                                    <img src="@Url.Content("~/Content/images/" + (string.IsNullOrEmpty(std.UserImage) ? "default-avatar.png" : std.UserImage))" alt="Avatar" class="user-avatar" />
+                                                }
+                                                <div class="user-text">
+                                                    <strong>@std.FullName</strong>
+                                                </div>
+                                            </div>
+                                        </td>
                                         <td>@std.Email</td>
                                         <td>
                                             @if (std.Status == "Active")
@@ -145,8 +197,8 @@
             var badge = row.find(".account-badge");
 
             var isDeactivating = btn.hasClass("deactivate");
-            var confirmMsg = isDeactivating 
-                ? "Are you sure you want to suspend this user account?" 
+            var confirmMsg = isDeactivating
+                ? "Are you sure you want to suspend this user account?"
                 : "Do you want to restore this user account?";
 
             if (confirm(confirmMsg)) {

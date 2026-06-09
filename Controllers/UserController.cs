@@ -6,6 +6,7 @@ using System.Web;
 using System.Web.Mvc;
 using System.Net;
 using System.Net.Mail;
+
 namespace OnlineCourseWebsite.Controllers
 {
     public class UserController : Controller
@@ -18,74 +19,6 @@ namespace OnlineCourseWebsite.Controllers
         {
             return View();
         }
-
-        //// POST: User/Register
-        //[HttpPost]
-        //public ActionResult Register(FormCollection collection)
-        //{
-        //    var fullName = collection["FullName"];
-        //    var phone = collection["Phone"];
-        //    var email = collection["Email"];
-        //    var password = collection["Password"];
-        //    var confirmPassword = collection["ConfirmPassword"];
-
-        //    bool hasError = false;
-
-        //    var checkEmail = db.User_Accounts.SingleOrDefault(u => u.Email == email);
-
-        //    if (checkEmail != null)
-        //    {
-        //        ViewBag.ErrorEmail = "This email is already registered!";
-        //        hasError = true;
-        //    }
-
-        //    if (password != confirmPassword)
-        //    {
-        //        ViewBag.ErrorConfirm = "Confirm password does not match!";
-        //        hasError = true;
-        //    }
-
-        //    if (hasError)
-        //    {
-        //        ViewBag.FullName = fullName;
-        //        ViewBag.Phone = phone;
-        //        ViewBag.Email = email;
-        //        return View();
-        //    }
-
-        //    try
-        //    {
-        //        User_Account newAccount = new User_Account();
-        //        newAccount.Email = email;
-        //        newAccount.Password = password;
-        //        newAccount.Role = "Student"; // Mặc định đăng ký là Student
-        //        newAccount.Status = "Active";
-        //        newAccount.CreatedDate = DateTime.Now;
-
-        //        db.User_Accounts.InsertOnSubmit(newAccount);
-        //        db.SubmitChanges();
-
-        //        Student newStudent = new Student();
-        //        newStudent.FullName = fullName;
-        //        newStudent.Phone = phone;
-        //        newStudent.UserID = newAccount.UserID; // Gán FK nối hai bảng
-
-        //        db.Students.InsertOnSubmit(newStudent);
-        //        db.SubmitChanges();
-
-        //        // Đăng ký xong đá sang trang Login của User (Không lo 404)
-        //        return RedirectToAction("Login", "User");
-        //    }
-        //    catch (Exception ex)
-        //    {
-        //        ViewBag.ErrorSystem = "Something went wrong: " + ex.Message;
-        //        ViewBag.FullName = fullName;
-        //        ViewBag.Phone = phone;
-        //        ViewBag.Email = email;
-        //        return View();
-        //    }
-        //}
-
 
         // POST: User/Register
         [HttpPost]
@@ -128,7 +61,7 @@ namespace OnlineCourseWebsite.Controllers
                 newAccount.Password = password;
                 newAccount.Role = "Student"; // Mặc định đăng ký là Student
 
-                // 🔥 ĐỔI KHÚC NÀY: Mặc định tài khoản mới tạo phải ở trạng thái Khoá (Inactive) để bắt xác nhận email
+                // Mặc định tài khoản mới tạo phải ở trạng thái Khoá (Inactive) để bắt xác nhận email
                 newAccount.Status = "Inactive";
 
                 // Đồng bộ múi giờ Việt Nam hiện tại chuẩn chỉ luôn ghen ní
@@ -145,10 +78,10 @@ namespace OnlineCourseWebsite.Controllers
                 db.Students.InsertOnSubmit(newStudent);
                 db.SubmitChanges();
 
-                // 🔥 GỌI HÀM GỬI EMAIL: Chạy ngầm gửi bức thư xác nhận đến email học viên vừa nhập
+                // GỌI HÀM GỬI EMAIL: Chạy ngầm gửi bức thư xác nhận đến email học viên vừa nhập
                 SendVerificationEmail(email, fullName, newAccount.UserID);
 
-                // 🔥 DÙNG TEMPDATA: Gửi thông điệp nhắc nhở xuyên suốt qua trang Login
+                // DÙNG TEMPDATA: Gửi thông điệp nhắc nhở xuyên suốt qua trang Login
                 TempData["SuccessMessage"] = "Đăng ký thành công! Hệ thống đã gửi một email xác nhận đến địa chỉ: " + email + ". Vui lòng kiểm tra hộp thư (hoặc mục Spam) để kích hoạt tài khoản trước khi đăng nhập.";
 
                 // Đăng ký xong đá văng sang trang Login đúng ý ní luôn
@@ -202,26 +135,31 @@ namespace OnlineCourseWebsite.Controllers
                     return View();
                 }
 
-                // Lưu thông tin tài khoản chung vào Session
-                Session["UserAccount"] = account;
+                // Lưu các thông tin ID và Quyền vào Session trước
                 Session["UserId"] = account.UserID;   // Giữ ID tài khoản để dùng chung
                 Session["UserRole"] = account.Role;   // Giữ Role để phân quyền chặn truy cập bậy
 
-                // 3. PHÂN LUỒNG ĐĂNG NHẬP THEO QUYỀN (ROLE)
+                // 3. PHÂN LUỒNG ĐĂNG NHẬP THEO QUYỀN (ROLE) & XỬ LÝ 🔀 ĐỔI CHUỖI HIỂN THỊ SESSION
                 if (account.Role == "Admin")
                 {
+                    Session["UserAccount"] = "Admin"; // Gán chuỗi chữ tường minh cho Admin
                     return RedirectToAction("Dashboard", "Admin");
                 }
                 else if (account.Role == "Instructor")
                 {
-                    // Lấy thêm thông tin chi tiết giảng viên từ bảng Instructor (hoặc Trainer tùy DB ní đặt tên)
-                    // Ở đây Gen giả định bảng của ní là Instructors nhé, ní check kỹ lại thực tế tên bảng của ní nha
+                    // Lấy thông tin chi tiết giảng viên từ bảng Instructor
                     var instructor = db.Instructors.SingleOrDefault(ins => ins.UserID == account.UserID);
                     if (instructor != null)
                     {
-                        // Lưu InstructorID thực tế vào Session để mớ câu LINQ mấy trang trước lượm xài
+                        // 🔥 ĐÃ SỬA: Gán ĐÍCH DANH trường FullName dạng string chứ không gán nguyên Object nữa nhé ní!
+                        Session["UserAccount"] = instructor.FullName;
+
                         Session["InstructorID"] = instructor.InstructorID;
                         Session["InstructorProfile"] = instructor;
+                    }
+                    else
+                    {
+                        Session["UserAccount"] = account.Email; // Dự phòng nếu chưa tạo bảng Instructor
                     }
 
                     // Đăng nhập đúng quyền Giảng viên thì đá thẳng vào Dashboard của Instructor liền!
@@ -232,12 +170,18 @@ namespace OnlineCourseWebsite.Controllers
                     var student = db.Students.SingleOrDefault(s => s.UserID == account.UserID);
                     if (student != null)
                     {
+                        Session["UserAccount"] = student.FullName; // Gán chuỗi tên học viên để hiển thị trên Layout chung
                         Session["StudentProfile"] = student;
                         Session["StudentID"] = student.StudentID;
+                    }
+                    else
+                    {
+                        Session["UserAccount"] = account.Email;
                     }
                     return RedirectToAction("Course", "Course");
                 }
 
+                Session["UserAccount"] = account.Email;
                 return RedirectToAction("Index", "Home");
             }
             else

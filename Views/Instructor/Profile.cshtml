@@ -1,0 +1,191 @@
+﻿@model OnlineCourseWebsite.Models.Instructor
+@{
+    ViewBag.Title = "My Profile";
+    Layout = "~/Views/Shared/_InsLayout.cshtml";
+}
+
+<style>
+    /* Sử dụng flexbox để căn toàn bộ nội dung bên trong ra giữa màn hình */
+    .admin-content {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        width: 100%;
+        box-sizing: border-box;
+        padding: 20px;
+    }
+
+        /* Căn giữa tiêu đề và đoạn mô tả */
+        .admin-content h2, .admin-content p {
+            text-align: center;
+        }
+
+    .profile-container {
+        width: 100%;
+        max-width: 650px;
+        background: #fff;
+        padding: 30px;
+        border-radius: 8px;
+        box-shadow: 0 4px 6px -1px rgba(0,0,0,0.1);
+        margin: 20px auto; /* auto ở 2 bên để tự động căn giữa box */
+        box-sizing: border-box;
+    }
+
+    .form-group {
+        margin-bottom: 20px;
+    }
+
+        .form-group label {
+            display: block;
+            font-weight: 600;
+            margin-bottom: 8px;
+            color: #334155;
+        }
+
+    .form-control {
+        width: 100%;
+        padding: 10px;
+        border: 1px solid #cbd5e1;
+        border-radius: 6px;
+        box-sizing: border-box;
+    }
+
+        .form-control:disabled {
+            background-color: #f1f5f9;
+            color: #64748b;
+            cursor: not-allowed;
+        }
+
+    /* Khu vực chứa avatar được căn giữa */
+    .avatar-wrapper {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        margin-bottom: 20px;
+    }
+
+    .avatar-preview {
+        width: 110px;
+        height: 110px;
+        border-radius: 50%;
+        object-fit: cover;
+        border: 2px solid #e2e8f0;
+        margin-bottom: 12px;
+    }
+
+    /* Đưa nút lưu ra giữa form */
+    .btn-container {
+        display: flex;
+        justify-content: center;
+        margin-top: 25px;
+    }
+
+    .btn-save {
+        background-color: #2563eb;
+        color: white;
+        padding: 12px 30px;
+        border: none;
+        border-radius: 6px;
+        cursor: pointer;
+        font-weight: bold;
+        font-size: 15px;
+        transition: background 0.2s;
+    }
+
+        .btn-save:hover {
+            background-color: #1d4ed8;
+        }
+
+    .alert {
+        padding: 12px;
+        border-radius: 6px;
+        margin-bottom: 15px;
+        width: 100%;
+        box-sizing: border-box;
+    }
+
+    .alert-success {
+        background: #dcfce7;
+        color: #166534;
+    }
+
+    .alert-danger {
+        background: #fee2e2;
+        color: #991b1b;
+    }
+</style>
+
+<div class="admin-content">
+    <h2>Instructor Profile Management</h2>
+    <p style="color: #64748b; margin-top: 5px;">Thay đổi thông tin cá nhân hiển thị trên hệ thống khóa học.</p>
+
+    <div class="profile-container">
+        @if (TempData["Success"] != null)
+        {
+            <div class="alert alert-success">@TempData["Success"]</div>
+        }
+        @if (TempData["Error"] != null)
+        {
+            <div class="alert alert-danger">@TempData["Error"]</div>
+        }
+
+        @using (Html.BeginForm("UpdateProfile", "Instructor", FormMethod.Post, new { enctype = "multipart/form-data" }))
+        {
+            <div class="avatar-wrapper">
+                <label style="font-weight: 600; margin-bottom: 10px; color: #334155;">Profile Picture</label>
+                @if (!string.IsNullOrEmpty(Model.Image) && (Model.Image.StartsWith("~/") || Model.Image.StartsWith("/")))
+                {
+                    <img src="@Url.Content(Model.Image)" class="avatar-preview" id="imgPreview" />
+                }
+                else
+                {
+                    <img src="@Url.Content("~/Content/images/" + (string.IsNullOrEmpty(Model.Image) ? "default-avatar.png" : Model.Image))" class="avatar-preview" id="imgPreview" />
+                }
+                <input type="file" name="AvatarFile" id="AvatarFile" accept="image/*" onchange="previewImage(this);" style="font-size: 13px;" />
+            </div>
+
+            <div class="form-group">
+                <label>Email Address (Khóa định danh - Không được sửa)</label>
+                <input type="email" class="form-control" value="@(Model.User_Account?.Email)" disabled />
+            </div>
+
+            <div class="form-group">
+                <label>Full Name</label>
+                <input type="text" name="FullName" class="form-control" value="@Model.FullName" required />
+            </div>
+
+            <div class="form-row" style="display: flex; gap: 15px;">
+                <div class="form-group" style="flex: 1;">
+                    <label>Phone Number</label>
+                    <input type="text" name="Phone" class="form-control" value="@Model.Phone" />
+                </div>
+                <div class="form-group" style="flex: 1;">
+                    <label>Address</label>
+                    <input type="text" name="Address" class="form-control" value="@Model.Address" />
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label>Biography</label>
+                <textarea name="Bio" class="form-control" rows="5" placeholder="Giới thiệu kinh nghiệm và chuyên môn của ní...">@Model.Bio</textarea>
+            </div>
+
+            <div class="btn-container">
+                <button type="submit" class="btn-save"><i class="fa fa-save"></i> Save Profile</button>
+            </div>
+        }
+    </div>
+</div>
+
+<script>
+    function previewImage(input) {
+        if (input.files && input.files[0]) {
+            var reader = new FileReader();
+            reader.onload = function (e) {
+                document.getElementById('imgPreview').src = e.target.result;
+            }
+            reader.readAsDataURL(input.files[0]);
+        }
+    }
+</script>

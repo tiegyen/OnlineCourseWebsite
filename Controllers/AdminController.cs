@@ -164,6 +164,7 @@ public class AdminController : Controller
     {
         var model = new UsersViewModel();
 
+        // 1. Lấy danh sách Instructors kèm ảnh
         model.Instructors = (from inst in db.Instructors
                              join acc in db.User_Accounts on inst.UserID equals acc.UserID
                              select new UserDto
@@ -173,9 +174,11 @@ public class AdminController : Controller
                                  FullName = inst.FullName,
                                  Email = acc.Email,
                                  Bio = inst.Bio,
-                                 Status = acc.Status
+                                 Status = acc.Status,
+                                 UserImage = inst.Image // Hoặc inst.Avatar tùy tên cột trong DB của ní
                              }).ToList();
 
+        // 2. Lấy danh sách Students kèm ảnh
         model.Students = (from std in db.Students
                           join acc in db.User_Accounts on std.UserID equals acc.UserID
                           select new UserDto
@@ -184,7 +187,8 @@ public class AdminController : Controller
                               DetailID = std.StudentID,
                               FullName = std.FullName,
                               Email = acc.Email,
-                              Status = acc.Status
+                              Status = acc.Status,
+                              UserImage = std.Avatar // Hoặc std.Avatar tùy tên cột trong DB của ní
                           }).ToList();
 
         return View(model);
@@ -572,4 +576,47 @@ public class AdminController : Controller
 
         return Json(new { success = true, message = "Transaction status has been restored to Pending." });
     }
+
+    // Action xuất file thống kê CSV (UTF-8 mã hóa để mở Excel không lỗi font)
+    public ActionResult ExportStatistics()
+    {
+        // 1. Thu thập lại toàn bộ số liệu giống y hệt ngoài Dashboard
+        var totalCourses = db.Courses.Count();
+        var totalStudents = db.Students.Count();
+        var totalInstructors = db.Instructors.Count();
+        var totalEnrollments = db.Enrollments.Count();
+        var totalRevenue = db.Payments.Where(p => p.PaymentStatus == "Paid").Sum(p => (decimal?)p.Amount).GetValueOrDefault(0);
+
+        var allReviews = db.Reviews.ToList();
+        double avgRating = allReviews.Any() ? allReviews.Average(r => r.Rating) : 5.0;
+
+        // 2. Tạo nội dung file CSV
+        var sw = new StringWriter();
+
+        // Viết tiêu đề cột
+        sw.WriteLine("Metric Name,Statistic Value");
+
+        // Viết dữ liệu dòng
+        sw.WriteLine($"Total Courses,{totalCourses}");
+        sw.WriteLine($"Total Students,{totalStudents}");
+        sw.WriteLine($"Total Instructors,{totalInstructors}");
+        sw.WriteLine($"Total Enrollments,{totalEnrollments}");
+        sw.WriteLine($"Total Revenue (VND),{totalRevenue}");
+        sw.WriteLine($"Average Course Rating,{avgRating.ToString("F1")}");
+        sw.WriteLine($"Exported Date,{GetVnNow().ToString("dd/MM/yyyy HH:mm:ss")}");
+
+        // 3. Ép kiểu mã hóa UTF-8 kèm BOM (Byte Order Mark) để Excel mở lên đọc được dấu tiếng Việt/ký tự đặc biệt
+        var stringData = sw.ToString();
+        var bytes = System.Text.Encoding.UTF8.GetBytes(stringData);
+        var result = new byte[bytes.Length + 3];
+        result[0] = 0xEF; // BOM định dạng UTF-8
+        result[1] = 0xBB;
+        result[2] = 0xBF;
+        Array.Copy(bytes, 0, result, 3, bytes.Length);
+
+        // 4. Trả file về cho trình duyệt tự động kích hoạt lệnh Download
+        string fileName = "System_Statistics_" + GetVnNow().ToString("yyyyMMdd_HHmmss") + ".csv";
+        return File(result, "text/csv", fileName);
+    }
+
 }

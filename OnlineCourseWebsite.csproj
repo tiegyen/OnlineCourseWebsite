@@ -284,6 +284,7 @@
     <Content Include="Views\Instructor\Curriculum.cshtml" />
     <Content Include="Views\Instructor\EnrolledStudents.cshtml" />
     <Content Include="Views\Instructor\Reviews.cshtml" />
+    <Content Include="Views\Instructor\Profile.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />

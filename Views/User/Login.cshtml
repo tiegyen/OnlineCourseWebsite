@@ -22,6 +22,13 @@
             </div>
         }
 
+        @if (ViewBag.ErrorSystem != null)
+        {
+            <div style="background: #ffe0e6; color: #ff4d4d; border: 1px solid #ffa3b1; padding: 12px; border-radius: 6px; margin-bottom: 20px; font-size: 14px; font-weight: 500; text-align: center;">
+                <i class="fa fa-exclamation-circle" style="margin-right: 5px;"></i> @ViewBag.ErrorSystem
+            </div>
+        }
+
         <form action="@Url.Action("Login", "User")" method="post" id="loginForm">
 
             <div class="form-group" style="margin-bottom: 20px;">

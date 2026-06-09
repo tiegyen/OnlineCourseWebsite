@@ -481,5 +481,145 @@ namespace OnlineCourseWebsite.Controllers
             return RedirectToAction("MyCourses");
         }
 
+        // Action xuất file danh sách học viên đăng ký theo Instructor (Hỗ trợ giữ nguyên bộ lọc Category)
+        public ActionResult ExportEnrolledStudents(int? categoryId)
+        {
+            // 1. Kiểm tra bảo mật quyền Instructor
+            if (Session["UserAccount"] == null || Session["UserRole"]?.ToString() != "Instructor")
+            {
+                return RedirectToAction("Login", "User");
+            }
+
+            int currentInstructorID = Convert.ToInt32(Session["InstructorID"]);
+
+            // 2. Tạo Query cơ sở: Chỉ lấy học viên đăng ký các khóa của giảng viên này
+            var enrollmentQuery = db.Enrollments.Where(e => e.Course.InstructorID == currentInstructorID);
+
+            // Nếu có bộ lọc categoryId thì áp dụng lọc tiếp
+            if (categoryId.HasValue && categoryId.Value > 0)
+            {
+                enrollmentQuery = enrollmentQuery.Where(e => e.Course.CategoryID == categoryId.Value);
+            }
+
+            // 3. Lấy dữ liệu về RAM để chuẩn bị ghi file
+            var studentList = enrollmentQuery
+                .Select(e => new EnrolledStudentViewModel
+                {
+                    StudentName = e.Student.FullName,
+                    Email = e.Student.User_Account.Email,
+                    CourseName = e.Course.CourseName,
+                    EnrollmentDate = e.EnrollmentDate ?? DateTime.Now,
+                    PaymentStatus = e.Payments.FirstOrDefault() != null ? e.Payments.FirstOrDefault().PaymentStatus : "Pending",
+                    Progress = e.Progress ?? 0
+                })
+                .OrderByDescending(e => e.EnrollmentDate)
+                .ToList();
+
+            // 4. Khởi tạo StringWriter viết nội dung CSV
+            var sw = new StringWriter();
+
+            // Viết tiêu đề cột (Bằng tiếng Anh hoặc tiếng Việt không dấu/có dấu đều được nhờ UTF-8 BOM)
+            sw.WriteLine("Student Name,Email,Course Name,Enrollment Date,Payment Status,Progress (%)");
+
+            // Duyệt qua danh sách ghi từng dòng dữ liệu
+            foreach (var std in studentList)
+            {
+                // Xử lý chuỗi tên khóa học hoặc tên học viên nếu lỡ có dấu phẩy tránh làm lệch cột CSV
+                string cleanCourseName = std.CourseName.Replace(",", " ");
+                string cleanStudentName = std.StudentName.Replace(",", " ");
+                string formattedDate = std.EnrollmentDate.ToString("dd/MM/yyyy HH:mm:ss");
+
+                sw.WriteLine($"\"{cleanStudentName}\",\"{std.Email}\",\"{cleanCourseName}\",\"{formattedDate}\",\"{std.PaymentStatus}\",{std.Progress}");
+            }
+
+            // 5. Đóng gói Byte Order Mark (BOM) để Excel nhận diện chữ có dấu mượt mà
+            var stringData = sw.ToString();
+            var bytes = System.Text.Encoding.UTF8.GetBytes(stringData);
+            var result = new byte[bytes.Length + 3];
+            result[0] = 0xEF; // BOM UTF-8
+            result[1] = 0xBB;
+            result[2] = 0xBF;
+            Array.Copy(bytes, 0, result, 3, bytes.Length);
+
+            // 6. Trả file download về máy
+            string fileName = "Enrolled_Students_" + DateTime.Now.ToString("yyyyMMdd_HHmmss") + ".csv";
+            return File(result, "text/csv", fileName);
+        }
+
+        // GET: Instructor/Profile
+        [HttpGet]
+        public ActionResult Profile()
+        {
+            if (Session["UserAccount"] == null || Session["UserRole"]?.ToString() != "Instructor")
+            {
+                return RedirectToAction("Login", "User");
+            }
+
+            int currentInstructorID = Convert.ToInt32(Session["InstructorID"]);
+
+            // Tìm Instructor và dùng LINQ để ép load luôn cả bảng User_Account đi kèm (để lấy Email)
+            var instructor = db.Instructors.SingleOrDefault(i => i.InstructorID == currentInstructorID);
+            if (instructor == null)
+            {
+                return HttpNotFound();
+            }
+
+            return View(instructor);
+        }
+
+        // POST: Instructor/UpdateProfile
+        [HttpPost]
+        [ValidateInput(false)]
+        public ActionResult UpdateProfile(FormCollection collection, HttpPostedFileBase AvatarFile)
+        {
+            if (Session["UserAccount"] == null || Session["UserRole"]?.ToString() != "Instructor")
+            {
+                return RedirectToAction("Login", "User");
+            }
+
+            int currentInstructorID = Convert.ToInt32(Session["InstructorID"]);
+            var instructor = db.Instructors.SingleOrDefault(i => i.InstructorID == currentInstructorID);
+
+            if (instructor == null)
+            {
+                return HttpNotFound();
+            }
+
+            try
+            {
+                // 1. Cập nhật các thông tin theo ĐÚNG tên cột DB của ní
+                instructor.FullName = collection["FullName"];
+                instructor.Phone = collection["Phone"];
+                instructor.Address = collection["Address"];
+                instructor.Bio = collection["Bio"];
+
+                // 2. Xử lý up ảnh và lưu vào cột [Image] của bảng Instructor
+                if (AvatarFile != null && AvatarFile.ContentLength > 0)
+                {
+                    string filename = Path.GetFileName(AvatarFile.FileName);
+                    string path = Path.Combine(Server.MapPath("~/Content/images/"), filename);
+                    AvatarFile.SaveAs(path);
+
+                    // Map đúng vào cột Image của ní nè
+                    instructor.Image = "~/Content/images/" + filename;
+                }
+
+                // 3. Đẩy thay đổi xuống SQL Server
+                db.SubmitChanges();
+
+                // Đồng bộ lại Session hiển thị tên mới trên Layout ngay lập tức
+                Session["UserAccount"] = instructor.FullName;
+
+                TempData["Success"] = "Profile updated successfully!";
+                return RedirectToAction("Profile");
+            }
+            catch (Exception ex)
+            {
+                TempData["Error"] = "Lỗi cập nhật: " + ex.Message;
+                return RedirectToAction("Profile");
+            }
+        }
+
+
     }
 }

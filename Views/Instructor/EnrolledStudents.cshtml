@@ -17,11 +17,25 @@
         </div>
     </div>
 
-    <div class="table-filter-zone">
+    <div class="table-filter-zone" style="display: flex; justify-content: space-between; align-items: center; gap: 15px; margin-bottom: 20px;">
+
         @Html.DropDownList("categoryFilter",
             (IEnumerable<SelectListItem>)ViewBag.Categories,
             "All Categories",
-            new { @class = "form-control filter-select", style = "width: 250px;", id = "categoryFilter" })
+            new { @class = "form-control filter-select", style = "width: 250px; margin-bottom: 0;", id = "categoryFilter" })
+
+        <a href="@Url.Action("ExportEnrolledStudents", "Instructor", new { categoryId = selectedCategory })"
+           class="btn-export-csv"
+           style="background-color: #28a745; color: white; font-weight: 600; padding: 10px 18px; border-radius: 6px; text-decoration: none; display: inline-flex; align-items: center; gap: 8px; border: none; font-size: 14px; transition: background 0.2s;"
+           onmouseover="this.style.backgroundColor='#218838'"
+           onmouseout="this.style.backgroundColor='#28a745'">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+                <polyline points="7 10 12 15 17 10"></polyline>
+                <line x1="12" y1="15" x2="12" y2="3"></line>
+            </svg>
+            Export Student List (.CSV)
+        </a>
     </div>
 
     <div class="data-table-wrapper">
@@ -48,28 +62,27 @@
                 {
                     foreach (var item in Model)
                     {
-            <tr>
-                <td>
-                    <strong>@item.StudentName</strong><br>
-                    <small class="text-link">@item.Email</small>
-                </td>
-                <td>@item.CourseName</td>
-                @*<td>@item.EnrollmentDate.ToString("MMMM dd, yyyy")</td>*@
-                <td>@item.EnrollmentDate.ToString("MMMM dd, yyyy", new System.Globalization.CultureInfo("en-US"))</td>
-                <td>
-                    <span class="payment-badge @(item.PaymentStatus == "Paid" ? "paid" : "pending")">
-                        @item.PaymentStatus
-                    </span>
-                </td>
-                <td>
-                    <div class="progress-container">
-                        <div class="progress-bar-bg">
-                            <div class="progress-bar-fill" style="width: @(item.Progress)%;"></div>
-                        </div>
-                        <span class="progress-text">@item.Progress%</span>
-                    </div>
-                </td>
-            </tr>
+                        <tr>
+                            <td>
+                                <strong>@item.StudentName</strong><br>
+                                <small class="text-link">@item.Email</small>
+                            </td>
+                            <td>@item.CourseName</td>
+                            <td>@item.EnrollmentDate.ToString("MMMM dd, yyyy", new System.Globalization.CultureInfo("en-US"))</td>
+                            <td>
+                                <span class="payment-badge @(item.PaymentStatus == "Paid" ? "paid" : "pending")">
+                                    @item.PaymentStatus
+                                </span>
+                            </td>
+                            <td>
+                                <div class="progress-container">
+                                    <div class="progress-bar-bg">
+                                        <div class="progress-bar-fill" style="width: @(item.Progress)%;"></div>
+                                    </div>
+                                    <span class="progress-text">@item.Progress%</span>
+                                </div>
+                            </td>
+                        </tr>
                     }
                 }
             </tbody>
@@ -90,5 +103,4 @@
             }
         });
     </script>
-}
 }

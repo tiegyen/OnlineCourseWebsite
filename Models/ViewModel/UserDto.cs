@@ -11,6 +11,7 @@ namespace OnlineCourseWebsite.ViewModels
         public string Email { get; set; }
         public string Bio { get; set; } // Chỉ Instructor dùng, Student để trống
         public string Status { get; set; } // 'Active' hoặc 'Inactive'
+        public string UserImage { get; set; } //thuộc tính để hứng tên file ảnh từ DB
     }
 
     public class UsersViewModel
