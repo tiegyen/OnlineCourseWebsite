@@ -17,37 +17,24 @@
 
         <div class="col-2 details-left" style="flex: 1.5; min-width: 300px;">
             @{
-                // Logic bốc ảnh thông minh: Cân cả ảnh mới upload, ảnh cũ chứa đường dẫn và ảnh mặc định
+                // Logic bốc ảnh khóa học thông minh
                 string courseImageUrl = "";
 
-                // 1. Kiểm tra nếu cột Image trong DB không bị null hoặc rỗng
                 if (Model.Image != null && !string.IsNullOrEmpty(Model.Image.ToString().Trim()))
                 {
                     string dbImageValue = Model.Image.ToString().Trim();
 
-                    // TRƯỜNG HỢP A: Nếu trong DB đã chứa sẵn cụm đường dẫn "Content/images" (Ảnh cũ)
                     if (dbImageValue.ToLower().Contains("content/images"))
                     {
-                        if (dbImageValue.StartsWith("/"))
-                        {
-                            courseImageUrl = "~" + dbImageValue;
-                        }
-                        else if (dbImageValue.StartsWith("~/"))
-                        {
-                            courseImageUrl = dbImageValue;
-                        }
-                        else
-                        {
-                            courseImageUrl = "~/" + dbImageValue;
-                        }
+                        if (dbImageValue.StartsWith("/")) { courseImageUrl = "~" + dbImageValue; }
+                        else if (dbImageValue.StartsWith("~/")) { courseImageUrl = dbImageValue; }
+                        else { courseImageUrl = "~/" + dbImageValue; }
                     }
-                    // TRƯỜNG HỢP B: Nếu trong DB chỉ lưu mỗi tên file kiểu "course_9822dc82.jpg" (Ảnh mới upload)
                     else
                     {
                         courseImageUrl = "~/Content/images/" + dbImageValue;
                     }
                 }
-                // 2. Nếu cột Image trống huơ trống hoác -> Dùng logic gán cứng theo Category làm cứu cánh giống ngày xưa
                 else
                 {
                     if (Model.CategoryID == 1) { courseImageUrl = "~/Content/images/pic1.jpg"; }
@@ -91,8 +78,6 @@
             }
 
             <div class="details-action-group" style="margin-top: 25px; display: flex; flex-direction: column; gap: 12px;">
-
-                @* --- TRƯỜNG HỢP 1: HỌC VIÊN ĐÃ ĐĂNG KÝ (ENROLLED) --- *@
                 @if (ViewBag.IsEnrolled != null && (bool)ViewBag.IsEnrolled == true)
                 {
                     if (ViewBag.IsPaid != null && (bool)ViewBag.IsPaid == true)
@@ -105,8 +90,6 @@
                     {
                         if (currentStatus == "open")
                         {
-                            @* 🌟 KHẮC PHỤC CHỖ NÀY NÍ ƠI: Nếu đơn hàng bị Cancelled (khiến cho ViewBag.PaymentID bị null),
-                                tụi mình kiểm tra nếu không có PaymentID thì cho nó hiển thị nút Re-enroll dẫn tới trang EnrollPage luôn! *@
                             if (ViewBag.PaymentID != null && (int)ViewBag.PaymentID > 0)
                             {
                                 <a href="@Url.Action("PaymentDetails", "Course", new { paymentId = ViewBag.PaymentID })" class="btn btn-warning w-100" style="display: flex; align-items: center; justify-content: center; gap: 8px;">
@@ -128,7 +111,6 @@
                         }
                     }
                 }
-                @* --- TRƯỜNG HỢP 2: CHƯA ĐĂNG KÝ HOẶC LÀ GUEST --- *@
                 else
                 {
                     if (currentStatus == "open")
@@ -168,8 +150,34 @@
 
             @if (Model.Instructor != null)
             {
+                // 🔥 ĐÃ SỬA: Xử lý bốc ảnh thiệt của Instructor từ database lên
+                string instructorImageUrl = "";
+                if (Model.Instructor.Image != null && !string.IsNullOrEmpty(Model.Instructor.Image.ToString().Trim()))
+                {
+                    string insImageValue = Model.Instructor.Image.ToString().Trim();
+
+                    // Check xem chuỗi trong DB có chứa đường dẫn folder sẵn chưa
+                    if (insImageValue.ToLower().Contains("content/images"))
+                    {
+                        if (insImageValue.StartsWith("/")) { instructorImageUrl = "~" + insImageValue; }
+                        else if (insImageValue.StartsWith("~/")) { instructorImageUrl = insImageValue; }
+                        else { instructorImageUrl = "~/" + insImageValue; }
+                    }
+                    else
+                    {
+                        // Nếu chỉ lưu mỗi tên file lẻ
+                        instructorImageUrl = "~/Content/images/" + insImageValue;
+                    }
+                }
+                else
+                {
+                    // Ảnh cứu cánh mặc định nếu giảng viên chưa cập nhật ảnh đại diện
+                    instructorImageUrl = "~/Content/images/default-instructor.png";
+                }
+
                 <div class="instructor-header" style="display: flex; gap: 15px; margin-top: 20px; align-items: center;">
-                    <img src="@Url.Content("~/Content/images/instructor1.jpg")" alt="@Model.Instructor.FullName" class="instructor-avatar p-0" style="width: 70px; height: 70px; object-fit: cover; border-radius: 50%;">
+                    @* Đổ biến ảnh vừa xử lý vào đây *@
+                    <img src="@Url.Content(instructorImageUrl)" alt="@Model.Instructor.FullName" class="instructor-avatar p-0" style="width: 70px; height: 70px; object-fit: cover; border-radius: 50%;">
                     <div>
                         <h4 class="instructor-name" style="font-size: 18px; color: #222; font-weight: 600; margin: 0;">@Model.Instructor.FullName</h4>
                         <p class="instructor-title" style="color: #764ba2; font-size: 13px; font-weight: 500; margin-top: 3px;">Senior Trainer</p>
@@ -228,6 +236,7 @@
     </div>
 </div>
 
+@* Khối feedback modal giữ nguyên *@
 <div class="feedback-modal-overlay" id="feedbackModal">
     <div class="feedback-modal-box">
         <span class="close-modal-btn" onclick="document.getElementById('feedbackModal').classList.remove('open')">&times;</span>
@@ -251,7 +260,7 @@
 
             <div class="form-group" style="margin-bottom: 20px;">
                 <label style="display: block; font-size: 14px; font-weight: 500; margin-bottom: 5px;">Your Review</label>
-                <textarea name="Comment" class="form-control feedback-textarea" rows="4" placeholder="What did you like or dislike about this course?..." required style="width: 100%; padding: 10px; border-radius: 6px; border: 1px solid #ddd; resize: none; font-size: 13.5px;"></textarea>
+                <textarea name="Comment" class="form-control feedback-textarea" rows="4" placeholder="What did you like or dislike about this course?..." required style="width: 100%; padding: 10px; border-radius: 6px; border: 1px solid #ddd; resize: none; font-size: 13.5px Haus;"></textarea>
             </div>
 
             <button type="submit" class="btn btn-primary w-100" style="padding: 10px; font-weight: 600; border-radius: 6px; cursor: pointer;">Submit Review</button>
