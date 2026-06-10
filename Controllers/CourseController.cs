@@ -438,7 +438,78 @@ namespace OnlineCourseWebsite.Controllers
         }
 
 
+       
+        // POST: Course/SubmitReview
+        [HttpPost]
+        public ActionResult SubmitReview(int CourseID, int Rating, string Comment)
+        {
+            // 1. Kiểm tra đăng nhập
+            var studentSession = Session["StudentProfile"] as OnlineCourseWebsite.Models.Student;
+            if (studentSession == null)
+            {
+                TempData["Error"] = "Please login as a student to give feedback!";
+                return RedirectToAction("Login", "User");
+            }
 
+            // 2. Kiểm tra xem học viên đã thanh toán thành công khóa học này chưa
+            var hasPaid = db.Enrollments.Any(e => e.StudentID == studentSession.StudentID
+                                               && e.CourseID == CourseID
+                                               && db.Payments.Any(p => p.EnrollmentID == e.EnrollmentID && p.PaymentStatus == "Paid"));
+
+            if (!hasPaid)
+            {
+                TempData["Error"] = "You can only review courses you have successfully enrolled and paid for!";
+                return RedirectToAction("Details", new { id = CourseID });
+            }
+
+            // Validation chuỗi trống
+            if (string.IsNullOrEmpty(Comment) || string.IsNullOrEmpty(Comment.Trim()))
+            {
+                TempData["Error"] = "Please write some comments for your review!";
+                return RedirectToAction("Details", new { id = CourseID });
+            }
+
+            try
+            {
+                // 🔍 3. TÌM KIẾM: Kiểm tra xem học viên này đã từng review khóa học này chưa
+                var existingReview = db.Reviews.FirstOrDefault(r => r.StudentID == studentSession.StudentID && r.CourseID == CourseID);
+
+                if (existingReview != null)
+                {
+                    // 👉 NẾU ĐÃ CÓ: Tiến hành CẬP NHẬT (Update) lại review cũ
+                    existingReview.Rating = Rating;
+                    existingReview.Comment = Comment.Trim();
+
+                    // Nếu DB của ní có cột ngày tháng thì cập nhật lại thời gian chỉnh sửa mới nhất
+                    existingReview.ReviewDate = DateTime.Now;
+
+                    db.SubmitChanges(); // Lưu thay đổi cập nhật vào DB
+                    TempData["Success"] = "Your review has been successfully updated!";
+                }
+                else
+                {
+                    // 👉 NẾU CHƯA CÓ: Tiến hành THÊM MỚI (Insert) như bình thường
+                    Review newReview = new Review
+                    {
+                        CourseID = CourseID,
+                        StudentID = studentSession.StudentID,
+                        Rating = Rating,
+                        Comment = Comment.Trim(),
+                        ReviewDate = DateTime.Now
+                    };
+
+                    db.Reviews.InsertOnSubmit(newReview);
+                    db.SubmitChanges(); // Lưu dòng mới vào DB
+                    TempData["Success"] = "Thank you for your valuable feedback!";
+                }
+            }
+            catch (Exception ex)
+            {
+                TempData["Error"] = "An error occurred while processing your review. Please try again!";
+            }
+
+            return RedirectToAction("Details", new { id = CourseID });
+        }
 
 
     }

@@ -44,35 +44,48 @@
                 var currentEnrollment = item.Enrollments.FirstOrDefault(e => e.StudentID == currentStudentID);
                 double currentProgress = currentEnrollment != null ? (double)(currentEnrollment.Progress ?? 0) : 0;
 
-                <div class="col-4 card-box" style="flex: 1; min-width: 250px; max-width: 310px; box-shadow: 0 4px 12px rgba(0,0,0,0.05); padding: 20px; border-radius: 10px; background: #fff;">
+                <div class="col-4 card-box" style="flex: 1; min-width: 250px; max-width: 310px; box-shadow: 0 4px 12px rgba(0,0,0,0.05); padding: 20px; border-radius: 10px; background: #fff; display: flex; flex-direction: column; justify-content: space-between;">
 
-                    @* 🔥 HẾT HARDCODE ẢNH: Đọc trực tiếp trường dữ liệu Image của Course trong database *@
-                    @if (!string.IsNullOrEmpty(item.Image) && (item.Image.StartsWith("~/") || item.Image.StartsWith("/")))
-                    {
-                        <img src="@Url.Content(item.Image)" alt="@item.CourseName" style="width:100%; border-radius: 8px; object-fit: cover; height: 160px;">
-                    }
-                    else
-                    {
-                        // Phòng hờ database lưu dạng tên file lẻ (ví dụ: 'course1.jpg') hoặc trống hoàn toàn thì trỏ về ảnh mặc định
-                        <img src="@Url.Content("~/Content/images/" + (string.IsNullOrEmpty(item.Image) ? "default.png" : item.Image))" alt="@item.CourseName" style="width:100%; border-radius: 8px; object-fit: cover; height: 160px;">
-                    }
+                    <div>
+                        @* 🔥 HẾT HARDCODE ẢNH: Đọc trực tiếp trường dữ liệu Image của Course trong database *@
+                        @if (!string.IsNullOrEmpty(item.Image) && (item.Image.StartsWith("~/") || item.Image.StartsWith("/")))
+                        {
+                            <img src="@Url.Content(item.Image)" alt="@item.CourseName" style="width:100%; border-radius: 8px; object-fit: cover; height: 160px;">
+                        }
+                        else
+                        {
+                            // Phòng hờ database lưu dạng tên file lẻ (ví dụ: 'course1.jpg') hoặc trống hoàn toàn thì trỏ về ảnh mặc định
+                            <img src="@Url.Content("~/Content/images/" + (string.IsNullOrEmpty(item.Image) ? "default.png" : item.Image))" alt="@item.CourseName" style="width:100%; border-radius: 8px; object-fit: cover; height: 160px;">
+                        }
 
-                    <h4 style="margin-top: 15px; font-size: 16px; color: #222; font-weight: 600;">@item.CourseName</h4>
-                    <p style="font-size: 13.5px; color: #777; margin-top: 5px;">Instructor: @(item.Instructor != null ? item.Instructor.FullName : "Updating")</p>
+                        <h4 style="margin-top: 15px; font-size: 16px; color: #222; font-weight: 600;">@item.CourseName</h4>
+                        <p style="font-size: 13.5px; color: #777; margin-top: 5px; margin-bottom: 2px;">Instructor: @(item.Instructor != null ? item.Instructor.FullName : "Updating")</p>
 
-                    <div style="margin: 15px 0;">
-                        <div style="display: flex; justify-content: space-between; font-size: 12px; margin-bottom: 5px; color: #555;">
-                            <span>Progress</span>
-                            @* Đổ phần trăm thực tế từ database thay vì 25% *@
-                            <span id="progress-val-@item.CourseID">@currentProgress%</span>
-                        </div>
-                        <div style="background: #e2e8f0; height: 8px; border-radius: 4px; overflow: hidden;">
-                            @* Thanh xanh chạy dài theo đúng tỷ lệ phần trăm tiến độ của học viên *@
-                            <div id="progress-bar-@item.CourseID" class="progress-bar-fill" style="width: @(currentProgress)%; height: 100%; background: #2ecc71; border-radius: 4px; transition: width 0.5s ease;"></div>
-                        </div>
+                        @* 🔥 HIỂN THỊ NGÀY ĐĂNG KÝ Ở ĐÂY NÍ ƠI *@
+                        <p style="font-size: 12.5px; color: #888; margin-bottom: 12px;">
+                            <i class="fa fa-calendar-check-o"></i> Enrolled:
+                            @(currentEnrollment != null && currentEnrollment.EnrollmentDate != null
+                                ? string.Format("{0:dd/MM/yyyy}", currentEnrollment.EnrollmentDate)
+                                : "Updating")
+                        </p>
                     </div>
 
-                    <a href="@Url.Action("Classroom", "Student", new { id = item.CourseID })" class="btn btn-primary w-100" style="text-align: center; display: block; padding: 10px; font-weight: 600; text-decoration: none; font-size: 14px;">Continue Learning</a>
+                    <div>
+                        <div style="margin: 15px 0;">
+                            <div style="display: flex; justify-content: space-between; font-size: 12px; margin-bottom: 5px; color: #555;">
+                                <span>Progress</span>
+                                @* Đổ phần trăm thực tế từ database thay vì 25% *@
+                                <span id="progress-val-@item.CourseID">@currentProgress%</span>
+                            </div>
+                            <div style="background: #e2e8f0; height: 8px; border-radius: 4px; overflow: hidden;">
+                                @* Thanh xanh chạy dài theo đúng tỷ lệ phần trăm tiến độ của học viên *@
+                                <div id="progress-bar-@item.CourseID" class="progress-bar-fill" style="width: @(currentProgress)%; height: 100%; background: #2ecc71; border-radius: 4px; transition: width 0.5s ease;"></div>
+                            </div>
+                        </div>
+
+                        <a href="@Url.Action("Classroom", "Student", new { id = item.CourseID })" class="btn btn-primary w-100" style="text-align: center; display: block; padding: 10px; font-weight: 600; text-decoration: none; font-size: 14px;">Continue Learning</a>
+                    </div>
+
                 </div>
             }
         </div>

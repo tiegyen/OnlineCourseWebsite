@@ -33,6 +33,7 @@
 
             <div class="form-group" style="margin-bottom: 20px;">
                 <label style="display: block; margin-bottom: 8px; font-weight: 500; color: #444;">Email Address</label>
+                @* Giá trị value sẽ tự bốc từ Cookie thông qua ViewBag truyền từ Controller xuống *@
                 <input type="email" name="Email" class="form-control" placeholder="Enter your registered email" value="@ViewBag.Email" required style="width: 100%; padding: 10px; border: 1px solid #ddd; border-radius: 6px;">
                 @if (ViewBag.ErrorEmail != null)
                 {
@@ -42,14 +43,26 @@
 
             <div class="form-group" style="margin-bottom: 20px;">
                 <label style="display: block; margin-bottom: 8px; font-weight: 500; color: #444;">Password</label>
-                <input type="password" name="Password" class="form-control" placeholder="Enter your password" required style="width: 100%; padding: 10px; border: 1px solid #ddd; border-radius: 6px;">
+                <input type="password" name="Password" class="form-control" placeholder="Enter your password" value="@ViewBag.Password" required style="width: 100%; padding: 10px; border: 1px solid #ddd; border-radius: 6px;">
                 @if (ViewBag.ErrorPassword != null)
                 {
                     <small style="color: #ff4d4d; font-size: 12px; margin-top: 5px; display: block;">@ViewBag.ErrorPassword</small>
                 }
             </div>
 
-            <button type="submit" class="btn btn-primary w-100 mt-20" style="padding: 12px; font-weight: 600; border-radius: 6px; cursor: pointer;">Login Now</button>
+            @* 🛠️ HÀNG THÊM MỚI: REMEMBER ME & FORGOT PASSWORD *@
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 25px; font-size: 14px;">
+                <label style="display: flex; align-items: center; gap: 6px; color: #666; cursor: pointer; user-select: none;">
+                    <input type="checkbox" name="RememberMe" value="true" @(ViewBag.RememberMe == true ? "checked" : "") style="width: 16px; height: 16px; cursor: pointer;" />
+                    Remember me
+                </label>
+
+                <a href="javascript:void(0);" onclick="showForgotPasswordAlert()" style="color: #ff4757; font-weight: 500; text-decoration: none;">
+                    Forgot password?
+                </a>
+            </div>
+
+            <button type="submit" class="btn btn-primary w-100" style="padding: 12px; font-weight: 600; border-radius: 6px; cursor: pointer; background: #764ba2; border: none; color: #fff;">Login Now</button>
         </form>
 
         <p class="text-center mt-20" style="color: #666; font-size: 14px; text-align: center; margin-top: 20px;">
@@ -57,3 +70,10 @@
         </p>
     </div>
 </div>
+
+@* 📱 JAVASCRIPT XỬ LÝ QUÊN MẬT KHẨU TẠI CHỖ *@
+<script type="text/javascript">
+    function showForgotPasswordAlert() {
+        alert("🔒 Password Recovery Support:\n\nTo reset your password, please directly contact our Administrator:\n✉️ Email: admin@course.com\n📞 Hotline: 1900 xxxx\n\nPlease provide your registered email for identity verification!");
+    }
+</script>

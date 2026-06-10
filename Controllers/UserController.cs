@@ -101,6 +101,14 @@ namespace OnlineCourseWebsite.Controllers
         [HttpGet]
         public ActionResult Login()
         {
+            // 🔍 ĐỌC COOKIE "REMEMBER ME" NẾU CÓ
+            HttpCookie loginCookie = Request.Cookies["RememberMeCookie"];
+            if (loginCookie != null)
+            {
+                ViewBag.Email = loginCookie["Email"];
+                ViewBag.Password = loginCookie["Password"]; // Lưu ý: Làm thực tế nên mã hoá, ở đây làm đồ án lưu chuỗi trực tiếp để test cho khoẻ
+                ViewBag.RememberMe = true;
+            }
             return View();
         }
 
@@ -110,6 +118,8 @@ namespace OnlineCourseWebsite.Controllers
         {
             var email = collection["Email"];
             var password = collection["Password"];
+            // Đọc trạng thái check của checkbox (nếu checked nó trả về chuỗi "true", không chọn trả về null)
+            bool rememberMe = collection["RememberMe"] == "true";
 
             bool hasError = false;
 
@@ -135,34 +145,49 @@ namespace OnlineCourseWebsite.Controllers
                     return View();
                 }
 
-                // Lưu các thông tin ID và Quyền vào Session trước
-                Session["UserId"] = account.UserID;   // Giữ ID tài khoản để dùng chung
-                Session["UserRole"] = account.Role;   // Giữ Role để phân quyền chặn truy cập bậy
+                // 🍪 XỬ LÝ LƯU HOẶC XOÁ COOKIE "REMEMBER ME" KHI ĐĂNG NHẬP THÀNH CÔNG
+                if (rememberMe)
+                {
+                    HttpCookie loginCookie = new HttpCookie("RememberMeCookie");
+                    loginCookie["Email"] = email;
+                    loginCookie["Password"] = password;
+                    loginCookie.Expires = DateTime.Now.AddDays(30); // Lưu giữ trong 30 ngày
+                    Response.Cookies.Add(loginCookie);
+                }
+                else
+                {
+                    // Nếu người dùng không chọn ghi nhớ nữa thì xoá Cookie cũ trên trình duyệt đi
+                    if (Request.Cookies["RememberMeCookie"] != null)
+                    {
+                        HttpCookie loginCookie = new HttpCookie("RememberMeCookie");
+                        loginCookie.Expires = DateTime.Now.AddDays(-1); // Cho hết hạn ngay lập tức
+                        Response.Cookies.Add(loginCookie);
+                    }
+                }
 
-                // 3. PHÂN LUỒNG ĐĂNG NHẬP THEO QUYỀN (ROLE) & XỬ LÝ 🔀 ĐỔI CHUỖI HIỂN THỊ SESSION
+                // Lưu các thông tin ID và Quyền vào Session
+                Session["UserId"] = account.UserID;
+                Session["UserRole"] = account.Role;
+
+                // 3. PHÂN LUỒNG ĐĂNG NHẬP THEO QUYỀN (ROLE)
                 if (account.Role == "Admin")
                 {
-                    Session["UserAccount"] = "Admin"; // Gán chuỗi chữ tường minh cho Admin
+                    Session["UserAccount"] = "Admin";
                     return RedirectToAction("Dashboard", "Admin");
                 }
                 else if (account.Role == "Instructor")
                 {
-                    // Lấy thông tin chi tiết giảng viên từ bảng Instructor
                     var instructor = db.Instructors.SingleOrDefault(ins => ins.UserID == account.UserID);
                     if (instructor != null)
                     {
-                        //Gán ĐÍCH DANH trường FullName dạng string chứ không gán nguyên Object
                         Session["UserAccount"] = instructor.FullName;
-
                         Session["InstructorID"] = instructor.InstructorID;
                         Session["InstructorProfile"] = instructor;
                     }
                     else
                     {
-                        Session["UserAccount"] = account.Email; // Dự phòng nếu chưa tạo bảng Instructor
+                        Session["UserAccount"] = account.Email;
                     }
-
-                    // Đăng nhập đúng quyền Giảng viên thì đá thẳng vào Dashboard của Instructor liền!
                     return RedirectToAction("Dashboard", "Instructor");
                 }
                 else if (account.Role == "Student")
@@ -170,7 +195,7 @@ namespace OnlineCourseWebsite.Controllers
                     var student = db.Students.SingleOrDefault(s => s.UserID == account.UserID);
                     if (student != null)
                     {
-                        Session["UserAccount"] = student.FullName; // Gán chuỗi tên học viên để hiển thị trên Layout chung
+                        Session["UserAccount"] = student.FullName;
                         Session["StudentProfile"] = student;
                         Session["StudentID"] = student.StudentID;
                     }
