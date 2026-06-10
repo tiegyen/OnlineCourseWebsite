@@ -67,13 +67,13 @@ namespace OnlineCourseWebsite.Controllers
             var recentActivitiesList = enrollActivities.Union(reviewActivities)
                 .OrderByDescending(a => a.ActionDate).Take(5).ToList();
 
-            // 🔥 TỐI ƯU: Chỉ truy vấn bảng Reviews đúng 1 lần duy nhất để lấy danh sách điểm số, giảm tải cho SQL Server
+            //TỐI ƯU: Chỉ truy vấn bảng Reviews đúng 1 lần duy nhất để lấy danh sách điểm số, giảm tải cho SQL Server
             var instructorRatings = db.Reviews
                                       .Where(r => r.Course.InstructorID == currentInstructorID)
                                       .Select(r => r.Rating)
                                       .ToList();
 
-            // 5. Đóng gói gửi qua View
+            // 5. Đóng gói gửi qua View Model
             var viewModel = new InstructorDashboardViewModel
             {
                 TotalCourses = courseStatsList.Count,
@@ -153,7 +153,7 @@ namespace OnlineCourseWebsite.Controllers
             string duration = collection["Duration"];
             string description = collection["Description"];
 
-            // 🔥 TỐI ƯU: Ép kiểu an toàn bằng TryParse tránh sập web khi nhập sai định dạng số tiền
+            //TỐI ƯU: Ép kiểu an toàn bằng TryParse tránh sập web khi nhập sai định dạng số tiền
             decimal price = 0;
             decimal.TryParse(collection["Price"], out price);
 
@@ -297,7 +297,7 @@ namespace OnlineCourseWebsite.Controllers
 
             if (lesson != null)
             {
-                // 🔥 TỐI ƯU: Tìm và xóa các file vật lý của bài học này trên ổ cứng Server trước khi xóa DB
+                //TỐI ƯU: Tìm và xóa các file vật lý của bài học này trên ổ cứng Server trước khi xóa DB
                 var materials = db.CourseMaterials.Where(m => m.LessonID == id).ToList();
                 foreach (var mat in materials)
                 {
@@ -347,7 +347,7 @@ namespace OnlineCourseWebsite.Controllers
             // 3. Truy vấn dữ liệu học viên (Khởi tạo Query)
             var enrollmentQuery = db.Enrollments.Where(e => e.Course.InstructorID == currentInstructorID);
 
-            // 🔥 LỌC THEO CATEGORY: Nếu ní chọn một danh mục cụ thể, LINQ sẽ đắp thêm điều kiện lọc
+            //LỌC THEO CATEGORY: Nếu chọn một danh mục cụ thể, LINQ sẽ đắp thêm điều kiện lọc
             if (categoryId.HasValue && categoryId.Value > 0)
             {
                 enrollmentQuery = enrollmentQuery.Where(e => e.Course.CategoryID == categoryId.Value);
@@ -457,7 +457,7 @@ namespace OnlineCourseWebsite.Controllers
                     db.Reviews.DeleteAllOnSubmit(reviews);
 
                     // c. Xóa các Enrollments (Học viên đăng ký) liên quan đến khóa học này
-                    // LƯU Ý: Nếu có bảng Payments liên kết với Enrollment, ní cần xóa Payment trước luôn nhé!
+                    // LƯU Ý: Nếu có bảng Payments liên kết với Enrollment, cần xóa Payment trước luôn nhé!
                     var enrollments = db.Enrollments.Where(e => e.CourseID == id).ToList();
                     foreach (var e in enrollments)
                     {
@@ -587,7 +587,7 @@ namespace OnlineCourseWebsite.Controllers
 
             try
             {
-                // 1. Cập nhật các thông tin theo ĐÚNG tên cột DB của ní
+                // 1. Cập nhật các thông tin theo ĐÚNG tên cột DB
                 instructor.FullName = collection["FullName"];
                 instructor.Phone = collection["Phone"];
                 instructor.Address = collection["Address"];
@@ -600,7 +600,7 @@ namespace OnlineCourseWebsite.Controllers
                     string path = Path.Combine(Server.MapPath("~/Content/images/"), filename);
                     AvatarFile.SaveAs(path);
 
-                    // Map đúng vào cột Image của ní nè
+                    // Map đúng vào cột Image
                     instructor.Image = "~/Content/images/" + filename;
                 }
 
