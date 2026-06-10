@@ -175,7 +175,7 @@ public class AdminController : Controller
                                  Email = acc.Email,
                                  Bio = inst.Bio,
                                  Status = acc.Status,
-                                 UserImage = inst.Image // Hoặc inst.Avatar tùy tên cột trong DB của ní
+                                 UserImage = inst.Image // Hoặc inst.Avatar tùy tên cột trong DB
                              }).ToList();
 
         // 2. Lấy danh sách Students kèm ảnh
@@ -188,7 +188,7 @@ public class AdminController : Controller
                               FullName = std.FullName,
                               Email = acc.Email,
                               Status = acc.Status,
-                              UserImage = std.Avatar // Hoặc std.Avatar tùy tên cột trong DB của ní
+                              UserImage = std.Avatar // Hoặc std.Avatar tùy tên cột trong DB 
                           }).ToList();
 
         return View(model);
@@ -397,7 +397,7 @@ public class AdminController : Controller
             db.Courses.InsertOnSubmit(newCourse);
             db.SubmitChanges();
 
-            TempData["Success"] = "Thêm khóa học thành công rồi ní ơi!";
+            TempData["Success"] = "Thêm khóa học thành công!";
             return RedirectToAction("Courses");
         }
         catch (System.Data.Linq.ForeignKeyReferenceAlreadyHasValueException ex)

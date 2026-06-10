@@ -25,7 +25,7 @@
                 {
                     string dbImageValue = Model.Image.ToString().Trim();
 
-                    // TRƯỜNG HỢP A: Nếu trong DB đã chứa sẵn cụm đường dẫn "Content/images" (Ảnh cũ của ní)
+                    // TRƯỜNG HỢP A: Nếu trong DB đã chứa sẵn cụm đường dẫn "Content/images" (Ảnh cũ)
                     if (dbImageValue.ToLower().Contains("content/images"))
                     {
                         if (dbImageValue.StartsWith("/"))

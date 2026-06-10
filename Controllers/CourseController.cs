@@ -154,7 +154,7 @@ namespace OnlineCourseWebsite.Controllers
                 }
             }
 
-            // 🌟 SỬA DÒNG NÀY: Chỉ định rõ ràng tên View là "EnrollPage" ghen ní!
+            // 🌟 SỬA DÒNG NÀY: Chỉ định rõ ràng tên View là "EnrollPage"
             return View("EnrollPage", course);
         }
 
@@ -367,7 +367,7 @@ namespace OnlineCourseWebsite.Controllers
                 payment.PaymentStatus = "Cancelled";
 
                 // 3. XÓA dòng Enrollment tương ứng để giải phóng CONSTRAINT UNIQUE (StudentID, CourseID)
-                // Điều này giúp học viên sau này muốn mua lại khóa học đó thì vẫn bấm "Enroll Now" được ghen ní!
+                // Điều này giúp học viên sau này muốn mua lại khóa học đó thì vẫn bấm "Enroll Now" được
                 var enroll = db.Enrollments.SingleOrDefault(e => e.EnrollmentID == payment.EnrollmentID);
                 if (enroll != null)
                 {
@@ -422,7 +422,7 @@ namespace OnlineCourseWebsite.Controllers
             if (payment.PaymentStatus == "Pending")
             {
                 // Không dùng "Awaiting" nữa vì SQL chặn
-                // Ní có thể giữ nguyên "Pending" hoặc đổi thành trạng thái hợp lệ dưới DB của ní
+                // Ní có thể giữ nguyên "Pending" hoặc đổi thành trạng thái hợp lệ dưới DB
                 payment.PaymentStatus = "Pending";
                 payment.PaymentMethod = "Bank Transfer";
                 payment.PaymentDate = DateTime.Now;

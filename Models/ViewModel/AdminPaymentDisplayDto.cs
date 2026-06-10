@@ -14,7 +14,7 @@ namespace OnlineCourseWebsite.ViewModels
         public DateTime PaymentDate { get; set; }
         public double Progress { get; set; } // Thêm trường này để check tiến độ
 
-        // 🔥 THÊM 2 THUỘC TÍNH NÀY:
+        // THÊM 2 THUỘC TÍNH
         public DateTime? UpdatedDate { get; set; } // Lấy ngày PaymentDate để tính thời gian sau khi bấm nút
         public string StatusNotes { get; set; }    // Tận dụng cột mô tả để lưu trạng thái gốc (nếu DB có hoặc ta giả định)
     }

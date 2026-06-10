@@ -1092,7 +1092,7 @@ h4 {
     box-shadow: 0 2px 4px rgba(0,0,0,0.05);
 }
 
-/* Màu sắc động theo từng StatusID trong DB của ní */
+/* Màu sắc động theo từng StatusID trong DB */
 .status-1 {
     background-color: #e8f5e9;
     color: #2e7d32;

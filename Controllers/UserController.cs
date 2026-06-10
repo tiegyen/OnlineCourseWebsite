@@ -64,7 +64,7 @@ namespace OnlineCourseWebsite.Controllers
                 // Mặc định tài khoản mới tạo phải ở trạng thái Khoá (Inactive) để bắt xác nhận email
                 newAccount.Status = "Inactive";
 
-                // Đồng bộ múi giờ Việt Nam hiện tại chuẩn chỉ luôn ghen ní
+                // Đồng bộ múi giờ Việt Nam hiện tại chuẩn
                 newAccount.CreatedDate = TimeZoneInfo.ConvertTimeFromUtc(DateTime.UtcNow, TimeZoneInfo.FindSystemTimeZoneById("SE Asia Standard Time"));
 
                 db.User_Accounts.InsertOnSubmit(newAccount);
@@ -84,7 +84,7 @@ namespace OnlineCourseWebsite.Controllers
                 // DÙNG TEMPDATA: Gửi thông điệp nhắc nhở xuyên suốt qua trang Login
                 TempData["SuccessMessage"] = "Đăng ký thành công! Hệ thống đã gửi một email xác nhận đến địa chỉ: " + email + ". Vui lòng kiểm tra hộp thư (hoặc mục Spam) để kích hoạt tài khoản trước khi đăng nhập.";
 
-                // Đăng ký xong đá văng sang trang Login đúng ý ní luôn
+                // Đăng ký xong đá văng sang trang Login
                 return RedirectToAction("Login", "User");
             }
             catch (Exception ex)
@@ -151,7 +151,7 @@ namespace OnlineCourseWebsite.Controllers
                     var instructor = db.Instructors.SingleOrDefault(ins => ins.UserID == account.UserID);
                     if (instructor != null)
                     {
-                        // 🔥 ĐÃ SỬA: Gán ĐÍCH DANH trường FullName dạng string chứ không gán nguyên Object nữa nhé ní!
+                        //Gán ĐÍCH DANH trường FullName dạng string chứ không gán nguyên Object
                         Session["UserAccount"] = instructor.FullName;
 
                         Session["InstructorID"] = instructor.InstructorID;
@@ -206,7 +206,7 @@ namespace OnlineCourseWebsite.Controllers
         {
             try
             {
-                // 1. Cấu hình thông tin người gửi (Thay bằng Gmail của ní và Mật khẩu ứng dụng - App Password)
+                // 1. Cấu hình thông tin người gửi (Thay bằng Gmail của bản thân và Mật khẩu ứng dụng - App Password)
                 string fromEmail = "anhthu2005.rg@gmail.com";
                 string appPassword = "nzhvpcbwvwygbfhg"; // Mật khẩu ứng dụng 16 ký tự, KHÔNG PHẢI mật khẩu chính của Gmail
 

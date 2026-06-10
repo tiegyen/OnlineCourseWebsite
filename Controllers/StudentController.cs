@@ -1,4 +1,4 @@
-﻿using OnlineCourseWebsite.Models; // Ní nhớ check đúng namespace Models của hai ní nha
+﻿using OnlineCourseWebsite.Models; 
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -10,7 +10,7 @@ namespace OnlineCourseWebsite.Controllers
 {
     public class StudentController : Controller
     {
-        private dbOnlineCourseDataContext db = new dbOnlineCourseDataContext(); // Thay bằng tên DbContext của ní
+        private dbOnlineCourseDataContext db = new dbOnlineCourseDataContext(); 
 
         // GET: Student/MyCourses
         public ActionResult MyCourses()
@@ -37,7 +37,7 @@ namespace OnlineCourseWebsite.Controllers
 
             // 🌟 MẸO NHỎ (Tùy chọn): Nếu bảng Enrollment có lưu sẵn cột Progress (Tiến độ % học), 
             // có thể quăng nguyên danh sách Enrollment sang View luôn. 
-            // Ở đây Gen truyền List<Course> làm Model chính để khớp với sườn giao diện của ní ghen.
+            // Ở đây Gen truyền List<Course> làm Model chính để khớp với sườn giao diện
 
             return View(myEnrolledCourses);
         }
@@ -180,7 +180,7 @@ namespace OnlineCourseWebsite.Controllers
                     // Lưu file hình vật lý vào thư mục dự án
                     avatarFile.SaveAs(fullPath);
 
-                    // Cập nhật đường dẫn hình mới vào Database (cột Avatar của hai ní)
+                    // Cập nhật đường dẫn hình mới vào Database (cột Avatar)
                     var student = db.Students.SingleOrDefault(s => s.StudentID == studentSession.StudentID);
                     student.Avatar = "~/Content/images/" + fileName;
 
