@@ -12,7 +12,7 @@ namespace OnlineCourseWebsite.Controllers
         dbOnlineCourseDataContext db = new dbOnlineCourseDataContext();
         public ActionResult Index()
         {
-            var topSubscribed = (from c in db.Courses
+            var topSubscribed = ( from c in db.Courses
                               join e in db.Enrollments on c.CourseID equals e.CourseID into subscriberGroup
                               select new TargetCourseView
                               {
